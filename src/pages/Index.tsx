@@ -1,7 +1,16 @@
+import { Navigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Index = () => {
+  const { user } = useAuth();
+
+  // Redirect authenticated users to dashboard
+  if (user) {
+    return <Navigate to="/dashboard/home" replace />;
+  }
+
   return (
     <div className="min-h-screen bg-background">
       {/* Cabeçalho Fixo */}
@@ -13,16 +22,16 @@ const Index = () => {
             </div>
             <nav className="flex items-center gap-6">
               <Link 
-                to="/dashboard" 
+                to="/auth" 
                 className="text-foreground hover:text-primary transition-colors"
               >
                 Resultados
               </Link>
-              <Button variant="outline" size="sm">
-                Entrar
+              <Button variant="outline" size="sm" asChild>
+                <Link to="/auth">Entrar</Link>
               </Button>
-              <Button variant="default" size="sm">
-                Criar Conta
+              <Button variant="default" size="sm" asChild>
+                <Link to="/auth">Criar Conta</Link>
               </Button>
             </nav>
           </div>

@@ -1,5 +1,6 @@
-import { Home, BarChart3, Target, Building2, ChevronRight } from "lucide-react"
+import { Home, BarChart3, Target, Building2, ChevronRight, LogOut, User } from "lucide-react"
 import { NavLink, useLocation } from "react-router-dom"
+import { useAuth } from "@/contexts/AuthContext"
 
 import {
   Sidebar,
@@ -14,12 +15,19 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
   useSidebar,
+  SidebarFooter,
 } from "@/components/ui/sidebar"
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 const menuItems = [
   {
@@ -61,6 +69,7 @@ export function AppSidebar() {
   const { state } = useSidebar()
   const location = useLocation()
   const currentPath = location.pathname
+  const { user, signOut } = useAuth()
 
   const isActive = (path: string) => currentPath === path
   const hasActiveChild = (items?: { url: string }[]) => 
@@ -132,6 +141,32 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      
+      <SidebarFooter>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <SidebarMenuButton className="w-full">
+                  <User className="h-4 w-4" />
+                  {!isCollapsed && (
+                    <>
+                      <span className="truncate">{user?.email}</span>
+                      <ChevronRight className="ml-auto h-4 w-4" />
+                    </>
+                  )}
+                </SidebarMenuButton>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuItem onClick={signOut} className="cursor-pointer">
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Sair
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
     </Sidebar>
   )
 }
