@@ -78,7 +78,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      can_view_hospital: {
+        Args: { hospital_uuid: string }
+        Returns: boolean
+      }
+      has_admin_access: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
     }
     Enums: {
       tipo_acesso:
