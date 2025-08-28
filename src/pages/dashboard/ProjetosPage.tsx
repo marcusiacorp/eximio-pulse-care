@@ -1,11 +1,23 @@
+import { NavLink } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
+
 const ProjetosPage = () => {
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-foreground">Projetos</h1>
-        <p className="text-muted-foreground mt-2">
-          Gerencie os hospitais e instituições sob sua responsabilidade
-        </p>
+      <div className="flex justify-between items-start">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground">Projetos</h1>
+          <p className="text-muted-foreground mt-2">
+            Gerencie os hospitais e instituições sob sua responsabilidade
+          </p>
+        </div>
+        <Button asChild>
+          <NavLink to="/dashboard/projetos/cadastro">
+            <Plus className="h-4 w-4 mr-2" />
+            Cadastrar Hospital
+          </NavLink>
+        </Button>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -64,11 +76,17 @@ const ProjetosPage = () => {
         </div>
       </div>
 
-      <div className="rounded-lg border bg-card p-6">
-        <h3 className="font-semibold text-card-foreground mb-4">Adicionar Novo Projeto</h3>
-        <p className="text-sm text-muted-foreground">
-          Funcionalidade para adicionar novos hospitais será implementada aqui
+      <div className="rounded-lg border bg-card p-6 text-center">
+        <h3 className="font-semibold text-card-foreground mb-2">Adicionar Novo Projeto</h3>
+        <p className="text-sm text-muted-foreground mb-4">
+          Clique no botão acima para cadastrar um novo hospital
         </p>
+        <Button asChild variant="outline">
+          <NavLink to="/dashboard/projetos/cadastro">
+            <Plus className="h-4 w-4 mr-2" />
+            Cadastrar Hospital
+          </NavLink>
+        </Button>
       </div>
     </div>
   )

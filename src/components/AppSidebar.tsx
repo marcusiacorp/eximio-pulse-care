@@ -43,8 +43,17 @@ const menuItems = [
   },
   {
     title: "Projetos",
-    url: "/dashboard/projetos",
     icon: Building2,
+    items: [
+      {
+        title: "Lista de Projetos",
+        url: "/dashboard/projetos",
+      },
+      {
+        title: "Cadastrar Hospital",
+        url: "/dashboard/projetos/cadastro",
+      },
+    ],
   },
 ]
 
