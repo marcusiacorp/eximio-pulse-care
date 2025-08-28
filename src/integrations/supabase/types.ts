@@ -14,7 +14,65 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      hospitais: {
+        Row: {
+          created_at: string
+          id: string
+          nome: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          nome: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          nome?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      usuarios: {
+        Row: {
+          created_at: string
+          email: string
+          hospital_id: string | null
+          id: string
+          nome: string
+          tipo_acesso: Database["public"]["Enums"]["tipo_acesso"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          hospital_id?: string | null
+          id?: string
+          nome: string
+          tipo_acesso: Database["public"]["Enums"]["tipo_acesso"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          hospital_id?: string | null
+          id?: string
+          nome?: string
+          tipo_acesso?: Database["public"]["Enums"]["tipo_acesso"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "usuarios_hospital_id_fkey"
+            columns: ["hospital_id"]
+            isOneToOne: false
+            referencedRelation: "hospitais"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +81,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      tipo_acesso: "administrador" | "gestor_diretor" | "gestor_medico"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +208,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      tipo_acesso: ["administrador", "gestor_diretor", "gestor_medico"],
+    },
   },
 } as const
