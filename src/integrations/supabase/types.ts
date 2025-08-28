@@ -81,7 +81,12 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      tipo_acesso: "administrador" | "gestor_diretor" | "gestor_medico"
+      tipo_acesso:
+        | "administrador"
+        | "gestor_diretor"
+        | "gestor_medico"
+        | "gestor_admin"
+        | "gestor_supervisor"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -209,7 +214,13 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      tipo_acesso: ["administrador", "gestor_diretor", "gestor_medico"],
+      tipo_acesso: [
+        "administrador",
+        "gestor_diretor",
+        "gestor_medico",
+        "gestor_admin",
+        "gestor_supervisor",
+      ],
     },
   },
 } as const
