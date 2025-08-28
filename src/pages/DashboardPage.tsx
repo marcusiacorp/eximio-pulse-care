@@ -1,11 +1,23 @@
+import { Outlet } from "react-router-dom"
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
+import { AppSidebar } from "@/components/AppSidebar"
+
 const DashboardPage = () => {
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-foreground mb-4">Painel de NPS</h1>
-        <p className="text-muted-foreground">Painel de NPS em construção</p>
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full">
+        <AppSidebar />
+        <div className="flex-1 flex flex-col">
+          <header className="h-16 flex items-center border-b bg-background px-4">
+            <SidebarTrigger />
+            <h1 className="ml-4 text-xl font-semibold text-foreground">Painel de NPS</h1>
+          </header>
+          <main className="flex-1 p-6 bg-background">
+            <Outlet />
+          </main>
+        </div>
       </div>
-    </div>
+    </SidebarProvider>
   );
 };
 
