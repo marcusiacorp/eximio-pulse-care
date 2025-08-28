@@ -1,0 +1,46 @@
+-- Criar o primeiro usuário administrador
+-- IMPORTANTE: Execute este comando no painel do Supabase Auth
+
+-- Para criar o usuário administrativo, você deve:
+-- 1. Ir ao painel do Supabase -> Authentication -> Users
+-- 2. Clicar em "Add user" 
+-- 3. Preencher:
+--    Email: marcus.azevedo@eximio.med.br
+--    Password: MVUn1c3ntr0@
+--    Email Confirm: true (marcar como confirmado)
+-- 4. Depois criar o registro na tabela usuarios
+
+-- Caso prefira criar via SQL (alternativo), descomente as linhas abaixo:
+-- INSERT INTO auth.users (
+--   id, 
+--   email, 
+--   encrypted_password, 
+--   email_confirmed_at, 
+--   created_at, 
+--   updated_at,
+--   role,
+--   aud,
+--   confirmation_token
+-- ) VALUES (
+--   gen_random_uuid(),
+--   'marcus.azevedo@eximio.med.br',
+--   crypt('MVUn1c3ntr0@', gen_salt('bf')),
+--   now(),
+--   now(),
+--   now(),
+--   'authenticated',
+--   'authenticated',
+--   ''
+-- );
+
+-- Criar diretamente o registro na tabela usuarios para o usuário administrador
+-- (Substitua o ID pelo ID real do usuário criado no painel)
+-- INSERT INTO public.usuarios (id, nome, email, tipo_acesso)
+-- VALUES (
+--   'USER_ID_FROM_AUTH_PANEL',
+--   'Marcus Azevedo',
+--   'marcus.azevedo@eximio.med.br',
+--   'administrador'::tipo_acesso
+-- );
+
+-- Comentário: Para criar o usuário de forma segura, use o painel do Supabase Auth
