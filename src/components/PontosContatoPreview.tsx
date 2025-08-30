@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -21,11 +22,13 @@ export const PontosContatoPreview = ({
   const [feedbackPositivo, setFeedbackPositivo] = useState("")
   const [influenciaSelecionada, setInfluenciaSelecionada] = useState<string[]>([])
   const [sugestaoFinal, setSugestaoFinal] = useState("")
+  const [novaOpcaoInfluencia, setNovaOpcaoInfluencia] = useState("")
+  const [opcoesInfluenciaCustom, setOpcoesInfluenciaCustom] = useState<string[]>([])
 
   const pontosAtivos = pontosContato.filter(ponto => ponto.ativo)
   const temPontoComNotaAlta = Object.values(selectedScores).some(score => score >= 9)
 
-  const opcoesInfluencia = [
+  const opcoesInfluenciaPadrao = [
     "Atendimento da equipe médica",
     "Atendimento prestado pelas equipes de apoio, como enfermagem, recepção e demais setores",
     "Comunicação e informações recebidas",
@@ -34,6 +37,8 @@ export const PontosContatoPreview = ({
     "Estrutura e conforto",
     "Higiene e Limpeza"
   ]
+
+  const todasOpcoesInfluencia = [...opcoesInfluenciaPadrao, ...opcoesInfluenciaCustom]
 
   const handleScoreSelect = (pontoId: string, score: number) => {
     setSelectedScores(prev => ({
@@ -48,6 +53,18 @@ export const PontosContatoPreview = ({
         ? prev.filter(item => item !== opcao)
         : [...prev, opcao]
     )
+  }
+
+  const handleAdicionarOpcaoInfluencia = () => {
+    if (!novaOpcaoInfluencia.trim() || opcoesInfluenciaCustom.includes(novaOpcaoInfluencia.trim())) return
+    
+    setOpcoesInfluenciaCustom(prev => [...prev, novaOpcaoInfluencia.trim()])
+    setNovaOpcaoInfluencia("")
+  }
+
+  const handleRemoverOpcaoInfluencia = (opcao: string) => {
+    setOpcoesInfluenciaCustom(prev => prev.filter(item => item !== opcao))
+    setInfluenciaSelecionada(prev => prev.filter(item => item !== opcao))
   }
 
   const getScoreButtonClass = (score: number, isSelected: boolean, isDisabled: boolean) => {
@@ -190,21 +207,51 @@ export const PontosContatoPreview = ({
           </p>
           
           <div className="space-y-2">
-            {opcoesInfluencia.map((opcao) => (
-              <div key={opcao} className="flex items-center space-x-2">
-                <Checkbox
-                  id={opcao}
-                  checked={influenciaSelecionada.includes(opcao)}
-                  onCheckedChange={() => handleInfluenciaToggle(opcao)}
-                />
-                <label
-                  htmlFor={opcao}
-                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
-                >
-                  {opcao}
-                </label>
+            {todasOpcoesInfluencia.map((opcao) => (
+              <div key={opcao} className="flex items-center justify-between gap-2">
+                <div className="flex items-center space-x-2 flex-1">
+                  <Checkbox
+                    id={opcao}
+                    checked={influenciaSelecionada.includes(opcao)}
+                    onCheckedChange={() => handleInfluenciaToggle(opcao)}
+                  />
+                  <label
+                    htmlFor={opcao}
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                  >
+                    {opcao}
+                  </label>
+                </div>
+                
+                {opcoesInfluenciaCustom.includes(opcao) && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleRemoverOpcaoInfluencia(opcao)}
+                    className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive"
+                  >
+                    ×
+                  </Button>
+                )}
               </div>
             ))}
+            
+            <div className="flex gap-2 mt-3 pt-3 border-t">
+              <Input
+                value={novaOpcaoInfluencia}
+                onChange={(e) => setNovaOpcaoInfluencia(e.target.value)}
+                placeholder="Adicionar nova opção de influência"
+                onKeyPress={(e) => e.key === 'Enter' && handleAdicionarOpcaoInfluencia()}
+              />
+              <Button 
+                onClick={handleAdicionarOpcaoInfluencia} 
+                variant="outline" 
+                size="sm"
+                disabled={!novaOpcaoInfluencia.trim()}
+              >
+                Adicionar
+              </Button>
+            </div>
           </div>
         </div>
 

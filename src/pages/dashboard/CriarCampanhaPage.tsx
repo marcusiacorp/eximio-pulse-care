@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable"
 import { useAuth } from "@/contexts/AuthContext"
+import { useHospital } from "@/contexts/HospitalContext"
 import { supabase } from "@/integrations/supabase/client"
 import { useToast } from "@/hooks/use-toast"
 import { NPSPreview } from "@/components/NPSPreview"
@@ -19,6 +20,7 @@ const CriarCampanhaPage = () => {
   const { tipo } = useParams<{ tipo: string }>()
   const navigate = useNavigate()
   const { user } = useAuth()
+  const { selectedHospital } = useHospital()
   const { toast } = useToast()
   
   const [campaignName, setCampaignName] = useState("")
@@ -297,6 +299,7 @@ const CriarCampanhaPage = () => {
                     <PontosContatoPreview
                       pontosContatoAtivos={pontosContatoAtivos}
                       pontosContato={pontosContato}
+                      nomeHospital={selectedHospital?.nome}
                     />
                   ) : (
                     <NPSPreview
