@@ -9,12 +9,24 @@ interface NPSPreviewProps {
   trechoPergunta: string
   recomendacao: string
   autorizacao: string
+  oQueAgradou?: string
+  setoresHospital?: string[]
+  nomeHospital?: string
 }
 
-export const NPSPreview = ({ trechoPergunta, recomendacao, autorizacao }: NPSPreviewProps) => {
+export const NPSPreview = ({ 
+  trechoPergunta, 
+  recomendacao, 
+  autorizacao, 
+  oQueAgradou, 
+  setoresHospital = [],
+  nomeHospital = "Nome do Hospital"
+}: NPSPreviewProps) => {
   const [selectedScore, setSelectedScore] = useState<number | null>(null)
   const [feedback, setFeedback] = useState("")
   const [selectedAuthorization, setSelectedAuthorization] = useState<boolean | null>(null)
+  const [respostaAgradou, setRespostaAgradou] = useState("")
+  const [setoresSelecionados, setSetoresSelecionados] = useState<string[]>([])
   const [logoFile, setLogoFile] = useState<File | null>(null)
   const [logoPreview, setLogoPreview] = useState<string | null>(null)
   const [showLogoDialog, setShowLogoDialog] = useState(false)
@@ -77,6 +89,14 @@ export const NPSPreview = ({ trechoPergunta, recomendacao, autorizacao }: NPSPre
     return "bg-green-600 text-white"
   }
 
+  const handleSetorToggle = (setor: string) => {
+    setSetoresSelecionados(prev => 
+      prev.includes(setor) 
+        ? prev.filter(item => item !== setor)
+        : [...prev, setor]
+    )
+  }
+
   return (
     <div className="max-w-md mx-auto bg-white border rounded-lg shadow-sm p-6 space-y-6">
       {/* Logo do Hospital */}
@@ -98,6 +118,11 @@ export const NPSPreview = ({ trechoPergunta, recomendacao, autorizacao }: NPSPre
             </div>
           )}
         </div>
+      </div>
+
+      {/* Nome do Hospital */}
+      <div className="text-center">
+        <h2 className="text-xl font-bold text-gray-900 mb-4">{nomeHospital}</h2>
       </div>
 
       {/* Pergunta Principal */}
@@ -133,6 +158,53 @@ export const NPSPreview = ({ trechoPergunta, recomendacao, autorizacao }: NPSPre
           <span>Recomendaria totalmente</span>
         </div>
       </div>
+
+      {/* Pergunta sobre o que agradou */}
+      {oQueAgradou && (
+        <div className="space-y-3">
+          <p className="text-sm font-medium text-gray-700">
+            {oQueAgradou}
+          </p>
+          <Textarea
+            value={respostaAgradou}
+            onChange={(e) => setRespostaAgradou(e.target.value.slice(0, 280))}
+            placeholder="Digite sua resposta aqui..."
+            className="resize-none"
+            rows={3}
+          />
+          <p className="text-xs text-gray-500 text-right">
+            {respostaAgradou.length}/280 caracteres
+          </p>
+        </div>
+      )}
+
+      {/* Seleção de setores */}
+      {setoresHospital.length > 0 && (
+        <div className="space-y-3">
+          <p className="text-sm font-medium text-gray-700">
+            Em qual área do hospital você foi atendido?
+          </p>
+          <div className="space-y-2">
+            {setoresHospital.map((setor) => (
+              <div key={setor} className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id={setor}
+                  checked={setoresSelecionados.includes(setor)}
+                  onChange={() => handleSetorToggle(setor)}
+                  className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                />
+                <label
+                  htmlFor={setor}
+                  className="text-sm font-medium leading-none cursor-pointer"
+                >
+                  {setor}
+                </label>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Pergunta de Feedback */}
       <div className="space-y-3">

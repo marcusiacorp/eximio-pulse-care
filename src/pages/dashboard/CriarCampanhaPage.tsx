@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { Checkbox } from "@/components/ui/checkbox"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable"
@@ -30,6 +31,8 @@ const CriarCampanhaPage = () => {
   const [trechoPergunta, setTrechoPergunta] = useState("")
   const [recomendacao, setRecomendacao] = useState("")
   const [autorizacao, setAutorizacao] = useState("")
+  const [oQueAgradou, setOQueAgradou] = useState("")
+  const [setoresHospital, setSetoresHospital] = useState<string[]>([])
   const [activeTab, setActiveTab] = useState("pergunta-definitiva")
   
   // Estados dos pontos de contato
@@ -67,7 +70,7 @@ const CriarCampanhaPage = () => {
       return
     }
 
-    if (!campaignName.trim() || !trechoPergunta.trim() || !recomendacao.trim() || !autorizacao.trim()) {
+    if (!campaignName.trim() || !trechoPergunta.trim() || !recomendacao.trim() || !autorizacao.trim() || !oQueAgradou.trim()) {
       toast({
         title: "Erro",
         description: "Preencha todos os campos obrigatórios",
@@ -116,6 +119,23 @@ const CriarCampanhaPage = () => {
         variant: "destructive"
       })
     }
+  }
+
+  const setoresDisponiveis = [
+    "AMBULATÓRIO",
+    "PRONTO SOCORRO", 
+    "UNIDADE DE INTERNAÇÃO",
+    "UNIDADE DE TERAPIA INTENSIVA",
+    "CENTRO CIRÚRGICO",
+    "EXAMES E PROCEDIMENTOS"
+  ]
+
+  const handleSetorToggle = (setor: string) => {
+    setSetoresHospital(prev => 
+      prev.includes(setor) 
+        ? prev.filter(item => item !== setor)
+        : [...prev, setor]
+    )
   }
 
   const getTipoTitle = (tipo: string) => {
@@ -240,6 +260,38 @@ const CriarCampanhaPage = () => {
                         rows={3}
                       />
                     </div>
+
+                    <div>
+                      <Label htmlFor="o-que-agradou">O que mais te agradou em sua experiência conosco? *</Label>
+                      <Textarea
+                        id="o-que-agradou"
+                        value={oQueAgradou}
+                        onChange={(e) => setOQueAgradou(e.target.value)}
+                        placeholder="Ex: O que mais te chamou atenção durante seu atendimento?"
+                        rows={3}
+                      />
+                    </div>
+
+                    <div>
+                      <Label className="text-base font-medium">Em qual área do hospital você foi atendido?</Label>
+                      <div className="space-y-2 mt-2">
+                        {setoresDisponiveis.map((setor) => (
+                          <div key={setor} className="flex items-center space-x-2">
+                            <Checkbox
+                              id={setor}
+                              checked={setoresHospital.includes(setor)}
+                              onCheckedChange={() => handleSetorToggle(setor)}
+                            />
+                            <Label
+                              htmlFor={setor}
+                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                            >
+                              {setor}
+                            </Label>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </TabsContent>
 
                   <TabsContent value="pontos-contato">
@@ -306,6 +358,9 @@ const CriarCampanhaPage = () => {
                       trechoPergunta={trechoPergunta}
                       recomendacao={recomendacao}
                       autorizacao={autorizacao}
+                      oQueAgradou={oQueAgradou}
+                      setoresHospital={setoresHospital}
+                      nomeHospital={selectedHospital?.nome}
                     />
                   )}
                 </CardContent>
