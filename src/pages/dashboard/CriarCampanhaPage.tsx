@@ -16,6 +16,7 @@ import { useToast } from "@/hooks/use-toast"
 import { NPSPreview } from "@/components/NPSPreview"
 import { PontosContatoForm, PontoContato } from "@/components/PontosContatoForm"
 import { PontosContatoPreview } from "@/components/PontosContatoPreview"
+import { ProblemasPreview } from "@/components/ProblemasPreview"
 
 const CriarCampanhaPage = () => {
   const { tipo } = useParams<{ tipo: string }>()
@@ -38,6 +39,9 @@ const CriarCampanhaPage = () => {
   // Estados dos pontos de contato
   const [pontosContatoAtivos, setPontosContatoAtivos] = useState(false)
   const [pontosContato, setPontosContato] = useState<PontoContato[]>([])
+  
+  // Estados dos problemas
+  const [problemasAtivos, setProblemasAtivos] = useState(false)
   
   // Estados do usuário
   const [userHospitalId, setUserHospitalId] = useState<string | null>(null)
@@ -209,7 +213,7 @@ const CriarCampanhaPage = () => {
                   <TabsTrigger value="pontos-contato" className="justify-start">
                     Pontos de Contato
                   </TabsTrigger>
-                  <TabsTrigger value="problemas" className="justify-start" disabled>
+                  <TabsTrigger value="problemas" className="justify-start">
                     Problemas
                   </TabsTrigger>
                   <TabsTrigger value="formularios-adicionais" className="justify-start" disabled>
@@ -303,9 +307,40 @@ const CriarCampanhaPage = () => {
                     />
                   </TabsContent>
 
-                  <TabsContent value="problemas">
-                    <div className="text-center py-8 text-muted-foreground">
-                      <p>Esta seção será implementada em breve</p>
+                  <TabsContent value="problemas" className="space-y-4">
+                    <div className="bg-muted/30 p-4 rounded-lg">
+                      <p className="text-sm text-muted-foreground mb-4">
+                        Pergunte aos seus clientes se eles tiveram algum tipo de problema
+                      </p>
+                      
+                      <div className="space-y-3">
+                        <Label className="text-base font-medium">
+                          Você deseja perguntar aos seus clientes se eles tiveram algum tipo de problema?
+                        </Label>
+                        
+                        <div className="flex gap-4">
+                          <div className="flex items-center space-x-2">
+                            <Checkbox
+                              id="problemas-sim"
+                              checked={problemasAtivos}
+                              onCheckedChange={(checked) => setProblemasAtivos(checked as boolean)}
+                            />
+                            <Label htmlFor="problemas-sim" className="cursor-pointer">
+                              Sim
+                            </Label>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Checkbox
+                              id="problemas-nao"
+                              checked={!problemasAtivos}
+                              onCheckedChange={(checked) => setProblemasAtivos(!(checked as boolean))}
+                            />
+                            <Label htmlFor="problemas-nao" className="cursor-pointer">
+                              Não
+                            </Label>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </TabsContent>
 
@@ -351,6 +386,11 @@ const CriarCampanhaPage = () => {
                     <PontosContatoPreview
                       pontosContatoAtivos={pontosContatoAtivos}
                       pontosContato={pontosContato}
+                      nomeHospital={selectedHospital?.nome}
+                    />
+                  ) : activeTab === "problemas" ? (
+                    <ProblemasPreview
+                      problemasAtivos={problemasAtivos}
                       nomeHospital={selectedHospital?.nome}
                     />
                   ) : (
