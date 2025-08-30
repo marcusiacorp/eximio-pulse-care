@@ -20,7 +20,7 @@ export const ProblemasPreview = ({ problemasAtivos, nomeHospital }: ProblemasPre
       
       <div className="text-center">
         <h2 className="text-xl font-semibold text-foreground mb-6">
-          {nomeHospital ? `Hospital ${nomeHospital}` : "Nome do Hospital"}
+          {nomeHospital || "Nome do Hospital"}
         </h2>
       </div>
 
