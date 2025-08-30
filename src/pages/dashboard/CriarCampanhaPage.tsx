@@ -17,6 +17,8 @@ import { NPSPreview } from "@/components/NPSPreview"
 import { PontosContatoForm, PontoContato } from "@/components/PontosContatoForm"
 import { PontosContatoPreview } from "@/components/PontosContatoPreview"
 import { ProblemasPreview } from "@/components/ProblemasPreview"
+import { FormulariosAdicionaisPreview } from "@/components/FormulariosAdicionaisPreview"
+import { NovoFormularioModal } from "@/components/NovoFormularioModal"
 
 const CriarCampanhaPage = () => {
   const { tipo } = useParams<{ tipo: string }>()
@@ -42,6 +44,9 @@ const CriarCampanhaPage = () => {
   
   // Estados dos problemas
   const [problemasAtivos, setProblemasAtivos] = useState(false)
+  
+  // Estados dos formulários adicionais
+  const [formulariosAdicionaisAtivos, setFormulariosAdicionaisAtivos] = useState(false)
   
   // Estados do usuário
   const [userHospitalId, setUserHospitalId] = useState<string | null>(null)
@@ -216,7 +221,7 @@ const CriarCampanhaPage = () => {
                   <TabsTrigger value="problemas" className="justify-start">
                     Problemas
                   </TabsTrigger>
-                  <TabsTrigger value="formularios-adicionais" className="justify-start" disabled>
+                  <TabsTrigger value="formularios-adicionais" className="justify-start">
                     Formulários Adicionais
                   </TabsTrigger>
                   <TabsTrigger value="layout-envio" className="justify-start" disabled>
@@ -344,9 +349,50 @@ const CriarCampanhaPage = () => {
                     </div>
                   </TabsContent>
 
-                  <TabsContent value="formularios-adicionais">
-                    <div className="text-center py-8 text-muted-foreground">
-                      <p>Esta seção será implementada em breve</p>
+                  <TabsContent value="formularios-adicionais" className="space-y-4">
+                    <div className="bg-muted/30 p-4 rounded-lg">
+                      <p className="text-sm text-muted-foreground mb-4">
+                        Crie formulários para pedir mais detalhes sobre as respostas de seus clientes
+                      </p>
+                      
+                      <div className="space-y-3">
+                        <Label className="text-base font-medium">
+                          Você gostaria de fazer perguntas adicionais aos seus clientes?
+                        </Label>
+                        
+                        <div className="flex gap-4">
+                          <div className="flex items-center space-x-2">
+                            <Checkbox
+                              id="formularios-sim"
+                              checked={formulariosAdicionaisAtivos}
+                              onCheckedChange={(checked) => setFormulariosAdicionaisAtivos(checked as boolean)}
+                            />
+                            <Label htmlFor="formularios-sim" className="cursor-pointer">
+                              Sim
+                            </Label>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Checkbox
+                              id="formularios-nao"
+                              checked={!formulariosAdicionaisAtivos}
+                              onCheckedChange={(checked) => setFormulariosAdicionaisAtivos(!(checked as boolean))}
+                            />
+                            <Label htmlFor="formularios-nao" className="cursor-pointer">
+                              Não
+                            </Label>
+                          </div>
+                        </div>
+                        
+                        {formulariosAdicionaisAtivos && (
+                          <div className="mt-4">
+                            <NovoFormularioModal>
+                              <Button variant="outline" className="w-full">
+                                + Novo formulário
+                              </Button>
+                            </NovoFormularioModal>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </TabsContent>
 
@@ -391,6 +437,11 @@ const CriarCampanhaPage = () => {
                   ) : activeTab === "problemas" ? (
                     <ProblemasPreview
                       problemasAtivos={problemasAtivos}
+                      nomeHospital={selectedHospital?.nome}
+                    />
+                  ) : activeTab === "formularios-adicionais" ? (
+                    <FormulariosAdicionaisPreview
+                      formulariosAdicionaisAtivos={formulariosAdicionaisAtivos}
                       nomeHospital={selectedHospital?.nome}
                     />
                   ) : (
