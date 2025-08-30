@@ -233,9 +233,11 @@ const CriarCampanhaPage = () => {
                   <TabsTrigger value="formularios-adicionais" className="justify-start">
                     Formulários Adicionais
                   </TabsTrigger>
-                  <TabsTrigger value="layout-envio" className="justify-start">
-                    Layout de Envio
-                  </TabsTrigger>
+                  {(tipo === "email" || tipo === "multiple") && (
+                    <TabsTrigger value="layout-envio" className="justify-start">
+                      Layout de Envio
+                    </TabsTrigger>
+                  )}
                   <TabsTrigger value="lembrete" className="justify-start" disabled>  
                     Lembrete
                   </TabsTrigger>
