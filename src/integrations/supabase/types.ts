@@ -14,6 +14,106 @@ export type Database = {
   }
   public: {
     Tables: {
+      campanha_configuracao: {
+        Row: {
+          autorizacao: string | null
+          campanha_id: string
+          confirmacao_envio: Json | null
+          created_at: string
+          formularios_adicionais: Json | null
+          id: string
+          layout_envio: Json | null
+          lembrete: Json | null
+          pontos_contato: Json | null
+          problemas: Json | null
+          recomendacao: string | null
+          trecho_pergunta: string | null
+          updated_at: string
+        }
+        Insert: {
+          autorizacao?: string | null
+          campanha_id: string
+          confirmacao_envio?: Json | null
+          created_at?: string
+          formularios_adicionais?: Json | null
+          id?: string
+          layout_envio?: Json | null
+          lembrete?: Json | null
+          pontos_contato?: Json | null
+          problemas?: Json | null
+          recomendacao?: string | null
+          trecho_pergunta?: string | null
+          updated_at?: string
+        }
+        Update: {
+          autorizacao?: string | null
+          campanha_id?: string
+          confirmacao_envio?: Json | null
+          created_at?: string
+          formularios_adicionais?: Json | null
+          id?: string
+          layout_envio?: Json | null
+          lembrete?: Json | null
+          pontos_contato?: Json | null
+          problemas?: Json | null
+          recomendacao?: string | null
+          trecho_pergunta?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campanha_configuracao_campanha_id_fkey"
+            columns: ["campanha_id"]
+            isOneToOne: false
+            referencedRelation: "campanhas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      campanhas: {
+        Row: {
+          ativa: boolean
+          created_at: string
+          data_criacao: string
+          hospital_id: string | null
+          id: string
+          nome: string
+          tipo_campanha: string
+          updated_at: string
+          usuario_id: string
+        }
+        Insert: {
+          ativa?: boolean
+          created_at?: string
+          data_criacao?: string
+          hospital_id?: string | null
+          id?: string
+          nome: string
+          tipo_campanha: string
+          updated_at?: string
+          usuario_id: string
+        }
+        Update: {
+          ativa?: boolean
+          created_at?: string
+          data_criacao?: string
+          hospital_id?: string | null
+          id?: string
+          nome?: string
+          tipo_campanha?: string
+          updated_at?: string
+          usuario_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campanhas_hospital_id_fkey"
+            columns: ["hospital_id"]
+            isOneToOne: false
+            referencedRelation: "hospitais"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       hospitais: {
         Row: {
           created_at: string

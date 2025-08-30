@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 import { Plus, Mail, Link, Network, Zap, QrCode } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
@@ -11,6 +12,7 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
 const CampanhasPage = () => {
+  const navigate = useNavigate()
   const [isDialogOpen, setIsDialogOpen] = useState(false)
 
   const campaignTypes = [
@@ -58,9 +60,8 @@ const CampanhasPage = () => {
   ]
 
   const handleCampaignTypeSelect = (typeId: string) => {
-    console.log("Tipo de campanha selecionado:", typeId)
     setIsDialogOpen(false)
-    // Aqui será implementada a lógica para criar a campanha do tipo selecionado
+    navigate(`/dashboard/campanhas/criar/${typeId}`)
   }
 
   return (

@@ -13,6 +13,7 @@ import GoalsPage from "./pages/dashboard/insights/GoalsPage";
 import ProjetosPage from "./pages/dashboard/ProjetosPage";
 import CadastroHospitalPage from "./pages/dashboard/CadastroHospitalPage";
 import CampanhasPage from "./pages/dashboard/CampanhasPage";
+import CriarCampanhaPage from "./pages/dashboard/CriarCampanhaPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -33,6 +34,7 @@ const App = () => (
           }>
             <Route path="home" element={<HomePage />} />
             <Route path="campanhas" element={<CampanhasPage />} />
+            <Route path="campanhas/criar/:tipo" element={<CriarCampanhaPage />} />
             <Route path="insights/reports" element={<ReportsPage />} />
             <Route path="insights/goals" element={<GoalsPage />} />
             <Route path="projetos" element={<ProjetosPage />} />
