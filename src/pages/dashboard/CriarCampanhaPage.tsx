@@ -12,6 +12,8 @@ import { useAuth } from "@/contexts/AuthContext"
 import { supabase } from "@/integrations/supabase/client"
 import { useToast } from "@/hooks/use-toast"
 import { NPSPreview } from "@/components/NPSPreview"
+import { PontosContatoForm, PontoContato } from "@/components/PontosContatoForm"
+import { PontosContatoPreview } from "@/components/PontosContatoPreview"
 
 const CriarCampanhaPage = () => {
   const { tipo } = useParams<{ tipo: string }>()
@@ -27,6 +29,10 @@ const CriarCampanhaPage = () => {
   const [recomendacao, setRecomendacao] = useState("")
   const [autorizacao, setAutorizacao] = useState("")
   const [activeTab, setActiveTab] = useState("pergunta-definitiva")
+  
+  // Estados dos pontos de contato
+  const [pontosContatoAtivos, setPontosContatoAtivos] = useState(false)
+  const [pontosContato, setPontosContato] = useState<PontoContato[]>([])
   
   // Estados do usuário
   const [userHospitalId, setUserHospitalId] = useState<string | null>(null)
@@ -178,7 +184,7 @@ const CriarCampanhaPage = () => {
                   <TabsTrigger value="pergunta-definitiva" className="justify-start">
                     Pergunta Definitiva
                   </TabsTrigger>
-                  <TabsTrigger value="pontos-contato" className="justify-start" disabled>
+                  <TabsTrigger value="pontos-contato" className="justify-start">
                     Pontos de Contato
                   </TabsTrigger>
                   <TabsTrigger value="problemas" className="justify-start" disabled>
@@ -235,9 +241,12 @@ const CriarCampanhaPage = () => {
                   </TabsContent>
 
                   <TabsContent value="pontos-contato">
-                    <div className="text-center py-8 text-muted-foreground">
-                      <p>Esta seção será implementada em breve</p>
-                    </div>
+                    <PontosContatoForm
+                      pontosContatoAtivos={pontosContatoAtivos}
+                      setPontosContatoAtivos={setPontosContatoAtivos}
+                      pontosContato={pontosContato}
+                      setPontosContato={setPontosContato}
+                    />
                   </TabsContent>
 
                   <TabsContent value="problemas">
@@ -284,11 +293,18 @@ const CriarCampanhaPage = () => {
                   <CardTitle>Preview da Pesquisa</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <NPSPreview
-                    trechoPergunta={trechoPergunta}
-                    recomendacao={recomendacao}
-                    autorizacao={autorizacao}
-                  />
+                  {activeTab === "pontos-contato" ? (
+                    <PontosContatoPreview
+                      pontosContatoAtivos={pontosContatoAtivos}
+                      pontosContato={pontosContato}
+                    />
+                  ) : (
+                    <NPSPreview
+                      trechoPergunta={trechoPergunta}
+                      recomendacao={recomendacao}
+                      autorizacao={autorizacao}
+                    />
+                  )}
                 </CardContent>
               </Card>
             </div>
