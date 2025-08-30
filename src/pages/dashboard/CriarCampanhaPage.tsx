@@ -19,6 +19,7 @@ import { PontosContatoPreview } from "@/components/PontosContatoPreview"
 import { ProblemasPreview } from "@/components/ProblemasPreview"
 import { FormulariosAdicionaisPreview } from "@/components/FormulariosAdicionaisPreview"
 import { NovoFormularioModal } from "@/components/NovoFormularioModal"
+import { LayoutEnvioPreview } from "@/components/LayoutEnvioPreview"
 
 const CriarCampanhaPage = () => {
   const { tipo } = useParams<{ tipo: string }>()
@@ -48,6 +49,12 @@ const CriarCampanhaPage = () => {
   // Estados dos formulários adicionais
   const [formulariosAdicionaisAtivos, setFormulariosAdicionaisAtivos] = useState(false)
   const [formulariosCriados, setFormulariosCriados] = useState<any[]>([])
+  
+  // Estados do layout de envio
+  const [assuntoEmail, setAssuntoEmail] = useState("")
+  const [bannerUrl, setBannerUrl] = useState("")
+  const [mensagemPersonalizada, setMensagemPersonalizada] = useState("")
+  const [permitirDescadastro, setPermitirDescadastro] = useState(true)
   
   // Estados do usuário
   const [userHospitalId, setUserHospitalId] = useState<string | null>(null)
@@ -225,7 +232,7 @@ const CriarCampanhaPage = () => {
                   <TabsTrigger value="formularios-adicionais" className="justify-start">
                     Formulários Adicionais
                   </TabsTrigger>
-                  <TabsTrigger value="layout-envio" className="justify-start" disabled>
+                  <TabsTrigger value="layout-envio" className="justify-start">
                     Layout de Envio
                   </TabsTrigger>
                   <TabsTrigger value="lembrete" className="justify-start" disabled>  
@@ -397,9 +404,98 @@ const CriarCampanhaPage = () => {
                     </div>
                   </TabsContent>
 
-                  <TabsContent value="layout-envio">
-                    <div className="text-center py-8 text-muted-foreground">
-                      <p>Esta seção será implementada em breve</p>
+                  <TabsContent value="layout-envio" className="space-y-4">
+                    <div className="bg-muted/30 p-4 rounded-lg">
+                      <p className="text-sm text-muted-foreground mb-4">
+                        O que seu cliente vai receber
+                      </p>
+                      
+                      <div className="space-y-4">
+                        <div>
+                          <Label htmlFor="assunto-email">Assunto do email</Label>
+                          <Input
+                            id="assunto-email"
+                            value={assuntoEmail}
+                            onChange={(e) => setAssuntoEmail(e.target.value)}
+                            placeholder="Digite o assunto do email"
+                          />
+                        </div>
+
+                        <div>
+                          <Label htmlFor="banner-upload">Banner da campanha</Label>
+                          <div className="mt-2">
+                            <Input
+                              id="banner-upload"
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0]
+                                if (file) {
+                                  const url = URL.createObjectURL(file)
+                                  setBannerUrl(url)
+                                }
+                              }}
+                            />
+                            {bannerUrl && (
+                              <div className="mt-2">
+                                <img src={bannerUrl} alt="Banner preview" className="h-20 w-auto rounded" />
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        <div>
+                          <Label htmlFor="mensagem-personalizada">Mensagem personalizada (até 144 caracteres)</Label>
+                          <Textarea
+                            id="mensagem-personalizada"
+                            value={mensagemPersonalizada}
+                            onChange={(e) => {
+                              if (e.target.value.length <= 144) {
+                                setMensagemPersonalizada(e.target.value)
+                              }
+                            }}
+                            placeholder="Digite sua mensagem personalizada"
+                            rows={3}
+                            maxLength={144}
+                          />
+                          <p className="text-xs text-muted-foreground mt-1">
+                            {mensagemPersonalizada.length}/144 caracteres
+                          </p>
+                        </div>
+
+                        <div className="bg-muted/50 p-3 rounded">
+                          <Label className="text-sm font-medium">Texto pré-configurado:</Label>
+                          <p className="text-sm text-muted-foreground mt-1">
+                            "Nós valorizamos muito nosso relacionamento e o serviço aos nossos clientes e queremos melhorar a cada dia. Pedimos que você use apenas alguns minutos para nos dar sua sincera opinião sobre sua experiência conosco."
+                          </p>
+                        </div>
+
+                        <div>
+                          <Label className="text-base font-medium">Permitir que o paciente se descadastre das campanhas?</Label>
+                          <div className="flex gap-4 mt-2">
+                            <div className="flex items-center space-x-2">
+                              <Checkbox
+                                id="descadastro-sim"
+                                checked={permitirDescadastro}
+                                onCheckedChange={(checked) => setPermitirDescadastro(checked as boolean)}
+                              />
+                              <Label htmlFor="descadastro-sim" className="cursor-pointer">
+                                Sim
+                              </Label>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <Checkbox
+                                id="descadastro-nao"
+                                checked={!permitirDescadastro}
+                                onCheckedChange={(checked) => setPermitirDescadastro(!(checked as boolean))}
+                              />
+                              <Label htmlFor="descadastro-nao" className="cursor-pointer">
+                                Não
+                              </Label>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </TabsContent>
 
@@ -445,6 +541,14 @@ const CriarCampanhaPage = () => {
                       formulariosAdicionaisAtivos={formulariosAdicionaisAtivos}
                       nomeHospital={selectedHospital?.nome}
                       formulariosCriados={formulariosCriados}
+                    />
+                  ) : activeTab === "layout-envio" ? (
+                    <LayoutEnvioPreview
+                      assuntoEmail={assuntoEmail}
+                      bannerUrl={bannerUrl}
+                      mensagemPersonalizada={mensagemPersonalizada}
+                      permitirDescadastro={permitirDescadastro}
+                      nomeHospital={selectedHospital?.nome}
                     />
                   ) : (
                     <NPSPreview
