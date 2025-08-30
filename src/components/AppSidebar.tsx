@@ -1,4 +1,4 @@
-import { Home, BarChart3, Target, Building2, ChevronRight, LogOut, User } from "lucide-react"
+import { Home, BarChart3, Target, Building2, ChevronRight, LogOut, User, Megaphone } from "lucide-react"
 import { NavLink, useLocation } from "react-router-dom"
 import { useAuth } from "@/contexts/AuthContext"
 
@@ -34,6 +34,11 @@ const menuItems = [
     title: "Página Inicial",
     url: "/dashboard/home",
     icon: Home,
+  },
+  {
+    title: "Campanhas",
+    url: "/dashboard/campanhas",
+    icon: Megaphone,
   },
   {
     title: "Insights",

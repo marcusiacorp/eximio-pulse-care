@@ -12,6 +12,7 @@ import ReportsPage from "./pages/dashboard/insights/ReportsPage";
 import GoalsPage from "./pages/dashboard/insights/GoalsPage";
 import ProjetosPage from "./pages/dashboard/ProjetosPage";
 import CadastroHospitalPage from "./pages/dashboard/CadastroHospitalPage";
+import CampanhasPage from "./pages/dashboard/CampanhasPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -31,6 +32,7 @@ const App = () => (
             </ProtectedRoute>
           }>
             <Route path="home" element={<HomePage />} />
+            <Route path="campanhas" element={<CampanhasPage />} />
             <Route path="insights/reports" element={<ReportsPage />} />
             <Route path="insights/goals" element={<GoalsPage />} />
             <Route path="projetos" element={<ProjetosPage />} />
