@@ -54,6 +54,7 @@ const CriarCampanhaPage = () => {
   const [assuntoEmail, setAssuntoEmail] = useState("")
   const [bannerUrl, setBannerUrl] = useState("")
   const [mensagemPersonalizada, setMensagemPersonalizada] = useState("")
+  const [mensagem, setMensagem] = useState("Nós valorizamos muito nosso relacionamento e o serviço aos nossos clientes e queremos melhorar a cada dia. Pedimos que você use apenas alguns minutos para nos dar sua sincera opinião sobre sua experiência conosco.")
   const [permitirDescadastro, setPermitirDescadastro] = useState(true)
   
   // Estados do usuário
@@ -437,8 +438,16 @@ const CriarCampanhaPage = () => {
                               }}
                             />
                             {bannerUrl && (
-                              <div className="mt-2">
+                              <div className="mt-2 flex items-center gap-2">
                                 <img src={bannerUrl} alt="Banner preview" className="h-20 w-auto rounded" />
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => setBannerUrl("")}
+                                >
+                                  Remover
+                                </Button>
                               </div>
                             )}
                           </div>
@@ -463,11 +472,15 @@ const CriarCampanhaPage = () => {
                           </p>
                         </div>
 
-                        <div className="bg-muted/50 p-3 rounded">
-                          <Label className="text-sm font-medium">Texto pré-configurado:</Label>
-                          <p className="text-sm text-muted-foreground mt-1">
-                            "Nós valorizamos muito nosso relacionamento e o serviço aos nossos clientes e queremos melhorar a cada dia. Pedimos que você use apenas alguns minutos para nos dar sua sincera opinião sobre sua experiência conosco."
-                          </p>
+                        <div>
+                          <Label htmlFor="mensagem">Mensagem *</Label>
+                          <Textarea
+                            id="mensagem"
+                            value={mensagem}
+                            onChange={(e) => setMensagem(e.target.value)}
+                            placeholder="Nós valorizamos muito nosso relacionamento e o serviço aos nossos clientes e queremos melhorar a cada dia. Pedimos que você use apenas alguns minutos para nos dar sua sincera opinião sobre sua experiência conosco."
+                            rows={4}
+                          />
                         </div>
 
                         <div>
@@ -544,9 +557,9 @@ const CriarCampanhaPage = () => {
                     />
                   ) : activeTab === "layout-envio" ? (
                     <LayoutEnvioPreview
-                      assuntoEmail={assuntoEmail}
                       bannerUrl={bannerUrl}
                       mensagemPersonalizada={mensagemPersonalizada}
+                      mensagem={mensagem}
                       permitirDescadastro={permitirDescadastro}
                       nomeHospital={selectedHospital?.nome}
                     />

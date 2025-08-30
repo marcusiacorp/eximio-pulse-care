@@ -2,21 +2,20 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 
 interface LayoutEnvioPreviewProps {
-  assuntoEmail: string
   bannerUrl: string
   mensagemPersonalizada: string
+  mensagem: string
   permitirDescadastro: boolean
   nomeHospital?: string
 }
 
 export const LayoutEnvioPreview = ({
-  assuntoEmail,
   bannerUrl,
   mensagemPersonalizada,
+  mensagem,
   permitirDescadastro,
   nomeHospital
 }: LayoutEnvioPreviewProps) => {
-  const textoPadrao = "Nós valorizamos muito nosso relacionamento e o serviço aos nossos clientes e queremos melhorar a cada dia. Pedimos que você use apenas alguns minutos para nos dar sua sincera opinião sobre sua experiência conosco."
 
   return (
     <div className="space-y-4">
@@ -25,17 +24,8 @@ export const LayoutEnvioPreview = ({
       </div>
 
       {/* Email mockup */}
-      <Card className="max-w-md mx-auto bg-background border">
-        <CardHeader className="text-center pb-2">
-          <div className="text-sm text-muted-foreground">
-            <strong>De:</strong> {nomeHospital || "[Nome do Hospital]"} &lt;pesquisa@hospital.com.br&gt;
-          </div>
-          <div className="text-sm text-muted-foreground">
-            <strong>Assunto:</strong> {assuntoEmail || "Digite o assunto do email"}
-          </div>
-        </CardHeader>
-        
-        <CardContent className="space-y-4">
+      <Card className="max-w-md mx-auto bg-background border">        
+        <CardContent className="space-y-4 pt-6">
           {/* Banner */}
           {bannerUrl ? (
             <div className="text-center">
@@ -58,9 +48,9 @@ export const LayoutEnvioPreview = ({
             </div>
           )}
 
-          {/* Texto padrão */}
-          <div className="text-sm text-muted-foreground">
-            {textoPadrao}
+          {/* Mensagem principal */}
+          <div className="text-sm text-foreground">
+            {mensagem}
           </div>
 
           {/* Botão de ação */}
