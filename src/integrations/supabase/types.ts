@@ -201,7 +201,7 @@ export type Database = {
         | "administrador"
         | "gestor_diretor"
         | "gestor_medico"
-        | "gestor_admin"
+        | "gestor_eximio"
         | "gestor_supervisor"
     }
     CompositeTypes: {
@@ -334,7 +334,7 @@ export const Constants = {
         "administrador",
         "gestor_diretor",
         "gestor_medico",
-        "gestor_admin",
+        "gestor_eximio",
         "gestor_supervisor",
       ],
     },
