@@ -47,6 +47,7 @@ const CriarCampanhaPage = () => {
   
   // Estados dos formulários adicionais
   const [formulariosAdicionaisAtivos, setFormulariosAdicionaisAtivos] = useState(false)
+  const [formulariosCriados, setFormulariosCriados] = useState<any[]>([])
   
   // Estados do usuário
   const [userHospitalId, setUserHospitalId] = useState<string | null>(null)
@@ -385,7 +386,7 @@ const CriarCampanhaPage = () => {
                         
                         {formulariosAdicionaisAtivos && (
                           <div className="mt-4">
-                            <NovoFormularioModal>
+                            <NovoFormularioModal onSave={(formulario) => setFormulariosCriados(prev => [...prev, formulario])}>
                               <Button variant="outline" className="w-full">
                                 + Novo formulário
                               </Button>
@@ -443,6 +444,7 @@ const CriarCampanhaPage = () => {
                     <FormulariosAdicionaisPreview
                       formulariosAdicionaisAtivos={formulariosAdicionaisAtivos}
                       nomeHospital={selectedHospital?.nome}
+                      formulariosCriados={formulariosCriados}
                     />
                   ) : (
                     <NPSPreview

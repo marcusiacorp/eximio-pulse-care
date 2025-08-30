@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
-import { Checkbox } from "@/components/ui/checkbox"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { X, Plus } from "lucide-react"
 
@@ -108,17 +108,28 @@ export const NovoFormularioModal = ({ children, onSave }: NovoFormularioModalPro
           <div>
             <Label className="text-sm font-medium mb-3 block">Configurações:</Label>
             
-            <div className="space-y-4 pl-4">
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="obrigatorio"
-                  checked={obrigatorio}
-                  onCheckedChange={(checked) => setObrigatorio(checked as boolean)}
-                />
-                <Label htmlFor="obrigatorio" className="text-sm cursor-pointer">
-                  Obrigatório? Sim
-                </Label>
-              </div>
+              <div className="space-y-4 pl-4">
+                <div>
+                  <Label className="text-sm font-medium mb-2 block">Obrigatório?</Label>
+                  <RadioGroup 
+                    value={obrigatorio ? "sim" : "nao"} 
+                    onValueChange={(value) => setObrigatorio(value === "sim")}
+                    className="flex gap-4"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="sim" id="obrigatorio-sim" />
+                      <Label htmlFor="obrigatorio-sim" className="text-sm cursor-pointer">
+                        Sim
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="nao" id="obrigatorio-nao" />
+                      <Label htmlFor="obrigatorio-nao" className="text-sm cursor-pointer">
+                        Não
+                      </Label>
+                    </div>
+                  </RadioGroup>
+                </div>
 
               <div>
                 <Label className="text-sm font-medium">Tipo</Label>
