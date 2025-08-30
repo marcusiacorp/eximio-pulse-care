@@ -22,7 +22,7 @@ const formSchema = z.object({
   inicio_projeto: z.date({
     required_error: "Data de início do projeto é obrigatória",
   }),
-  sponsor: z.string().email("Email do sponsor é obrigatório e deve ser válido"),
+  sponsor: z.string().email("Email deve ser válido").optional().or(z.literal("")),
   email_diretor: z.string().email("Email do diretor é obrigatório e deve ser válido"),
 });
 
@@ -53,7 +53,7 @@ const CadastroHospitalPage = () => {
           nome: data.nome,
           localizacao: data.localizacao,
           inicio_projeto: format(data.inicio_projeto, "yyyy-MM-dd"),
-          sponsor: data.sponsor,
+          sponsor: data.sponsor || null,
           email_diretor: data.email_diretor,
         });
 
@@ -179,11 +179,11 @@ const CadastroHospitalPage = () => {
                 name="sponsor"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email do Sponsor</FormLabel>
+                    <FormLabel>Email do Sponsor (Opcional)</FormLabel>
                     <FormControl>
                       <Input
                         type="email"
-                        placeholder="email@exemplo.com"
+                        placeholder="email@exemplo.com (opcional)"
                         {...field}
                       />
                     </FormControl>
