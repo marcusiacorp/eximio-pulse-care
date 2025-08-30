@@ -240,28 +240,6 @@ const CriarCampanhaPage = () => {
                     </div>
 
                     <div>
-                      <Label htmlFor="recomendacao">Recomendação *</Label>
-                      <Textarea
-                        id="recomendacao"
-                        value={recomendacao}
-                        onChange={(e) => setRecomendacao(e.target.value)}
-                        placeholder="Ex: Com base na sua experiência, você nos recomendaria para amigos e familiares?"
-                        rows={3}
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="autorizacao">Autorização *</Label>
-                      <Textarea
-                        id="autorizacao"
-                        value={autorizacao}
-                        onChange={(e) => setAutorizacao(e.target.value)}
-                        placeholder="Ex: Você autoriza o uso do seu depoimento em nossas comunicações?"
-                        rows={3}
-                      />
-                    </div>
-
-                    <div>
                       <Label htmlFor="o-que-agradou">O que mais te agradou em sua experiência conosco? *</Label>
                       <Textarea
                         id="o-que-agradou"
@@ -291,6 +269,28 @@ const CriarCampanhaPage = () => {
                           </div>
                         ))}
                       </div>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="recomendacao">Recomendação *</Label>
+                      <Textarea
+                        id="recomendacao"
+                        value={recomendacao}
+                        onChange={(e) => setRecomendacao(e.target.value)}
+                        placeholder="Ex: Com base na sua experiência, você nos recomendaria para amigos e familiares?"
+                        rows={3}
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="autorizacao">Autorização *</Label>
+                      <Textarea
+                        id="autorizacao"
+                        value={autorizacao}
+                        onChange={(e) => setAutorizacao(e.target.value)}
+                        placeholder="Ex: Você autoriza o uso do seu depoimento em nossas comunicações?"
+                        rows={3}
+                      />
                     </div>
                   </TabsContent>
 
