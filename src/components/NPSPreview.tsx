@@ -1,8 +1,9 @@
-import { useState } from "react"
-import { Upload, Star } from "lucide-react"
+import { useState, useRef } from "react"
+import { Upload, Star, X, Check } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent } from "@/components/ui/card"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 
 interface NPSPreviewProps {
   trechoPergunta: string
@@ -14,6 +15,55 @@ export const NPSPreview = ({ trechoPergunta, recomendacao, autorizacao }: NPSPre
   const [selectedScore, setSelectedScore] = useState<number | null>(null)
   const [feedback, setFeedback] = useState("")
   const [selectedAuthorization, setSelectedAuthorization] = useState<boolean | null>(null)
+  const [logoFile, setLogoFile] = useState<File | null>(null)
+  const [logoPreview, setLogoPreview] = useState<string | null>(null)
+  const [showLogoDialog, setShowLogoDialog] = useState(false)
+  const [tempLogoFile, setTempLogoFile] = useState<File | null>(null)
+  const [tempLogoPreview, setTempLogoPreview] = useState<string | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (file && (file.type === 'image/png' || file.type === 'image/jpeg')) {
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        const result = e.target?.result as string
+        setTempLogoFile(file)
+        setTempLogoPreview(result)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
+  const handleSaveLogo = () => {
+    if (tempLogoFile && tempLogoPreview) {
+      setLogoFile(tempLogoFile)
+      setLogoPreview(tempLogoPreview)
+    }
+    setShowLogoDialog(false)
+    setTempLogoFile(null)
+    setTempLogoPreview(null)
+  }
+
+  const handleCancelLogo = () => {
+    setShowLogoDialog(false)
+    setTempLogoFile(null)
+    setTempLogoPreview(null)
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ""
+    }
+  }
+
+  const handleRemoveLogo = () => {
+    setLogoFile(null)
+    setLogoPreview(null)
+    setShowLogoDialog(false)
+    setTempLogoFile(null)
+    setTempLogoPreview(null)
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ""
+    }
+  }
 
   const getNPSColor = (score: number) => {
     if (score <= 6) return "bg-red-500 hover:bg-red-600"
@@ -31,11 +81,22 @@ export const NPSPreview = ({ trechoPergunta, recomendacao, autorizacao }: NPSPre
     <div className="max-w-md mx-auto bg-white border rounded-lg shadow-sm p-6 space-y-6">
       {/* Logo do Hospital */}
       <div className="flex justify-center">
-        <div className="w-32 h-16 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center bg-gray-50">
-          <div className="text-center">
-            <Upload className="h-6 w-6 mx-auto text-gray-400 mb-1" />
-            <p className="text-xs text-gray-500">Logo do Hospital</p>
-          </div>
+        <div 
+          className="w-32 h-16 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center bg-gray-50 cursor-pointer hover:bg-gray-100 transition-colors"
+          onClick={() => setShowLogoDialog(true)}
+        >
+          {logoPreview ? (
+            <img 
+              src={logoPreview} 
+              alt="Logo do Hospital" 
+              className="w-full h-full object-contain rounded-lg"
+            />
+          ) : (
+            <div className="text-center">
+              <Upload className="h-6 w-6 mx-auto text-gray-400 mb-1" />
+              <p className="text-xs text-gray-500">Logo do Hospital</p>
+            </div>
+          )}
         </div>
       </div>
 
@@ -151,6 +212,87 @@ export const NPSPreview = ({ trechoPergunta, recomendacao, autorizacao }: NPSPre
           Enviar Pesquisa
         </Button>
       </div>
+
+      {/* Input oculto para upload de arquivo */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/png,image/jpeg,image/jpg"
+        onChange={handleFileSelect}
+        className="hidden"
+      />
+
+      {/* Dialog de upload de logo */}
+      <Dialog open={showLogoDialog} onOpenChange={setShowLogoDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Logo do Hospital</DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            {/* Área de upload */}
+            <div 
+              className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-gray-400 transition-colors"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              {tempLogoPreview ? (
+                <div className="space-y-2">
+                  <div className="w-32 h-32 mx-auto border rounded-lg overflow-hidden">
+                    <img 
+                      src={tempLogoPreview} 
+                      alt="Preview" 
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                  <p className="text-sm text-gray-600">Clique para trocar a imagem</p>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <Upload className="h-12 w-12 mx-auto text-gray-400" />
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">Clique para fazer upload</p>
+                    <p className="text-xs text-gray-500">PNG ou JPG (tamanho recomendado: 170x170px)</p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Informações sobre o arquivo selecionado */}
+            {tempLogoFile && (
+              <div className="bg-gray-50 p-3 rounded-lg">
+                <p className="text-sm font-medium text-gray-900">{tempLogoFile.name}</p>
+                <p className="text-xs text-gray-500">
+                  {(tempLogoFile.size / 1024).toFixed(1)} KB
+                </p>
+              </div>
+            )}
+          </div>
+
+          <DialogFooter className="flex gap-2">
+            {logoPreview && (
+              <Button
+                variant="destructive"
+                onClick={handleRemoveLogo}
+                className="flex items-center gap-2"
+              >
+                <X className="h-4 w-4" />
+                Remover
+              </Button>
+            )}
+            <Button variant="outline" onClick={handleCancelLogo}>
+              Cancelar
+            </Button>
+            <Button 
+              onClick={handleSaveLogo} 
+              disabled={!tempLogoFile}
+              className="flex items-center gap-2"
+            >
+              <Check className="h-4 w-4" />
+              Salvar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
