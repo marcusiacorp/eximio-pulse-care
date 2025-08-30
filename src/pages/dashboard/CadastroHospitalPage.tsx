@@ -23,6 +23,7 @@ const formSchema = z.object({
     required_error: "Data de início do projeto é obrigatória",
   }),
   sponsor: z.string().email("Email do sponsor é obrigatório e deve ser válido"),
+  email_diretor: z.string().email("Email do diretor é obrigatório e deve ser válido"),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -38,6 +39,7 @@ const CadastroHospitalPage = () => {
       nome: "",
       localizacao: "",
       sponsor: "",
+      email_diretor: "",
     },
   });
 
@@ -52,6 +54,7 @@ const CadastroHospitalPage = () => {
           localizacao: data.localizacao,
           inicio_projeto: format(data.inicio_projeto, "yyyy-MM-dd"),
           sponsor: data.sponsor,
+          email_diretor: data.email_diretor,
         });
 
       if (error) {
@@ -185,15 +188,24 @@ const CadastroHospitalPage = () => {
                       />
                     </FormControl>
                     <FormMessage />
-                    <div className="text-sm text-muted-foreground mt-2">
-                      <p className="font-medium mb-1">Níveis de acesso disponíveis:</p>
-                      <ul className="space-y-1 text-xs">
-                        <li>• <strong>Admin</strong>: Acesso a todas as unidades</li>
-                        <li>• <strong>Gestor Exímio</strong>: Acesso a todas as unidades</li>
-                        <li>• <strong>Diretor</strong>: Acesso apenas à sua unidade</li>
-                        <li>• <strong>Médico</strong>: Acesso apenas à sua unidade</li>
-                      </ul>
-                    </div>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="email_diretor"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email do Diretor</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="email"
+                        placeholder="diretor@exemplo.com"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
                   </FormItem>
                 )}
               />

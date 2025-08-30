@@ -117,6 +117,7 @@ export type Database = {
       hospitais: {
         Row: {
           created_at: string
+          email_diretor: string | null
           id: string
           inicio_projeto: string | null
           localizacao: string | null
@@ -126,6 +127,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          email_diretor?: string | null
           id?: string
           inicio_projeto?: string | null
           localizacao?: string | null
@@ -135,6 +137,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          email_diretor?: string | null
           id?: string
           inicio_projeto?: string | null
           localizacao?: string | null
