@@ -292,6 +292,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      can_manage_patients: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
       can_view_hospital: {
         Args: { hospital_uuid: string }
         Returns: boolean
