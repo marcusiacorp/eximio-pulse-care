@@ -24,6 +24,7 @@ export type Database = {
           id: string
           layout_envio: Json | null
           lembrete: Json | null
+          pergunta_definitiva: Json | null
           pontos_contato: Json | null
           problemas: Json | null
           recomendacao: string | null
@@ -39,6 +40,7 @@ export type Database = {
           id?: string
           layout_envio?: Json | null
           lembrete?: Json | null
+          pergunta_definitiva?: Json | null
           pontos_contato?: Json | null
           problemas?: Json | null
           recomendacao?: string | null
@@ -54,6 +56,7 @@ export type Database = {
           id?: string
           layout_envio?: Json | null
           lembrete?: Json | null
+          pergunta_definitiva?: Json | null
           pontos_contato?: Json | null
           problemas?: Json | null
           recomendacao?: string | null

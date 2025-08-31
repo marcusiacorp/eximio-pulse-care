@@ -19,6 +19,7 @@ interface CampanhaData {
     trecho_pergunta?: string
     recomendacao?: string
     autorizacao?: string
+    pergunta_definitiva?: any
     pontos_contato?: any
     problemas?: any
     formularios_adicionais?: any
@@ -158,8 +159,8 @@ export default function PesquisaPublica() {
             trechoPergunta={campanha.configuracao?.[0]?.trecho_pergunta || ""}
             recomendacao={campanha.configuracao?.[0]?.recomendacao || ""}
             autorizacao={campanha.configuracao?.[0]?.autorizacao || ""}
-            oQueAgradou={(campanha.configuracao?.[0]?.pontos_contato as any)?.pergunta_agradou}
-            setoresHospital={(campanha.configuracao?.[0]?.pontos_contato as any)?.setores_hospital || []}
+            oQueAgradou={(campanha.configuracao?.[0]?.pergunta_definitiva as any)?.oQueAgradou}
+            setoresHospital={(campanha.configuracao?.[0]?.pergunta_definitiva as any)?.setoresHospital || []}
             nomeHospital={campanha.nome}
             isPublicMode={true}
             logoUrl={(campanha.configuracao?.[0]?.layout_envio as any)?.logo_url}
