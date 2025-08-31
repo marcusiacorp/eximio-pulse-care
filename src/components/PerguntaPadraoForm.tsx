@@ -186,56 +186,41 @@ export const PerguntaPadraoForm = ({
         </CardContent>
       </Card>
 
-      {/* Perguntas Padrão */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Perguntas Padrão</CardTitle>
-          <p className="text-sm text-muted-foreground">
-            Estas perguntas serão aplicadas em todos os setores
-          </p>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="bg-muted/30 p-4 rounded-lg space-y-3">
-            <div>
-              <Badge variant="outline">Pergunta NPS</Badge>
-              <p className="mt-2 text-sm">
-                De 0 a 10, o quanto você recomendaria o {hospitalName} para amigos e familiares?
-              </p>
-            </div>
-            
-            <div>
-              <Badge variant="outline">Campo Aberto</Badge>
-              <p className="mt-2 text-sm">
-                O que mais te agradou em sua experiência conosco?
-              </p>
-            </div>
-            
-            <div>
-              <Badge variant="outline">Múltipla Escolha</Badge>
-              <p className="mt-2 text-sm font-medium">Em qual área do hospital você foi atendido?</p>
-              <div className="flex flex-wrap gap-2 mt-2">
-                {["Ambulatório", "Pronto Socorro", "Unidade de Internação", "Unidade de Terapia Intensiva", "Centro Cirúrgico", "Exames e procedimentos"].map((area) => (
-                  <Badge key={area} variant="secondary" className="text-xs">
-                    {area}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
       {/* Perguntas por Setor */}
       {setoresData.map((setor) => (
         <Card key={setor.id}>
           <CardHeader>
             <CardTitle>Setor {setor.id} - {setor.nome}</CardTitle>
             <p className="text-sm text-muted-foreground">
-              Perguntas específicas para pacientes atendidos no {setor.nome}
+              Perguntas padrão e específicas para pacientes atendidos no {setor.nome}
             </p>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="bg-muted/30 p-4 rounded-lg space-y-4">
+            {/* Perguntas Padrão do Setor */}
+            <div className="bg-blue-50 dark:bg-blue-950 p-4 rounded-lg space-y-4">
+              <h4 className="font-semibold text-blue-900 dark:text-blue-100">Perguntas Padrão do {setor.nome}</h4>
+              
+              <div>
+                <Badge variant="outline">Pergunta NPS</Badge>
+                <p className="mt-2 text-sm">
+                  De 0 a 10, o quanto você recomendaria o {hospitalName} para amigos e familiares?
+                </p>
+              </div>
+              
+              <Separator />
+              
+              <div>
+                <Badge variant="outline">Campo Aberto</Badge>
+                <p className="mt-2 text-sm">
+                  O que mais te agradou em sua experiência conosco?
+                </p>
+              </div>
+            </div>
+
+            {/* Perguntas Direcionadas do Setor */}
+            <div className="bg-green-50 dark:bg-green-950 p-4 rounded-lg space-y-4">
+              <h4 className="font-semibold text-green-900 dark:text-green-100">Perguntas Direcionadas do {setor.nome}</h4>
+              
               <div>
                 <Badge variant="outline">Avaliação (0-10)</Badge>
                 <p className="mt-2 text-sm">{setor.perguntas.experiencia}</p>

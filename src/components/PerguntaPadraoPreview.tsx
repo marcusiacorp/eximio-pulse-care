@@ -23,29 +23,19 @@ export const PerguntaPadraoPreview = ({
   isPublicMode = false,
   onResponse
 }: PerguntaPadraoPreviewProps) => {
-  const [currentStep, setCurrentStep] = useState(0)
-  const [selectedSetor, setSelectedSetor] = useState<string>("")
+  const [selectedSetor, setSelectedSetor] = useState<string>("Pronto Socorro")
   
-  // Respostas das perguntas padrão
-  const [npsScore, setNpsScore] = useState<number | null>(null)
-  const [oQueAgradou, setOQueAgradou] = useState("")
-  const [areasAtendimento, setAreasAtendimento] = useState<string[]>([])
+  // Respostas das perguntas padrão por setor
+  const [npsScorePadrao, setNpsScorePadrao] = useState<number | null>(null)
+  const [oQueAgradouPadrao, setOQueAgradouPadrao] = useState("")
   
-  // Respostas específicas por setor
+  // Respostas direcionadas por setor
   const [avaliacaoSetor, setAvaliacaoSetor] = useState<number | null>(null)
   const [satisfacaoSetor, setSatisfacaoSetor] = useState("")
   const [influencias, setInfluencias] = useState<string[]>([])
   const [sugestoes, setSugestoes] = useState("")
 
   const setoresDisponiveis = ["Pronto Socorro", "Ambulatório", "Unidade de Internação"]
-  const areasHospital = [
-    "Ambulatório",
-    "Pronto Socorro", 
-    "Unidade de Internação",
-    "Unidade de Terapia Intensiva",
-    "Centro Cirúrgico",
-    "Exames e procedimentos"
-  ]
   
   const opcoesInfluencia = [
     "Atendimento da equipe médica",
@@ -57,12 +47,15 @@ export const PerguntaPadraoPreview = ({
     "Higiene e Limpeza"
   ]
 
-  const handleAreaToggle = (area: string) => {
-    setAreasAtendimento(prev => 
-      prev.includes(area) 
-        ? prev.filter(item => item !== area)
-        : [...prev, area]
-    )
+  const handleSetorChange = (setor: string) => {
+    setSelectedSetor(setor)
+    // Reset das respostas quando trocar de setor
+    setNpsScorePadrao(null)
+    setOQueAgradouPadrao("")
+    setAvaliacaoSetor(null)
+    setSatisfacaoSetor("")
+    setInfluencias([])
+    setSugestoes("")
   }
 
   const handleInfluenciaToggle = (opcao: string) => {
@@ -73,47 +66,32 @@ export const PerguntaPadraoPreview = ({
     )
   }
 
-  const handleNextStep = () => {
-    if (currentStep === 0 && areasAtendimento.length > 0) {
-      // Determinar o setor principal baseado na seleção
-      const setorPrincipal = setoresDisponiveis.find(setor => 
-        areasAtendimento.includes(setor)
-      )
-      if (setorPrincipal) {
-        setSelectedSetor(setorPrincipal)
-        setCurrentStep(1)
+  const handleSubmitResponse = () => {
+    const respostaCompleta = {
+      setor: selectedSetor,
+      perguntasPadrao: {
+        npsScore: npsScorePadrao,
+        oQueAgradou: oQueAgradouPadrao
+      },
+      perguntasDirecionadas: {
+        avaliacaoSetor,
+        satisfacaoSetor,
+        influencias,
+        sugestoes
       }
-    } else if (currentStep === 1) {
-      // Enviar resposta final
-      const respostaCompleta = {
-        perguntasPadrao: {
-          npsScore,
-          oQueAgradou,
-          areasAtendimento
-        },
-        perguntasSetor: {
-          setor: selectedSetor,
-          avaliacaoSetor,
-          satisfacaoSetor,
-          influencias,
-          sugestoes
-        }
-      }
-      
-      if (onResponse) {
-        onResponse(respostaCompleta)
-      }
+    }
+    
+    if (onResponse) {
+      onResponse(respostaCompleta)
     }
   }
 
-  const canProceed = () => {
-    if (currentStep === 0) {
-      return npsScore !== null && oQueAgradou.trim() !== "" && areasAtendimento.length > 0
-    }
-    if (currentStep === 1) {
-      return avaliacaoSetor !== null && satisfacaoSetor.trim() !== "" && sugestoes.trim() !== ""
-    }
-    return false
+  const canSubmit = () => {
+    return npsScorePadrao !== null && 
+           oQueAgradouPadrao.trim() !== "" && 
+           avaliacaoSetor !== null && 
+           satisfacaoSetor.trim() !== "" && 
+           sugestoes.trim() !== ""
   }
 
   return (
@@ -138,13 +116,43 @@ export const PerguntaPadraoPreview = ({
         </div>
       </div>
 
-      {currentStep === 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Avaliação Geral</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {/* Pergunta NPS */}
+      {/* Seleção de Setor */}
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle>Selecione o Setor</CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Escolha o setor onde você foi atendido para responder as perguntas específicas
+          </p>
+        </CardHeader>
+        <CardContent>
+          <RadioGroup
+            value={selectedSetor}
+            onValueChange={handleSetorChange}
+            disabled={!isPublicMode}
+          >
+            {setoresDisponiveis.map((setor) => (
+              <div key={setor} className="flex items-center space-x-2">
+                <RadioGroupItem value={setor} id={setor} />
+                <Label htmlFor={setor} className="cursor-pointer">
+                  {setor}
+                </Label>
+              </div>
+            ))}
+          </RadioGroup>
+        </CardContent>
+      </Card>
+
+      {/* Formulário do Setor Selecionado */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Avaliação - {selectedSetor}</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {/* Perguntas Padrão */}
+          <div className="bg-blue-50 dark:bg-blue-950 p-4 rounded-lg space-y-4">
+            <h4 className="font-semibold text-blue-900 dark:text-blue-100">Perguntas Padrão - {selectedSetor}</h4>
+            
+            {/* NPS Padrão */}
             <div>
               <Label className="text-base font-medium mb-4 block">
                 De 0 a 10, o quanto você recomendaria o {hospitalName} para amigos e familiares?
@@ -154,10 +162,10 @@ export const PerguntaPadraoPreview = ({
                 {Array.from({ length: 11 }, (_, i) => (
                   <button
                     key={i}
-                    onClick={() => setNpsScore(i)}
+                    onClick={() => setNpsScorePadrao(i)}
                     className={`
                       w-12 h-12 rounded-full font-bold text-sm cursor-pointer
-                      ${getScaleColor(i, npsScore === i, false)}
+                      ${getScaleColor(i, npsScorePadrao === i, false)}
                     `}
                     disabled={!isPublicMode}
                   >
@@ -174,63 +182,25 @@ export const PerguntaPadraoPreview = ({
 
             <Separator />
 
-            {/* O que agradou */}
+            {/* O que agradou padrão */}
             <div>
               <Label className="text-base font-medium mb-2 block">
                 O que mais te agradou em sua experiência conosco?
               </Label>
               <Textarea
-                value={oQueAgradou}
-                onChange={(e) => setOQueAgradou(e.target.value)}
+                value={oQueAgradouPadrao}
+                onChange={(e) => setOQueAgradouPadrao(e.target.value)}
                 placeholder="Conte-nos sobre sua experiência..."
                 rows={3}
                 disabled={!isPublicMode}
               />
             </div>
+          </div>
 
-            <Separator />
-
-            {/* Áreas de atendimento */}
-            <div>
-              <Label className="text-base font-medium mb-4 block">
-                Em qual área do hospital você foi atendido?
-              </Label>
-              <div className="space-y-2">
-                {areasHospital.map((area) => (
-                  <div key={area} className="flex items-center space-x-2">
-                    <Checkbox
-                      id={area}
-                      checked={areasAtendimento.includes(area)}
-                      onCheckedChange={() => handleAreaToggle(area)}
-                      disabled={!isPublicMode}
-                    />
-                    <Label htmlFor={area} className="cursor-pointer">
-                      {area}
-                    </Label>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {isPublicMode && (
-              <Button 
-                onClick={handleNextStep} 
-                className="w-full mt-6"
-                disabled={!canProceed()}
-              >
-                Continuar
-              </Button>
-            )}
-          </CardContent>
-        </Card>
-      )}
-
-      {currentStep === 1 && selectedSetor && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Avaliação Específica - {selectedSetor}</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
+          {/* Perguntas Direcionadas */}
+          <div className="bg-green-50 dark:bg-green-950 p-4 rounded-lg space-y-4">
+            <h4 className="font-semibold text-green-900 dark:text-green-100">Perguntas Direcionadas - {selectedSetor}</h4>
+            
             {/* Avaliação do setor */}
             <div>
               <Label className="text-base font-medium mb-4 block">
@@ -309,19 +279,19 @@ export const PerguntaPadraoPreview = ({
                 disabled={!isPublicMode}
               />
             </div>
+          </div>
 
-            {isPublicMode && (
-              <Button 
-                onClick={handleNextStep} 
-                className="w-full mt-6"
-                disabled={!canProceed()}
-              >
-                Finalizar Avaliação
-              </Button>
-            )}
-          </CardContent>
-        </Card>
-      )}
+          {isPublicMode && (
+            <Button 
+              onClick={handleSubmitResponse} 
+              className="w-full mt-6"
+              disabled={!canSubmit()}
+            >
+              Finalizar Avaliação
+            </Button>
+          )}
+        </CardContent>
+      </Card>
     </div>
   )
 }
