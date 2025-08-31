@@ -144,27 +144,41 @@ export default function PesquisaPublica() {
     if (!campanhaId) return false
 
     try {
+      console.log('Iniciando salvamento de resposta:', respostas)
+      
       // Criar envio se não existir
       let currentEnvioId = envioId
       if (!currentEnvioId) {
-        const { data: envioData, error: envioError } = await supabase
+        console.log('Criando novo envio para campanha:', campanhaId)
+        
+        // Gerar UUID válido para paciente público
+        const publicPatientId = crypto.randomUUID()
+        
+        const envioData = {
+          campanha_id: campanhaId,
+          paciente_id: publicPatientId,
+          status: 'respondido',
+          respondido_em: new Date().toISOString()
+        }
+        
+        console.log('Dados do envio:', envioData)
+        
+        const { data: novoEnvio, error: envioError } = await supabase
           .from('envios_pesquisa')
-          .insert({
-            campanha_id: campanhaId,
-            paciente_id: 'public-user-' + Date.now(), // ID temporário para usuário público
-            status: 'respondido',
-            respondido_em: new Date().toISOString()
-          })
+          .insert(envioData)
           .select()
           .single()
 
         if (envioError) {
-          console.error('Erro ao criar envio:', envioError)
-          toast.error("Erro ao salvar resposta")
+          console.error('Erro detalhado ao criar envio:', envioError)
+          console.error('Código do erro:', envioError.code)
+          console.error('Detalhes do erro:', envioError.details)
+          toast.error(`Erro ao criar envio: ${envioError.message}`)
           return false
         }
 
-        currentEnvioId = envioData.id
+        console.log('Envio criado com sucesso:', novoEnvio)
+        currentEnvioId = novoEnvio.id
         setEnvioId(currentEnvioId)
       }
 
@@ -184,17 +198,22 @@ export default function PesquisaPublica() {
         formularios_adicionais: respostas.formularios_adicionais || null
       }
 
+      console.log('Salvando resposta com dados:', dadosResposta)
+
       // Salvar resposta
       const { error: respostaError } = await supabase
         .from('respostas_pesquisa')
         .insert(dadosResposta)
 
       if (respostaError) {
-        console.error('Erro ao salvar resposta:', respostaError)
-        toast.error("Erro ao salvar resposta")
+        console.error('Erro detalhado ao salvar resposta:', respostaError)
+        console.error('Código do erro:', respostaError.code)
+        console.error('Detalhes do erro:', respostaError.details)
+        toast.error(`Erro ao salvar resposta: ${respostaError.message}`)
         return false
       }
 
+      console.log('Resposta salva com sucesso!')
       return true
     } catch (error) {
       console.error('Erro inesperado ao salvar resposta:', error)
