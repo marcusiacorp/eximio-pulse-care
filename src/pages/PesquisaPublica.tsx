@@ -95,47 +95,52 @@ export default function PesquisaPublica() {
           const config = data.configuracao?.[0] // Access first element of array
           console.log('DEBUG - Configuração completa:', config)
           
-          // Verificar pontos de contato - deve ter pelo menos um ponto ativo
+          // Verificar pontos de contato
           if (config?.pontos_contato) {
-            console.log('DEBUG - Verificando pontos de contato:', config.pontos_contato)
-            // Verificar se é um objeto com propriedade ativo: true (formato booleano simples)
+            // Se é boolean true, adiciona a seção
             if (config.pontos_contato === true) {
               etapasDisponiveis.push("pontos_contato")
             }
-            // Ou verificar se é um objeto com array de pontos ativos
-            else if (typeof config.pontos_contato === 'object') {
+            // Se é objeto, verifica se tem pontos ativos
+            else if (typeof config.pontos_contato === 'object' && config.pontos_contato !== null) {
               const pontosData = config.pontos_contato as any
-              const pontos = pontosData?.pontos || []
-              const temPontosAtivos = Array.isArray(pontos) && pontos.some((ponto: any) => ponto?.ativo === true)
-              console.log('DEBUG - Pontos de contato detalhados:', { pontosData, pontos, temPontosAtivos })
-              if (temPontosAtivos) {
+              // Verificar se tem pontos configurados (qualquer estrutura)
+              if (pontosData?.pontos && Array.isArray(pontosData.pontos)) {
+                const temPontosAtivos = pontosData.pontos.some((ponto: any) => ponto?.ativo === true)
+                if (temPontosAtivos) {
+                  etapasDisponiveis.push("pontos_contato")
+                }
+              }
+              // Ou se tem propriedades que indicam configuração ativa
+              else if (Object.keys(pontosData).length > 0) {
                 etapasDisponiveis.push("pontos_contato")
               }
             }
           }
           
-          // Verificar problemas - pode ser true (boolean) ou objeto
+          // Verificar problemas
           if (config?.problemas) {
-            console.log('DEBUG - Verificando problemas:', config.problemas)
+            // Se é boolean true ou qualquer objeto não nulo, adiciona
             if (config.problemas === true || (typeof config.problemas === 'object' && config.problemas !== null)) {
               etapasDisponiveis.push("problemas")
             }
           }
           
-          // Verificar formulários adicionais - pode ser true (boolean) ou objeto com formulários
+          // Verificar formulários adicionais
           if (config?.formularios_adicionais) {
-            console.log('DEBUG - Verificando formulários adicionais:', config.formularios_adicionais)
-            // Verificar se é um boolean true
+            // Se é boolean true, adiciona a seção
             if (config.formularios_adicionais === true) {
               etapasDisponiveis.push("formularios_adicionais")
             }
-            // Ou verificar se é um objeto com array de formulários
-            else if (typeof config.formularios_adicionais === 'object') {
+            // Se é objeto, verifica se tem formulários
+            else if (typeof config.formularios_adicionais === 'object' && config.formularios_adicionais !== null) {
               const formulariosData = config.formularios_adicionais as any
-              const formularios = formulariosData?.formularios || []
-              const temFormularios = Array.isArray(formularios) && formularios.length > 0
-              console.log('DEBUG - Formulários adicionais detalhados:', { formulariosData, formularios, temFormularios })
-              if (temFormularios) {
+              // Verificar se tem formulários configurados
+              if (formulariosData?.formularios && Array.isArray(formulariosData.formularios) && formulariosData.formularios.length > 0) {
+                etapasDisponiveis.push("formularios_adicionais")
+              }
+              // Ou se tem outras propriedades que indicam configuração
+              else if (Object.keys(formulariosData).length > 0) {
                 etapasDisponiveis.push("formularios_adicionais")
               }
             }
