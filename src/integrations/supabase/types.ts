@@ -292,17 +292,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      can_manage_patients: {
+      get_user_hospital: {
         Args: Record<PropertyKey, never>
-        Returns: boolean
+        Returns: string
       }
-      can_view_hospital: {
-        Args: { hospital_uuid: string }
-        Returns: boolean
-      }
-      has_admin_access: {
+      get_user_type: {
         Args: Record<PropertyKey, never>
-        Returns: boolean
+        Returns: string
       }
     }
     Enums: {
