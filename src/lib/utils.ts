@@ -11,34 +11,34 @@ export function getScaleColor(score: number, isSelected: boolean = false, isDisa
     return "bg-muted text-muted-foreground border-muted"
   }
 
-  // Cores de fundo em degradê
+  // Cores de fundo em degradê baseado na imagem de referência
   const backgroundColors = [
-    'bg-red-500',    // 0
-    'bg-red-400',    // 1
-    'bg-red-300',    // 2
-    'bg-orange-400', // 3
-    'bg-orange-300', // 4
-    'bg-yellow-400', // 5
-    'bg-yellow-300', // 6
-    'bg-lime-400',   // 7
-    'bg-lime-300',   // 8
-    'bg-green-400',  // 9
-    'bg-green-500'   // 10
+    'bg-red-600',      // 0 - vermelho mais forte
+    'bg-red-500',      // 1 - vermelho
+    'bg-orange-600',   // 2 - laranja avermelhado
+    'bg-orange-500',   // 3 - laranja
+    'bg-orange-400',   // 4 - laranja claro
+    'bg-yellow-500',   // 5 - amarelo
+    'bg-yellow-400',   // 6 - amarelo claro
+    'bg-lime-500',     // 7 - verde limão
+    'bg-green-400',    // 8 - verde claro
+    'bg-green-500',    // 9 - verde
+    'bg-green-600'     // 10 - verde forte
   ]
 
   // Cores mais claras para não selecionados
   const lightColors = [
-    'bg-red-200',     // 0
-    'bg-red-150',     // 1
-    'bg-red-100',     // 2
-    'bg-orange-200',  // 3
-    'bg-orange-150',  // 4
-    'bg-yellow-200',  // 5
-    'bg-yellow-150',  // 6
-    'bg-lime-200',    // 7
-    'bg-lime-150',    // 8
-    'bg-green-200',   // 9
-    'bg-green-300'    // 10
+    'bg-red-200',      // 0
+    'bg-red-200',      // 1
+    'bg-orange-200',   // 2
+    'bg-orange-200',   // 3
+    'bg-orange-100',   // 4
+    'bg-yellow-200',   // 5
+    'bg-yellow-100',   // 6
+    'bg-lime-200',     // 7
+    'bg-green-200',    // 8
+    'bg-green-200',    // 9
+    'bg-green-300'     // 10
   ]
 
   const bgColor = isSelected ? backgroundColors[score] : lightColors[score]
