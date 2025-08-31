@@ -14,7 +14,8 @@ interface CampanhaData {
   nome: string
   tipo_campanha: string
   hospital_id: string
-  configuracao?: {
+  ativa: boolean
+  configuracao?: Array<{
     trecho_pergunta?: string
     recomendacao?: string
     autorizacao?: string
@@ -22,7 +23,7 @@ interface CampanhaData {
     problemas?: any
     formularios_adicionais?: any
     layout_envio?: any
-  }
+  }>
 }
 
 export default function PesquisaPublica() {
@@ -38,44 +39,54 @@ export default function PesquisaPublica() {
       if (!campanhaId) return
 
       try {
-        const { data: campanhaData, error: campanhaError } = await supabase
-          .from("campanhas")
-          .select("*")
-          .eq("id", campanhaId)
-          .single()
-
-        if (campanhaError) throw campanhaError
-
-        const { data: configData, error: configError } = await supabase
-          .from("campanha_configuracao")
-          .select("*")
-          .eq("campanha_id", campanhaId)
-          .single()
-
-        if (configError) throw configError
-
-        setCampanha({
-          ...campanhaData,
-          configuracao: configData
-        })
-
-        // Definir etapas baseadas na configuração
-        const etapasDisponiveis = ["pergunta_definitiva"]
+        setLoading(true)
+        console.log('Carregando campanha:', campanhaId)
         
-        if (configData.pontos_contato && typeof configData.pontos_contato === 'object' && (configData.pontos_contato as any)?.ativo) {
-          etapasDisponiveis.push("pontos_contato")
+        const { data, error } = await supabase
+          .from('campanhas')
+          .select(`
+            *,
+            configuracao:campanha_configuracao(*)
+          `)
+          .eq('id', campanhaId)
+          .maybeSingle()
+
+        if (error) {
+          console.error('Erro ao carregar campanha:', error)
+          setCampanha(null)
+          toast.error("Erro ao carregar pesquisa")
+        } else if (!data) {
+          console.log('Campanha não encontrada')
+          setCampanha(null)
+          toast.error("Pesquisa não encontrada")
+        } else if (!data.ativa) {
+          console.log('Campanha encontrada mas inativa')
+          setCampanha(null)
+          toast.error("Esta pesquisa não está mais disponível")
+        } else {
+          console.log('Campanha carregada:', data)
+          setCampanha(data)
+
+          // Definir etapas baseadas na configuração
+          const etapasDisponiveis = ["pergunta_definitiva"]
+          
+          const config = data.configuracao?.[0] // Access first element of array
+          if (config?.pontos_contato && typeof config.pontos_contato === 'object' && (config.pontos_contato as any)?.ativo) {
+            etapasDisponiveis.push("pontos_contato")
+          }
+          if (config?.problemas && typeof config.problemas === 'object' && (config.problemas as any)?.ativo) {
+            etapasDisponiveis.push("problemas")
+          }
+          if (config?.formularios_adicionais && typeof config.formularios_adicionais === 'object' && (config.formularios_adicionais as any)?.ativo) {
+            etapasDisponiveis.push("formularios_adicionais")
+          }
+          
+          setEtapas(etapasDisponiveis)
         }
-        if (configData.problemas && typeof configData.problemas === 'object' && (configData.problemas as any)?.ativo) {
-          etapasDisponiveis.push("problemas")
-        }
-        if (configData.formularios_adicionais && typeof configData.formularios_adicionais === 'object' && (configData.formularios_adicionais as any)?.ativo) {
-          etapasDisponiveis.push("formularios_adicionais")
-        }
-        
-        setEtapas(etapasDisponiveis)
       } catch (error) {
-        console.error("Erro ao carregar campanha:", error)
-        toast.error("Pesquisa não encontrada")
+        console.error("Erro inesperado:", error)
+        setCampanha(null)
+        toast.error("Erro inesperado ao carregar pesquisa")
       } finally {
         setLoading(false)
       }
@@ -144,19 +155,19 @@ export default function PesquisaPublica() {
         {/* Renderizar o componente de preview apropriado para cada etapa */}
         {etapaAtualNome === "pergunta_definitiva" && (
           <NPSPreview
-            trechoPergunta={campanha.configuracao?.trecho_pergunta || ""}
-            recomendacao={campanha.configuracao?.recomendacao || ""}
-            autorizacao={campanha.configuracao?.autorizacao || ""}
+            trechoPergunta={campanha.configuracao?.[0]?.trecho_pergunta || ""}
+            recomendacao={campanha.configuracao?.[0]?.recomendacao || ""}
+            autorizacao={campanha.configuracao?.[0]?.autorizacao || ""}
             nomeHospital={campanha.nome}
             isPublicMode={true}
-            logoUrl={(campanha.configuracao?.layout_envio as any)?.logo_url}
+            logoUrl={(campanha.configuracao?.[0]?.layout_envio as any)?.logo_url}
           />
         )}
 
-        {etapaAtualNome === "pontos_contato" && campanha.configuracao?.pontos_contato && (
+        {etapaAtualNome === "pontos_contato" && campanha.configuracao?.[0]?.pontos_contato && (
           <PontosContatoPreview
             pontosContatoAtivos={true}
-            pontosContato={(campanha.configuracao.pontos_contato as any)?.pontos || []}
+            pontosContato={(campanha.configuracao[0].pontos_contato as any)?.pontos || []}
             nomeHospital={campanha.nome}
             isPublicMode={true}
           />
@@ -173,7 +184,7 @@ export default function PesquisaPublica() {
         {etapaAtualNome === "formularios_adicionais" && (
           <FormulariosAdicionaisPreview
             formulariosAdicionaisAtivos={true}
-            formulariosCriados={(campanha.configuracao?.formularios_adicionais as any)?.formularios || []}
+            formulariosCriados={(campanha.configuracao?.[0]?.formularios_adicionais as any)?.formularios || []}
             nomeHospital={campanha.nome}
             isPublicMode={true}
           />
