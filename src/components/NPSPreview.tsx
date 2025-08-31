@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { supabase } from "@/integrations/supabase/client"
 import { toast } from "sonner"
 import { getScaleColor } from "@/lib/utils"
+import { useIsMobile } from "@/hooks/use-mobile"
 
 interface NPSPreviewProps {
   trechoPergunta: string
@@ -36,6 +37,7 @@ export const NPSPreview = ({
   console.log('NPSPreview recebeu logoUrl:', logoUrl)
   console.log('NPSPreview logoUrl existe?', !!logoUrl)
   console.log('NPSPreview isPublicMode:', isPublicMode)
+  const isMobile = useIsMobile()
   const [selectedScore, setSelectedScore] = useState<number | null>(null)
   const [feedback, setFeedback] = useState("")
   const [selectedAuthorization, setSelectedAuthorization] = useState<boolean | null>(null)
@@ -229,10 +231,47 @@ export const NPSPreview = ({
 
       {/* Escala NPS */}
       <div className="space-y-4">
-        <div className="space-y-2">
-          {/* Primeira fileira: 0-5 */}
-          <div className="grid grid-cols-6 gap-1 justify-center">
-            {Array.from({ length: 6 }, (_, i) => (
+        {isMobile ? (
+          <div className="space-y-2">
+            {/* Mobile: Primeira fileira: 0-5 */}
+            <div className="grid grid-cols-6 gap-1 justify-center">
+              {Array.from({ length: 6 }, (_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setSelectedScore(i)}
+                  className={`
+                    h-10 w-10 rounded-full text-sm font-medium
+                    ${getScaleColor(i, selectedScore === i)}
+                  `}
+                >
+                  {i}
+                </button>
+              ))}
+            </div>
+            
+            {/* Mobile: Segunda fileira: 6-10 */}
+            <div className="grid grid-cols-5 gap-1 justify-center">
+              {Array.from({ length: 5 }, (_, i) => {
+                const value = i + 6;
+                return (
+                  <button
+                    key={value}
+                    onClick={() => setSelectedScore(value)}
+                    className={`
+                      h-10 w-10 rounded-full text-sm font-medium
+                      ${getScaleColor(value, selectedScore === value)}
+                    `}
+                  >
+                    {value}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        ) : (
+          /* Desktop: Uma única fileira com todos os números */
+          <div className="grid grid-cols-11 gap-1">
+            {Array.from({ length: 11 }, (_, i) => (
               <button
                 key={i}
                 onClick={() => setSelectedScore(i)}
@@ -245,26 +284,7 @@ export const NPSPreview = ({
               </button>
             ))}
           </div>
-          
-          {/* Segunda fileira: 6-10 */}
-          <div className="grid grid-cols-5 gap-1 justify-center">
-            {Array.from({ length: 5 }, (_, i) => {
-              const value = i + 6;
-              return (
-                <button
-                  key={value}
-                  onClick={() => setSelectedScore(value)}
-                  className={`
-                    h-10 w-10 rounded-full text-sm font-medium
-                    ${getScaleColor(value, selectedScore === value)}
-                  `}
-                >
-                  {value}
-                </button>
-              );
-            })}
-          </div>
-        </div>
+        )}
         
         {/* Labels */}
         <div className="flex justify-between text-xs text-gray-500">

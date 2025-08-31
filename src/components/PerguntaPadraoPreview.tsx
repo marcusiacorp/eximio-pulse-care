@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { getScaleColor } from "@/lib/utils"
+import { useIsMobile } from "@/hooks/use-mobile"
 
 interface PerguntaPadraoPreviewProps {
   boasVindas: string
@@ -25,6 +26,7 @@ export const PerguntaPadraoPreview = ({
   onResponse,
   setoresSelecionados = ["Pronto Socorro", "Ambulatório", "Unidade de Internação"]
 }: PerguntaPadraoPreviewProps) => {
+  const isMobile = useIsMobile()
   // Estado para área selecionada
   const [areaSelecionada, setAreaSelecionada] = useState<string>("")
   
@@ -145,10 +147,49 @@ export const PerguntaPadraoPreview = ({
                 De 0 a 10, o quanto você recomendaria o {hospitalName} para amigos e familiares?
               </Label>
               
-              <div className="space-y-2">
-                {/* Primeira fileira: 0-5 */}
-                <div className="grid grid-cols-6 gap-2 justify-center">
-                  {Array.from({ length: 6 }, (_, i) => (
+              {isMobile ? (
+                <div className="space-y-2">
+                  {/* Mobile: Primeira fileira: 0-5 */}
+                  <div className="grid grid-cols-6 gap-2 justify-center">
+                    {Array.from({ length: 6 }, (_, i) => (
+                      <button
+                        key={i}
+                        onClick={() => setNpsScoreGlobal(i)}
+                        className={`
+                          w-12 h-12 rounded-full font-bold text-sm cursor-pointer
+                          ${getScaleColor(i, npsScoreGlobal === i, false)}
+                        `}
+                        disabled={!isPublicMode}
+                      >
+                        {i}
+                      </button>
+                    ))}
+                  </div>
+                  
+                  {/* Mobile: Segunda fileira: 6-10 */}
+                  <div className="grid grid-cols-5 gap-2 justify-center">
+                    {Array.from({ length: 5 }, (_, i) => {
+                      const value = i + 6;
+                      return (
+                        <button
+                          key={value}
+                          onClick={() => setNpsScoreGlobal(value)}
+                          className={`
+                            w-12 h-12 rounded-full font-bold text-sm cursor-pointer
+                            ${getScaleColor(value, npsScoreGlobal === value, false)}
+                          `}
+                          disabled={!isPublicMode}
+                        >
+                          {value}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ) : (
+                /* Desktop: Uma única fileira com todos os números */
+                <div className="grid grid-cols-11 gap-2">
+                  {Array.from({ length: 11 }, (_, i) => (
                     <button
                       key={i}
                       onClick={() => setNpsScoreGlobal(i)}
@@ -162,27 +203,7 @@ export const PerguntaPadraoPreview = ({
                     </button>
                   ))}
                 </div>
-                
-                {/* Segunda fileira: 6-10 */}
-                <div className="grid grid-cols-5 gap-2 justify-center">
-                  {Array.from({ length: 5 }, (_, i) => {
-                    const value = i + 6;
-                    return (
-                      <button
-                        key={value}
-                        onClick={() => setNpsScoreGlobal(value)}
-                        className={`
-                          w-12 h-12 rounded-full font-bold text-sm cursor-pointer
-                          ${getScaleColor(value, npsScoreGlobal === value, false)}
-                        `}
-                        disabled={!isPublicMode}
-                      >
-                        {value}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
+              )}
               
               <div className="flex justify-between text-xs text-muted-foreground mt-2">
                 <span>Não recomendaria</span>
@@ -249,10 +270,49 @@ export const PerguntaPadraoPreview = ({
                     De 0 a 10, como você avalia sua experiência durante seu atendimento no {setor}?
                   </Label>
                   
-                  <div className="space-y-2">
-                    {/* Primeira fileira: 0-5 */}
-                    <div className="grid grid-cols-6 gap-2 justify-center">
-                      {Array.from({ length: 6 }, (_, i) => (
+                  {isMobile ? (
+                    <div className="space-y-2">
+                      {/* Mobile: Primeira fileira: 0-5 */}
+                      <div className="grid grid-cols-6 gap-2 justify-center">
+                        {Array.from({ length: 6 }, (_, i) => (
+                          <button
+                            key={i}
+                            onClick={() => updateRespostaSetor(setor, 'avaliacaoSetor', i)}
+                            className={`
+                              w-12 h-12 rounded-full font-bold text-sm cursor-pointer
+                              ${getScaleColor(i, respostasSetores[setor].avaliacaoSetor === i, false)}
+                            `}
+                            disabled={!isPublicMode}
+                          >
+                            {i}
+                          </button>
+                        ))}
+                      </div>
+                      
+                      {/* Mobile: Segunda fileira: 6-10 */}
+                      <div className="grid grid-cols-5 gap-2 justify-center">
+                        {Array.from({ length: 5 }, (_, i) => {
+                          const value = i + 6;
+                          return (
+                            <button
+                              key={value}
+                              onClick={() => updateRespostaSetor(setor, 'avaliacaoSetor', value)}
+                              className={`
+                                w-12 h-12 rounded-full font-bold text-sm cursor-pointer
+                                ${getScaleColor(value, respostasSetores[setor].avaliacaoSetor === value, false)}
+                              `}
+                              disabled={!isPublicMode}
+                            >
+                              {value}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ) : (
+                    /* Desktop: Uma única fileira com todos os números */
+                    <div className="grid grid-cols-11 gap-2">
+                      {Array.from({ length: 11 }, (_, i) => (
                         <button
                           key={i}
                           onClick={() => updateRespostaSetor(setor, 'avaliacaoSetor', i)}
@@ -266,27 +326,7 @@ export const PerguntaPadraoPreview = ({
                         </button>
                       ))}
                     </div>
-                    
-                    {/* Segunda fileira: 6-10 */}
-                    <div className="grid grid-cols-5 gap-2 justify-center">
-                      {Array.from({ length: 5 }, (_, i) => {
-                        const value = i + 6;
-                        return (
-                          <button
-                            key={value}
-                            onClick={() => updateRespostaSetor(setor, 'avaliacaoSetor', value)}
-                            className={`
-                              w-12 h-12 rounded-full font-bold text-sm cursor-pointer
-                              ${getScaleColor(value, respostasSetores[setor].avaliacaoSetor === value, false)}
-                            `}
-                            disabled={!isPublicMode}
-                          >
-                            {value}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
+                  )}
                 </div>
 
                 <Separator />
