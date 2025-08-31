@@ -93,16 +93,37 @@ export default function PesquisaPublica() {
           const etapasDisponiveis = ["pergunta_definitiva"]
           
           const config = data.configuracao?.[0] // Access first element of array
-          if (config?.pontos_contato && typeof config.pontos_contato === 'object' && (config.pontos_contato as any)?.ativo) {
-            etapasDisponiveis.push("pontos_contato")
-          }
-          if (config?.problemas && typeof config.problemas === 'object' && (config.problemas as any)?.ativo) {
-            etapasDisponiveis.push("problemas")
-          }
-          if (config?.formularios_adicionais && typeof config.formularios_adicionais === 'object' && (config.formularios_adicionais as any)?.ativo) {
-            etapasDisponiveis.push("formularios_adicionais")
+          console.log('DEBUG - Configuração completa:', config)
+          
+          // Verificar pontos de contato - deve ter pelo menos um ponto ativo
+          if (config?.pontos_contato && typeof config.pontos_contato === 'object') {
+            const pontosData = config.pontos_contato as any
+            const pontos = pontosData?.pontos || []
+            const temPontosAtivos = pontos.some((ponto: any) => ponto?.ativo === true)
+            console.log('DEBUG - Pontos de contato:', { pontosData, pontos, temPontosAtivos })
+            if (temPontosAtivos) {
+              etapasDisponiveis.push("pontos_contato")
+            }
           }
           
+          // Verificar problemas - deve ser true (boolean)
+          if (config?.problemas === true) {
+            console.log('DEBUG - Problemas ativo:', true)
+            etapasDisponiveis.push("problemas")
+          }
+          
+          // Verificar formulários adicionais - deve ter pelo menos um formulário
+          if (config?.formularios_adicionais && typeof config.formularios_adicionais === 'object') {
+            const formulariosData = config.formularios_adicionais as any
+            const formularios = formulariosData?.formularios || []
+            const temFormularios = Array.isArray(formularios) && formularios.length > 0
+            console.log('DEBUG - Formulários adicionais:', { formulariosData, formularios, temFormularios })
+            if (temFormularios) {
+              etapasDisponiveis.push("formularios_adicionais")
+            }
+          }
+          
+          console.log('DEBUG - Etapas calculadas:', etapasDisponiveis)
           setEtapas(etapasDisponiveis)
         }
       } catch (error) {
@@ -152,10 +173,17 @@ export default function PesquisaPublica() {
 
   // Função para coletar dados dos componentes
   const handleResponse = (data: any) => {
-    setRespostas(prev => ({
-      ...prev,
-      ...data
-    }))
+    console.log('DEBUG - Recebendo resposta do componente:', data)
+    console.log('DEBUG - Etapa atual:', etapaAtualNome)
+    
+    setRespostas(prev => {
+      const novasRespostas = {
+        ...prev,
+        ...data
+      }
+      console.log('DEBUG - Respostas atualizadas:', novasRespostas)
+      return novasRespostas
+    })
   }
 
   // Função para salvar resposta no Supabase
@@ -296,6 +324,27 @@ export default function PesquisaPublica() {
   return (
     <div className="min-h-screen bg-background py-8">
       <div className="container mx-auto max-w-4xl px-4">
+        {/* Indicador de progresso dinâmico */}
+        <div className="mb-6 text-center">
+          <p className="text-sm text-muted-foreground">
+            Passo {etapaAtual + 1} de {etapas.length} • {etapaAtualNome.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+          </p>
+          <div className="w-full bg-secondary rounded-full h-2 mt-2 max-w-md mx-auto">
+            <div 
+              className="bg-primary h-2 rounded-full transition-all duration-300" 
+              style={{ width: `${((etapaAtual + 1) / etapas.length) * 100}%` }}
+            />
+          </div>
+        </div>
+
+        {/* Debug: mostrar respostas coletadas */}
+        {process.env.NODE_ENV === 'development' && (
+          <div className="mb-4 p-2 bg-muted rounded text-xs">
+            <strong>DEBUG - Respostas coletadas:</strong>
+            <pre>{JSON.stringify(respostas, null, 2)}</pre>
+          </div>
+        )}
+
         {/* Renderizar o componente de preview apropriado para cada etapa */}
         {etapaAtualNome === "pergunta_definitiva" && (() => {
           const bannerUrl = campanha.configuracao?.[0]?.banner_url
@@ -320,15 +369,21 @@ export default function PesquisaPublica() {
           )
         })()}
 
-        {etapaAtualNome === "pontos_contato" && campanha.configuracao?.[0]?.pontos_contato && (
-          <PontosContatoPreview
-            pontosContatoAtivos={true}
-            pontosContato={(campanha.configuracao[0].pontos_contato as any)?.pontos || []}
-            nomeHospital={campanha.nome}
-            isPublicMode={true}
-            onResponse={handleResponse}
-          />
-        )}
+        {etapaAtualNome === "pontos_contato" && campanha.configuracao?.[0]?.pontos_contato && (() => {
+          const pontosData = campanha.configuracao[0].pontos_contato as any
+          const pontosAtivos = (pontosData?.pontos || []).filter((ponto: any) => ponto?.ativo === true)
+          console.log('DEBUG - Renderizando pontos de contato:', { pontosData, pontosAtivos })
+          
+          return (
+            <PontosContatoPreview
+              pontosContatoAtivos={true}
+              pontosContato={pontosAtivos}
+              nomeHospital={campanha.nome}
+              isPublicMode={true}
+              onResponse={handleResponse}
+            />
+          )
+        })()}
 
         {etapaAtualNome === "problemas" && (
           <ProblemasPreview
