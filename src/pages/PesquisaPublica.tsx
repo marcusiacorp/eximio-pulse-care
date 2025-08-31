@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import { useParams } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { supabase } from "@/integrations/supabase/client"
+import { createClient } from '@supabase/supabase-js'
 import { toast } from "sonner"
 import { NPSPreview } from "@/components/NPSPreview"
 import { PontosContatoPreview } from "@/components/PontosContatoPreview"
@@ -10,6 +10,12 @@ import { ProblemasPreview } from "@/components/ProblemasPreview"
 import { FormulariosAdicionaisPreview } from "@/components/FormulariosAdicionaisPreview"
 import { DadosPessoaisForm } from "@/components/DadosPessoaisForm"
 import { PerguntaPadraoPreview } from "@/components/PerguntaPadraoPreview"
+
+// Cliente Supabase sem autenticação para acesso público
+const publicSupabase = createClient(
+  import.meta.env.VITE_SUPABASE_URL!,
+  import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY!
+)
 
 interface CampanhaData {
   id: string
@@ -58,7 +64,7 @@ export default function PesquisaPublica() {
         setLoading(true)
         console.log('Carregando campanha:', campanhaId)
         
-        const { data, error } = await supabase
+        const { data, error } = await publicSupabase
           .from('campanhas')
           .select(`
             *,
@@ -245,7 +251,7 @@ export default function PesquisaPublica() {
       
       console.log('Dados do envio:', envioData)
       
-      const { data: novoEnvio, error: envioError } = await supabase
+      const { data: novoEnvio, error: envioError } = await publicSupabase
         .from('envios_pesquisa')
         .insert(envioData)
         .select()
@@ -302,7 +308,7 @@ export default function PesquisaPublica() {
       console.log('Salvando resposta com dados:', dadosResposta)
 
       // Salvar resposta
-      const { error: respostaError } = await supabase
+      const { error: respostaError } = await publicSupabase
         .from('respostas_pesquisa')
         .insert(dadosResposta)
 
