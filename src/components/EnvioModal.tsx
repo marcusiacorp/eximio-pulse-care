@@ -169,8 +169,16 @@ export function EnvioModal({ isOpen, onClose, campaignData }: EnvioModalProps) {
         if (configError) throw configError
       }
 
-      // Gerar QR code para campanhas do tipo link
+      // Gerar QR code para campanhas do tipo link e ativar a campanha
       if (campaignData.tipo === 'link') {
+        // Ativar a campanha para que o link funcione
+        const { error: ativarError } = await supabase
+          .from('campanhas')
+          .update({ ativa: true })
+          .eq('id', campanhaIdFinal)
+
+        if (ativarError) throw ativarError
+
         const link = `${window.location.origin}/pesquisa/${campanhaIdFinal}`
         const qrCodeDataUrl = await QRCode.toDataURL(link, {
           width: 200,
