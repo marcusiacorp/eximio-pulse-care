@@ -254,7 +254,18 @@ export type Database = {
       }
       respostas_pesquisa: {
         Row: {
-          area_selecionada: string | null
+          avaliacao_ambulatorio_nota: number | null
+          avaliacao_ambulatorio_o_que_mais_contribuiu: string | null
+          avaliacao_ambulatorio_o_que_mais_influenciou: string | null
+          avaliacao_ambulatorio_sugestoes: string | null
+          avaliacao_prontosocorro_nota: number | null
+          avaliacao_prontosocorro_o_que_mais_contribuiu: string | null
+          avaliacao_prontosocorro_o_que_mais_influenciou: string | null
+          avaliacao_prontosocorro_sugestoes: string | null
+          avaliacao_unidadeinternacao_nota: number | null
+          avaliacao_unidadeinternacao_o_que_mais_contribuiu: string | null
+          avaliacao_unidadeinternacao_o_que_mais_influenciou: string | null
+          avaliacao_unidadeinternacao_sugestoes: string | null
           campanha_id: string | null
           created_at: string
           email_respondente: string | null
@@ -263,23 +274,34 @@ export type Database = {
           id: string
           nome_respondente: string | null
           nps_score: number | null
-          nps_score_global: number | null
           pergunta_definitiva: Json | null
+          pergunta_padrao_avaliacao_geral: number | null
+          pergunta_padrao_identificacao_da_area: string | null
+          pergunta_padrao_o_que_mais_te_agradou: string | null
           pontos_contato: Json | null
           problemas: Json | null
           resposta_autorizacao: boolean | null
           resposta_o_que_agradou: string | null
-          resposta_o_que_agradou_global: string | null
           resposta_porque_nota: string | null
           resposta_recomendacao: boolean | null
           resposta_trecho_pergunta: string | null
-          respostas_setores: Json | null
           setores_atendimento: string[] | null
           telefone_respondente: string | null
           updated_at: string
         }
         Insert: {
-          area_selecionada?: string | null
+          avaliacao_ambulatorio_nota?: number | null
+          avaliacao_ambulatorio_o_que_mais_contribuiu?: string | null
+          avaliacao_ambulatorio_o_que_mais_influenciou?: string | null
+          avaliacao_ambulatorio_sugestoes?: string | null
+          avaliacao_prontosocorro_nota?: number | null
+          avaliacao_prontosocorro_o_que_mais_contribuiu?: string | null
+          avaliacao_prontosocorro_o_que_mais_influenciou?: string | null
+          avaliacao_prontosocorro_sugestoes?: string | null
+          avaliacao_unidadeinternacao_nota?: number | null
+          avaliacao_unidadeinternacao_o_que_mais_contribuiu?: string | null
+          avaliacao_unidadeinternacao_o_que_mais_influenciou?: string | null
+          avaliacao_unidadeinternacao_sugestoes?: string | null
           campanha_id?: string | null
           created_at?: string
           email_respondente?: string | null
@@ -288,23 +310,34 @@ export type Database = {
           id?: string
           nome_respondente?: string | null
           nps_score?: number | null
-          nps_score_global?: number | null
           pergunta_definitiva?: Json | null
+          pergunta_padrao_avaliacao_geral?: number | null
+          pergunta_padrao_identificacao_da_area?: string | null
+          pergunta_padrao_o_que_mais_te_agradou?: string | null
           pontos_contato?: Json | null
           problemas?: Json | null
           resposta_autorizacao?: boolean | null
           resposta_o_que_agradou?: string | null
-          resposta_o_que_agradou_global?: string | null
           resposta_porque_nota?: string | null
           resposta_recomendacao?: boolean | null
           resposta_trecho_pergunta?: string | null
-          respostas_setores?: Json | null
           setores_atendimento?: string[] | null
           telefone_respondente?: string | null
           updated_at?: string
         }
         Update: {
-          area_selecionada?: string | null
+          avaliacao_ambulatorio_nota?: number | null
+          avaliacao_ambulatorio_o_que_mais_contribuiu?: string | null
+          avaliacao_ambulatorio_o_que_mais_influenciou?: string | null
+          avaliacao_ambulatorio_sugestoes?: string | null
+          avaliacao_prontosocorro_nota?: number | null
+          avaliacao_prontosocorro_o_que_mais_contribuiu?: string | null
+          avaliacao_prontosocorro_o_que_mais_influenciou?: string | null
+          avaliacao_prontosocorro_sugestoes?: string | null
+          avaliacao_unidadeinternacao_nota?: number | null
+          avaliacao_unidadeinternacao_o_que_mais_contribuiu?: string | null
+          avaliacao_unidadeinternacao_o_que_mais_influenciou?: string | null
+          avaliacao_unidadeinternacao_sugestoes?: string | null
           campanha_id?: string | null
           created_at?: string
           email_respondente?: string | null
@@ -313,17 +346,17 @@ export type Database = {
           id?: string
           nome_respondente?: string | null
           nps_score?: number | null
-          nps_score_global?: number | null
           pergunta_definitiva?: Json | null
+          pergunta_padrao_avaliacao_geral?: number | null
+          pergunta_padrao_identificacao_da_area?: string | null
+          pergunta_padrao_o_que_mais_te_agradou?: string | null
           pontos_contato?: Json | null
           problemas?: Json | null
           resposta_autorizacao?: boolean | null
           resposta_o_que_agradou?: string | null
-          resposta_o_que_agradou_global?: string | null
           resposta_porque_nota?: string | null
           resposta_recomendacao?: boolean | null
           resposta_trecho_pergunta?: string | null
-          respostas_setores?: Json | null
           setores_atendimento?: string[] | null
           telefone_respondente?: string | null
           updated_at?: string

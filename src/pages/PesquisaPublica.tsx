@@ -275,10 +275,24 @@ export default function PesquisaPublica() {
         problemas: respostas.problemas || null,
         formularios_adicionais: respostas.formularios_adicionais || null,
         // Campos da pergunta padrão
-        area_selecionada: respostas.areaSelecionada || null,
-        nps_score_global: respostas.npsScoreGlobal || null,
-        resposta_o_que_agradou_global: respostas.oQueAgradouGlobal || null,
-        respostas_setores: respostas.respostasSetores || null,
+        pergunta_padrao_avaliacao_geral: respostas.npsScoreGlobal || null,
+        pergunta_padrao_o_que_mais_te_agradou: respostas.oQueAgradouGlobal || null,
+        pergunta_padrao_identificacao_da_area: respostas.areaSelecionada || null,
+        // Campos por setor - Ambulatório
+        avaliacao_ambulatorio_nota: respostas.respostasSetores?.Ambulatório?.nota || null,
+        avaliacao_ambulatorio_o_que_mais_contribuiu: respostas.respostasSetores?.Ambulatório?.oQueMaisContribuiu || null,
+        avaliacao_ambulatorio_o_que_mais_influenciou: respostas.respostasSetores?.Ambulatório?.oQueMaisInfluenciou || null,
+        avaliacao_ambulatorio_sugestoes: respostas.respostasSetores?.Ambulatório?.sugestoes || null,
+        // Campos por setor - Pronto Socorro  
+        avaliacao_prontosocorro_nota: respostas.respostasSetores?.["Pronto Socorro"]?.nota || null,
+        avaliacao_prontosocorro_o_que_mais_contribuiu: respostas.respostasSetores?.["Pronto Socorro"]?.oQueMaisContribuiu || null,
+        avaliacao_prontosocorro_o_que_mais_influenciou: respostas.respostasSetores?.["Pronto Socorro"]?.oQueMaisInfluenciou || null,
+        avaliacao_prontosocorro_sugestoes: respostas.respostasSetores?.["Pronto Socorro"]?.sugestoes || null,
+        // Campos por setor - Unidade de Internação
+        avaliacao_unidadeinternacao_nota: respostas.respostasSetores?.["Unidade de Internação"]?.nota || null,
+        avaliacao_unidadeinternacao_o_que_mais_contribuiu: respostas.respostasSetores?.["Unidade de Internação"]?.oQueMaisContribuiu || null,
+        avaliacao_unidadeinternacao_o_que_mais_influenciou: respostas.respostasSetores?.["Unidade de Internação"]?.oQueMaisInfluenciou || null,
+        avaliacao_unidadeinternacao_sugestoes: respostas.respostasSetores?.["Unidade de Internação"]?.sugestoes || null,
         // Adicionar dados pessoais do respondente
         nome_respondente: dadosPessoaisFinais?.nome || null,
         email_respondente: dadosPessoaisFinais?.email || null,

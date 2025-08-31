@@ -17,10 +17,24 @@ export interface RespostaDetalhada {
   problemas?: any
   formularios_adicionais?: any
   // Novos campos da pergunta padrão
-  area_selecionada?: string
-  nps_score_global?: number
-  resposta_o_que_agradou_global?: string
-  respostas_setores?: any
+  pergunta_padrao_avaliacao_geral?: number
+  pergunta_padrao_o_que_mais_te_agradou?: string
+  pergunta_padrao_identificacao_da_area?: string
+  // Campos por setor - Ambulatório
+  avaliacao_ambulatorio_nota?: number
+  avaliacao_ambulatorio_o_que_mais_contribuiu?: string
+  avaliacao_ambulatorio_o_que_mais_influenciou?: string
+  avaliacao_ambulatorio_sugestoes?: string
+  // Campos por setor - Pronto Socorro
+  avaliacao_prontosocorro_nota?: number
+  avaliacao_prontosocorro_o_que_mais_contribuiu?: string
+  avaliacao_prontosocorro_o_que_mais_influenciou?: string
+  avaliacao_prontosocorro_sugestoes?: string
+  // Campos por setor - Unidade de Internação
+  avaliacao_unidadeinternacao_nota?: number
+  avaliacao_unidadeinternacao_o_que_mais_contribuiu?: string
+  avaliacao_unidadeinternacao_o_que_mais_influenciou?: string
+  avaliacao_unidadeinternacao_sugestoes?: string
   created_at: string
 }
 
