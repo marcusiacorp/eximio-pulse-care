@@ -73,7 +73,9 @@ export function EnvioModal({ isOpen, onClose, campaignData }: EnvioModalProps) {
     const isLovableEnv = currentHost.includes('lovable.dev') || currentHost.includes('sandbox')
     
     if (isLovableEnv) {
-      return `https://${currentHost}`
+      // TODO: Configure your production domain here
+      // For now, using a placeholder - replace with your actual domain
+      return 'https://seu-dominio-publico.com'
     } else {
       return window.location.origin
     }
