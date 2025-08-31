@@ -26,27 +26,25 @@ export const PerguntaPadraoPreview = ({
   // Estado para área selecionada
   const [areaSelecionada, setAreaSelecionada] = useState<string>("")
   
-  // Respostas por setor
+  // Estados para perguntas padrão globais
+  const [npsScoreGlobal, setNpsScoreGlobal] = useState<number | null>(null)
+  const [oQueAgradouGlobal, setOQueAgradouGlobal] = useState<string>("")
+  
+  // Respostas por setor (só perguntas direcionadas)
   const [respostasSetores, setRespostasSetores] = useState<{[key: string]: any}>({
     "Pronto Socorro": {
-      npsScorePadrao: null,
-      oQueAgradouPadrao: "",
       avaliacaoSetor: null,
       satisfacaoSetor: "",
       influencias: [],
       sugestoes: ""
     },
     "Ambulatório": {
-      npsScorePadrao: null,
-      oQueAgradouPadrao: "",
       avaliacaoSetor: null,
       satisfacaoSetor: "",
       influencias: [],
       sugestoes: ""
     },
     "Unidade de Internação": {
-      npsScorePadrao: null,
-      oQueAgradouPadrao: "",
       avaliacaoSetor: null,
       satisfacaoSetor: "",
       influencias: [],
@@ -97,6 +95,8 @@ export const PerguntaPadraoPreview = ({
   const handleSubmitResponse = () => {
     const respostaCompleta = {
       areaSelecionada,
+      npsScoreGlobal,
+      oQueAgradouGlobal,
       respostasSetores
     }
     
@@ -130,7 +130,7 @@ export const PerguntaPadraoPreview = ({
       {/* Pergunta Inicial - Área do Hospital */}
       <Card className="mb-8">
         <CardHeader>
-          <CardTitle>Identificação da Área</CardTitle>
+          <CardTitle>1. Identificação da Área</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="bg-purple-50 dark:bg-purple-950 p-4 rounded-lg">
@@ -155,66 +155,73 @@ export const PerguntaPadraoPreview = ({
         </CardContent>
       </Card>
 
-      {/* Todos os Setores */}
+      {/* Perguntas Padrão Globais */}
+      <Card className="mb-8">
+        <CardHeader>
+          <CardTitle>2. Avaliação Geral</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="bg-blue-50 dark:bg-blue-950 p-4 rounded-lg space-y-6">
+            <h4 className="font-semibold text-blue-900 dark:text-blue-100">Perguntas Padrão</h4>
+            
+            {/* NPS Global */}
+            <div>
+              <Label className="text-base font-medium mb-4 block">
+                De 0 a 10, o quanto você recomendaria o {hospitalName} para amigos e familiares?
+              </Label>
+              
+              <div className="grid grid-cols-11 gap-2">
+                {Array.from({ length: 11 }, (_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setNpsScoreGlobal(i)}
+                    className={`
+                      w-12 h-12 rounded-full font-bold text-sm cursor-pointer
+                      ${getScaleColor(i, npsScoreGlobal === i, false)}
+                    `}
+                    disabled={!isPublicMode}
+                  >
+                    {i}
+                  </button>
+                ))}
+              </div>
+              
+              <div className="flex justify-between text-xs text-muted-foreground mt-2">
+                <span>Não recomendaria</span>
+                <span>Recomendaria totalmente</span>
+              </div>
+            </div>
+
+            <Separator />
+
+            {/* O que agradou global */}
+            <div>
+              <Label className="text-base font-medium mb-2 block">
+                O que mais te agradou em sua experiência conosco?
+              </Label>
+              <Textarea
+                value={oQueAgradouGlobal}
+                onChange={(e) => setOQueAgradouGlobal(e.target.value)}
+                placeholder="Conte-nos sobre sua experiência..."
+                rows={3}
+                disabled={!isPublicMode}
+              />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Avaliações por Setor */}
       <div className="space-y-8">
-        {setoresDisponiveis.map((setor) => (
+        {setoresDisponiveis.map((setor, index) => (
           <Card key={setor}>
             <CardHeader>
-              <CardTitle>Avaliação - {setor}</CardTitle>
+              <CardTitle>3.{index + 1} Avaliação - {setor}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              {/* Perguntas Padrão */}
-              <div className="bg-blue-50 dark:bg-blue-950 p-4 rounded-lg space-y-4">
-                <h4 className="font-semibold text-blue-900 dark:text-blue-100">Perguntas Padrão - {setor}</h4>
-                
-                {/* NPS Padrão */}
-                <div>
-                  <Label className="text-base font-medium mb-4 block">
-                    De 0 a 10, o quanto você recomendaria o {hospitalName} para amigos e familiares?
-                  </Label>
-                  
-                  <div className="grid grid-cols-11 gap-2">
-                    {Array.from({ length: 11 }, (_, i) => (
-                      <button
-                        key={i}
-                        onClick={() => updateRespostaSetor(setor, 'npsScorePadrao', i)}
-                        className={`
-                          w-12 h-12 rounded-full font-bold text-sm cursor-pointer
-                          ${getScaleColor(i, respostasSetores[setor].npsScorePadrao === i, false)}
-                        `}
-                        disabled={!isPublicMode}
-                      >
-                        {i}
-                      </button>
-                    ))}
-                  </div>
-                  
-                  <div className="flex justify-between text-xs text-muted-foreground mt-2">
-                    <span>Não recomendaria</span>
-                    <span>Recomendaria totalmente</span>
-                  </div>
-                </div>
-
-                <Separator />
-
-                {/* O que agradou padrão */}
-                <div>
-                  <Label className="text-base font-medium mb-2 block">
-                    O que mais te agradou em sua experiência conosco?
-                  </Label>
-                  <Textarea
-                    value={respostasSetores[setor].oQueAgradouPadrao}
-                    onChange={(e) => updateRespostaSetor(setor, 'oQueAgradouPadrao', e.target.value)}
-                    placeholder="Conte-nos sobre sua experiência..."
-                    rows={3}
-                    disabled={!isPublicMode}
-                  />
-                </div>
-              </div>
-
               {/* Perguntas Direcionadas */}
               <div className="bg-green-50 dark:bg-green-950 p-4 rounded-lg space-y-4">
-                <h4 className="font-semibold text-green-900 dark:text-green-100">Perguntas Direcionadas - {setor}</h4>
+                <h4 className="font-semibold text-green-900 dark:text-green-100">Avaliação Específica - {setor}</h4>
                 
                 {/* Avaliação do setor */}
                 <div>
