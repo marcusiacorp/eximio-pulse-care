@@ -89,6 +89,11 @@ export function EnvioModal({ isOpen, onClose, campanha }: EnvioModalProps) {
       if (updateError) throw updateError
 
       // Salvar configuração da campanha
+      console.log('Salvando configuração:', {
+        bannerUrl: campanha.layoutEnvio?.bannerUrl,
+        layoutEnvio: campanha.layoutEnvio
+      });
+      
       const { error: configError } = await supabase
         .from("campanha_configuracao")
         .insert({

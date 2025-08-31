@@ -379,18 +379,20 @@ const CriarCampanhaPage = () => {
                                     const fileExt = file.name.split('.').pop()
                                     const fileName = `${selectedHospital.id}_${Date.now()}.${fileExt}`
                                     
-                                    const { data, error } = await supabase.storage
-                                      .from('banners')
-                                      .upload(fileName, file)
-                                    
-                                    if (error) throw error
-                                    
-                                    // Get public URL
-                                    const { data: { publicUrl } } = supabase.storage
-                                      .from('banners')
-                                      .getPublicUrl(fileName)
-                                    
-                                    setBannerUrl(publicUrl)
+                                     const { data, error } = await supabase.storage
+                                       .from('banners')
+                                       .upload(fileName, file)
+                                     
+                                     if (error) throw error
+                                     
+                                     // Get public URL
+                                     const { data: { publicUrl } } = supabase.storage
+                                       .from('banners')
+                                       .getPublicUrl(fileName)
+                                     
+                                     console.log('Banner uploaded successfully:', publicUrl)
+                                     setBannerUrl(publicUrl)
+                                     toast.success("Banner enviado com sucesso!")
                                   } catch (error) {
                                     console.error('Erro ao fazer upload do banner:', error)
                                     toast.error("Erro ao fazer upload do banner")
@@ -547,7 +549,10 @@ const CriarCampanhaPage = () => {
           </Button>
           <Button 
             className="bg-primary text-primary-foreground hover:bg-primary/90"
-            onClick={() => setShowEnvioModal(true)}
+            onClick={() => {
+              console.log('Banner URL antes de abrir modal:', bannerUrl)
+              setShowEnvioModal(true)
+            }}
           >
             Passo 2 - incluir envios
           </Button>
