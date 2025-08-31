@@ -16,12 +16,12 @@ export function DadosPessoaisForm({ onSubmit, loading }: DadosPessoaisFormProps)
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    
-    if (!nome.trim() || !email.trim()) {
-      return
-    }
 
-    onSubmit({ nome: nome.trim(), email: email.trim(), telefone: telefone.trim() })
+    onSubmit({ 
+      nome: nome.trim(), 
+      email: email.trim(), 
+      telefone: telefone.trim() 
+    })
   }
 
   return (
@@ -32,26 +32,24 @@ export function DadosPessoaisForm({ onSubmit, loading }: DadosPessoaisFormProps)
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="nome">Nome *</Label>
+            <Label htmlFor="nome">Nome</Label>
             <Input
               id="nome"
               type="text"
               value={nome}
               onChange={(e) => setNome(e.target.value)}
-              placeholder="Digite seu nome completo"
-              required
+              placeholder="Digite seu nome completo (opcional)"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="email">Email *</Label>
+            <Label htmlFor="email">Email</Label>
             <Input
               id="email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="Digite seu email"
-              required
+              placeholder="Digite seu email (opcional)"
             />
           </div>
 
@@ -69,9 +67,9 @@ export function DadosPessoaisForm({ onSubmit, loading }: DadosPessoaisFormProps)
           <Button 
             type="submit" 
             className="w-full"
-            disabled={loading || !nome.trim() || !email.trim()}
+            disabled={loading}
           >
-            {loading ? "Carregando..." : "Continuar"}
+            {loading ? "Salvando..." : "Finalizar Resposta"}
           </Button>
         </form>
       </CardContent>

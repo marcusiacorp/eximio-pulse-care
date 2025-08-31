@@ -43,7 +43,8 @@ export default function PesquisaPublica() {
   const [envioId, setEnvioId] = useState<string | null>(null)
   const [dadosPessoais, setDadosPessoais] = useState<{ nome: string; email: string; telefone: string } | null>(null)
   const [pacienteId, setPacienteId] = useState<string | null>(null)
-  const [mostrandoDadosPessoais, setMostrandoDadosPessoais] = useState(true)
+  const [mostrandoDadosPessoais, setMostrandoDadosPessoais] = useState(false)
+  const [coletandoDadosFinais, setColetandoDadosFinais] = useState(false)
 
   // Carregar dados da campanha
   useEffect(() => {
@@ -120,12 +121,8 @@ export default function PesquisaPublica() {
     if (etapaAtual < etapas.length - 1) {
       setEtapaAtual(etapaAtual + 1)
     } else {
-      // Na última etapa, salvar resposta
-      const sucesso = await salvarResposta()
-      if (sucesso) {
-        toast.success("Resposta enviada com sucesso! Obrigado pela sua participação.")
-        setEtapaAtual(999) // Tela de agradecimento
-      }
+      // Na última etapa, mostrar coleta de dados pessoais
+      setColetandoDadosFinais(true)
     }
   }
 
@@ -135,54 +132,20 @@ export default function PesquisaPublica() {
     }
   }
 
-  const handleDadosPessoais = async (dados: { nome: string; email: string; telefone: string }) => {
+  const handleDadosPessoaisFinais = async (dados: { nome: string; email: string; telefone: string }) => {
     try {
-      console.log('Salvando dados pessoais:', dados)
+      console.log('Salvando dados pessoais finais:', dados)
       
-      // Primeiro, verificar se já existe um paciente com este email
-      const { data: pacienteExistente, error: buscaError } = await supabase
-        .from('pacientes')
-        .select('id, nome, email, telefone')
-        .eq('email', dados.email)
-        .single()
-
-      let paciente = null
-
-      if (pacienteExistente && !buscaError) {
-        // Paciente já existe, usar o existente
-        console.log('Paciente já existe, usando existente:', pacienteExistente)
-        paciente = pacienteExistente
-      } else {
-        // Paciente não existe, criar novo
-        console.log('Criando novo paciente')
-        const { data: novoPaciente, error: pacienteError } = await supabase
-          .from('pacientes')
-          .insert({
-            nome: dados.nome,
-            email: dados.email,
-            telefone: dados.telefone || null,
-            hospital_id: campanha?.hospital_id || null
-          })
-          .select()
-          .single()
-
-        if (pacienteError) {
-          console.error('Erro ao criar paciente:', pacienteError)
-          toast.error(`Erro ao salvar dados: ${pacienteError.message}`)
-          return
-        }
-
-        paciente = novoPaciente
-        console.log('Paciente criado com sucesso:', novoPaciente)
-      }
-
       setDadosPessoais(dados)
-      setPacienteId(paciente.id)
-      setMostrandoDadosPessoais(false)
       
-      toast.success('Dados salvos com sucesso!')
+      // Agora salvar resposta com os dados pessoais
+      const sucesso = await salvarResposta(dados)
+      if (sucesso) {
+        toast.success("Resposta enviada com sucesso! Obrigado pela sua participação.")
+        setEtapaAtual(999) // Tela de agradecimento
+      }
     } catch (error) {
-      console.error('Erro inesperado ao salvar dados pessoais:', error)
+      console.error('Erro inesperado ao salvar dados finais:', error)
       toast.error('Erro inesperado ao salvar dados')
     }
   }
@@ -196,52 +159,39 @@ export default function PesquisaPublica() {
   }
 
   // Função para salvar resposta no Supabase
-  const salvarResposta = async () => {
+  const salvarResposta = async (dadosPessoaisFinais?: { nome: string; email: string; telefone: string }) => {
     if (!campanhaId) return false
 
     try {
       console.log('Iniciando salvamento de resposta:', respostas)
+      console.log('Dados pessoais finais:', dadosPessoaisFinais)
       
-      // Criar envio se não existir
-      let currentEnvioId = envioId
-      if (!currentEnvioId) {
-        console.log('Criando novo envio para campanha:', campanhaId)
-        
-        if (!pacienteId) {
-          console.error('ID do paciente não encontrado')
-          toast.error('Erro: dados do paciente não encontrados')
-          return false
-        }
-        
-        const envioData = {
-          campanha_id: campanhaId,
-          paciente_id: pacienteId,
-          status: 'respondido',
-          respondido_em: new Date().toISOString()
-        }
-        
-        console.log('Dados do envio:', envioData)
-        
-        const { data: novoEnvio, error: envioError } = await supabase
-          .from('envios_pesquisa')
-          .insert(envioData)
-          .select()
-          .single()
+      // Criar novo envio sem paciente_id (pesquisa pública)
+      const envioData = {
+        campanha_id: campanhaId,
+        paciente_id: null, // Pesquisa pública não tem paciente cadastrado
+        status: 'respondido',
+        respondido_em: new Date().toISOString()
+      }
+      
+      console.log('Dados do envio:', envioData)
+      
+      const { data: novoEnvio, error: envioError } = await supabase
+        .from('envios_pesquisa')
+        .insert(envioData)
+        .select()
+        .single()
 
-        if (envioError) {
-          console.error('Erro detalhado ao criar envio:', envioError)
-          console.error('Código do erro:', envioError.code)
-          console.error('Detalhes do erro:', envioError.details)
-          toast.error(`Erro ao criar envio: ${envioError.message}`)
-          return false
-        }
-
-        console.log('Envio criado com sucesso:', novoEnvio)
-        currentEnvioId = novoEnvio.id
-        setEnvioId(currentEnvioId)
+      if (envioError) {
+        console.error('Erro detalhado ao criar envio:', envioError)
+        toast.error(`Erro ao criar envio: ${envioError.message}`)
+        return false
       }
 
-      // Preparar dados normalizados
+      console.log('Envio criado com sucesso:', novoEnvio)
+      const currentEnvioId = novoEnvio.id
+
+      // Preparar dados normalizados com dados pessoais
       const dadosResposta = {
         envio_id: currentEnvioId,
         campanha_id: campanhaId,
@@ -254,7 +204,11 @@ export default function PesquisaPublica() {
         resposta_autorizacao: respostas.resposta_autorizacao || null,
         pontos_contato: respostas.pontos_contato || null,
         problemas: respostas.problemas || null,
-        formularios_adicionais: respostas.formularios_adicionais || null
+        formularios_adicionais: respostas.formularios_adicionais || null,
+        // Adicionar dados pessoais do respondente
+        nome_respondente: dadosPessoaisFinais?.nome || null,
+        email_respondente: dadosPessoaisFinais?.email || null,
+        telefone_respondente: dadosPessoaisFinais?.telefone || null
       }
 
       console.log('Salvando resposta com dados:', dadosResposta)
@@ -266,8 +220,6 @@ export default function PesquisaPublica() {
 
       if (respostaError) {
         console.error('Erro detalhado ao salvar resposta:', respostaError)
-        console.error('Código do erro:', respostaError.code)
-        console.error('Detalhes do erro:', respostaError.details)
         toast.error(`Erro ao salvar resposta: ${respostaError.message}`)
         return false
       }
@@ -319,15 +271,23 @@ export default function PesquisaPublica() {
   const etapaAtualNome = etapas[etapaAtual]
   const isUltimaEtapa = etapaAtual === etapas.length - 1
 
-  // Se ainda está coletando dados pessoais, mostrar formulário
-  if (mostrandoDadosPessoais) {
+  // Se está coletando dados pessoais no final, mostrar formulário
+  if (coletandoDadosFinais) {
     return (
       <div className="min-h-screen bg-background py-8">
         <div className="container mx-auto max-w-4xl px-4 flex items-center justify-center min-h-[80vh]">
-          <DadosPessoaisForm 
-            onSubmit={handleDadosPessoais}
-            loading={false}
-          />
+          <div className="text-center mb-6">
+            <h1 className="text-2xl font-bold text-foreground mb-2">
+              Quase terminamos!
+            </h1>
+            <p className="text-muted-foreground mb-6">
+              Para finalizar, gostaríamos de saber seus dados de contato (opcional)
+            </p>
+            <DadosPessoaisForm 
+              onSubmit={handleDadosPessoaisFinais}
+              loading={false}
+            />
+          </div>
         </div>
       </div>
     )
