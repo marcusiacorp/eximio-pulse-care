@@ -2,6 +2,7 @@ import React from "react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent } from "@/components/ui/card"
+import { getScaleColor } from "@/lib/utils"
 
 interface ProblemasPreviewProps {
   problemasAtivos: boolean
@@ -118,16 +119,17 @@ export const ProblemasPreview = ({ problemasAtivos, nomeHospital, isPublicMode =
               <h4 className="font-medium mb-3">Qual a sua nota para a forma com que você foi atendido?</h4>
               <div className="flex flex-wrap gap-2 justify-center">
                 {Array.from({ length: 11 }, (_, i) => (
-                  <Button
+                  <button
                     key={i}
-                    variant={notaAtendimento === i ? "default" : "outline"}
-                    size="sm"
-                    className="w-10 h-10 p-0"
+                    className={`
+                      w-10 h-10 rounded-full text-sm font-medium
+                      ${getScaleColor(i, notaAtendimento === i, !problemasAtivos)}
+                    `}
                     disabled={!problemasAtivos}
                     onClick={() => setNotaAtendimento(i)}
                   >
                     {i}
-                  </Button>
+                  </button>
                 ))}
               </div>
             </div>

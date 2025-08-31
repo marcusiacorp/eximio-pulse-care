@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import { supabase } from "@/integrations/supabase/client"
 import { toast } from "sonner"
+import { getScaleColor } from "@/lib/utils"
 
 interface NPSPreviewProps {
   trechoPergunta: string
@@ -144,17 +145,6 @@ export const NPSPreview = ({
     }
   }
 
-  const getNPSColor = (score: number) => {
-    if (score <= 6) return "bg-red-500 hover:bg-red-600"
-    if (score <= 8) return "bg-yellow-500 hover:bg-yellow-600"
-    return "bg-green-500 hover:bg-green-600"
-  }
-
-  const getNPSColorSelected = (score: number) => {
-    if (score <= 6) return "bg-red-600 text-white"
-    if (score <= 8) return "bg-yellow-600 text-white"
-    return "bg-green-600 text-white"
-  }
 
   const handleSetorToggle = (setor: string) => {
     setSetoresSelecionados(prev => 
@@ -245,11 +235,8 @@ export const NPSPreview = ({
               key={i}
               onClick={() => setSelectedScore(i)}
               className={`
-                h-10 w-10 rounded-full text-sm font-medium transition-all duration-200
-                ${selectedScore === i 
-                  ? getNPSColorSelected(i)
-                  : `${getNPSColor(i)} text-white hover:scale-105`
-                }
+                h-10 w-10 rounded-full text-sm font-medium
+                ${getScaleColor(i, selectedScore === i)}
               `}
             >
               {i}

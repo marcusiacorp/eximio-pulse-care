@@ -6,6 +6,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { PontoContato } from "@/components/PontosContatoForm"
+import { getScaleColor } from "@/lib/utils"
 
 interface PontosContatoPreviewProps {
   pontosContatoAtivos: boolean
@@ -71,19 +72,6 @@ export const PontosContatoPreview = ({
     setInfluenciaSelecionada(prev => prev.filter(item => item !== opcao))
   }
 
-  const getScoreButtonClass = (score: number, isSelected: boolean, isDisabled: boolean) => {
-    if (isDisabled) {
-      return "bg-muted text-muted-foreground cursor-not-allowed border-muted"
-    }
-    
-    if (isSelected) {
-      if (score <= 6) return "bg-red-500 text-white border-red-500"
-      if (score <= 8) return "bg-yellow-500 text-white border-yellow-500"
-      return "bg-green-500 text-white border-green-500"
-    }
-    
-    return "bg-background border-border hover:bg-accent"
-  }
 
   // Enviar dados para o parent via callback
   const enviarResposta = () => {
@@ -132,16 +120,17 @@ export const PontosContatoPreview = ({
                     De 0 a 10, como você avalia sua experiência durante sua passagem no setor <strong>{setor}</strong>?
                   </p>
                   <div className="flex gap-1 justify-center">
-                    {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((score) => (
-                      <Button
+                  {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((score) => (
+                      <button
                         key={score}
-                        size="sm"
-                        variant="outline"
-                        className="w-8 h-8 p-0 bg-muted text-muted-foreground cursor-not-allowed border-muted"
+                        className={`
+                          w-8 h-8 rounded-full text-sm font-medium
+                          ${getScaleColor(score, false, true)}
+                        `}
                         disabled
                       >
                         {score}
-                      </Button>
+                      </button>
                     ))}
                   </div>
                 </div>
@@ -187,19 +176,16 @@ export const PontosContatoPreview = ({
               
               <div className="flex gap-1 justify-center flex-wrap">
                 {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((score) => (
-                  <Button
+                  <button
                     key={score}
-                    size="sm"
-                    variant="outline"
-                    className={`w-8 h-8 p-0 ${getScoreButtonClass(
-                      score, 
-                      selectedScores[ponto.id] === score,
-                      false
-                    )}`}
+                    className={`
+                      w-8 h-8 rounded-full text-sm font-medium
+                      ${getScaleColor(score, selectedScores[ponto.id] === score)}
+                    `}
                     onClick={() => handleScoreSelect(ponto.id, score)}
                   >
                     {score}
-                  </Button>
+                  </button>
                 ))}
               </div>
               
