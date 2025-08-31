@@ -5,9 +5,12 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Switch } from "@/components/ui/switch"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Separator } from "@/components/ui/separator"
+import { EnvioModal } from "@/components/EnvioModal"
+import { Checkbox } from "@/components/ui/checkbox"
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable"
 import { useAuth } from "@/contexts/AuthContext"
 import { useHospital } from "@/contexts/HospitalContext"
@@ -56,6 +59,7 @@ const CriarCampanhaPage = () => {
   const [mensagemPersonalizada, setMensagemPersonalizada] = useState("")
   const [mensagem, setMensagem] = useState("Nós valorizamos muito nosso relacionamento e o serviço aos nossos clientes e queremos melhorar a cada dia. Pedimos que você use apenas alguns minutos para nos dar sua sincera opinião sobre sua experiência conosco.")
   const [permitirDescadastro, setPermitirDescadastro] = useState(true)
+  const [showEnvioModal, setShowEnvioModal] = useState(false)
   
   // Estados do usuário
   const [userHospitalId, setUserHospitalId] = useState<string | null>(null)
@@ -580,7 +584,55 @@ const CriarCampanhaPage = () => {
             </div>
           </ResizablePanel>
         </ResizablePanelGroup>
+
+        {/* Botões de Navegação */}
+        <div className="flex justify-between mt-6">
+          <Button variant="outline" className="text-muted-foreground">
+            Passo 1/2
+          </Button>
+          <Button 
+            className="bg-primary text-primary-foreground hover:bg-primary/90"
+            onClick={() => setShowEnvioModal(true)}
+          >
+            Passo 2 - incluir envios
+          </Button>
+        </div>
       </div>
+
+      {/* Modal de Envios */}
+      <EnvioModal 
+        isOpen={showEnvioModal}
+        onClose={() => setShowEnvioModal(false)}
+        campanha={{
+          nome: campaignName,
+          tipo: tipo!,
+          perguntaDefinitiva: {
+            trechoPergunta,
+            recomendacao,
+            autorizacao,
+            oQueAgradou,
+            setoresHospital
+          },
+          pontosContato: {
+            ativos: pontosContatoAtivos,
+            dados: pontosContato
+          },
+          problemas: {
+            ativos: problemasAtivos
+          },
+          formulariosAdicionais: {
+            ativos: formulariosAdicionaisAtivos,
+            formularios: formulariosCriados
+          },
+          layoutEnvio: {
+            assuntoEmail,
+            bannerUrl,
+            mensagemPersonalizada,
+            mensagem,
+            permitirDescadastro
+          }
+        }}
+      />
     </div>
   )
 }

@@ -114,6 +114,42 @@ export type Database = {
           },
         ]
       }
+      envios_pesquisa: {
+        Row: {
+          campanha_id: string
+          created_at: string
+          enviado_em: string
+          id: string
+          paciente_id: string
+          respondido_em: string | null
+          status: string
+          token_resposta: string
+          updated_at: string
+        }
+        Insert: {
+          campanha_id: string
+          created_at?: string
+          enviado_em?: string
+          id?: string
+          paciente_id: string
+          respondido_em?: string | null
+          status?: string
+          token_resposta?: string
+          updated_at?: string
+        }
+        Update: {
+          campanha_id?: string
+          created_at?: string
+          enviado_em?: string
+          id?: string
+          paciente_id?: string
+          respondido_em?: string | null
+          status?: string
+          token_resposta?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       hospitais: {
         Row: {
           created_at: string
@@ -143,6 +179,72 @@ export type Database = {
           localizacao?: string | null
           nome?: string
           sponsor?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      pacientes: {
+        Row: {
+          created_at: string
+          email: string
+          hospital_id: string | null
+          id: string
+          nome: string
+          telefone: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          hospital_id?: string | null
+          id?: string
+          nome: string
+          telefone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          hospital_id?: string | null
+          id?: string
+          nome?: string
+          telefone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      respostas_pesquisa: {
+        Row: {
+          created_at: string
+          envio_id: string
+          formularios_adicionais: Json | null
+          id: string
+          nps_score: number | null
+          pergunta_definitiva: Json | null
+          pontos_contato: Json | null
+          problemas: Json | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          envio_id: string
+          formularios_adicionais?: Json | null
+          id?: string
+          nps_score?: number | null
+          pergunta_definitiva?: Json | null
+          pontos_contato?: Json | null
+          problemas?: Json | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          envio_id?: string
+          formularios_adicionais?: Json | null
+          id?: string
+          nps_score?: number | null
+          pergunta_definitiva?: Json | null
+          pontos_contato?: Json | null
+          problemas?: Json | null
           updated_at?: string
         }
         Relationships: []
