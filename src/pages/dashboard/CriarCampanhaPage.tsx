@@ -133,7 +133,9 @@ const CriarCampanhaPage = () => {
       // Popular pontos de contato
       if (configData.pontos_contato) {
         setPontosContatoAtivos(true)
-        setPontosContato(configData.pontos_contato as any)
+        const pontosData = configData.pontos_contato as any
+        // Se tem estrutura com pontos, usar ela; senão, usar diretamente como array
+        setPontosContato(pontosData?.pontos || pontosData || [])
       }
       
       // Popular problemas
@@ -144,7 +146,9 @@ const CriarCampanhaPage = () => {
       // Popular formulários adicionais
       if (configData.formularios_adicionais) {
         setFormulariosAdicionaisAtivos(true)
-        setFormulariosCriados(configData.formularios_adicionais as any)
+        const formulariosData = configData.formularios_adicionais as any
+        // Se tem estrutura com formularios, usar ela; senão, usar diretamente como array
+        setFormulariosCriados(formulariosData?.formularios || formulariosData || [])
       }
 
       console.log('DEBUGGING BANNER - Dados carregados:', {
@@ -674,9 +678,9 @@ const CriarCampanhaPage = () => {
                 oQueAgradou,
                 setoresHospital
               },
-              pontosContato: pontosContatoAtivos ? pontosContato : null,
-              problemas: problemasAtivos,
-              formulariosAdicionais: formulariosAdicionaisAtivos ? formulariosCriados : null,
+              pontosContato: pontosContatoAtivos ? { pontos: pontosContato } : null,
+              problemas: problemasAtivos ? {} : null,
+              formulariosAdicionais: formulariosAdicionaisAtivos ? { formularios: formulariosCriados } : null,
               layoutEnvio: {
                 assuntoEmail,
                 bannerUrl,
