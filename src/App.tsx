@@ -14,6 +14,7 @@ import ProjetosPage from "./pages/dashboard/ProjetosPage";
 import CadastroHospitalPage from "./pages/dashboard/CadastroHospitalPage";
 import CampanhasPage from "./pages/dashboard/CampanhasPage";
 import CriarCampanhaPage from "./pages/dashboard/CriarCampanhaPage";
+import PesquisaPublica from "./pages/PesquisaPublica";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -27,6 +28,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/auth" element={<AuthPage />} />
+          <Route path="/pesquisa/:campanhaId" element={<PesquisaPublica />} />
           <Route path="/dashboard" element={
             <ProtectedRoute>
               <DashboardPage />

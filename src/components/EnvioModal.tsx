@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -6,10 +6,12 @@ import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Trash2, Upload } from "lucide-react"
+import { Trash2, Upload, Copy, QrCode } from "lucide-react"
 import { supabase } from "@/integrations/supabase/client"
 import { useHospital } from "@/contexts/HospitalContext"
+import { useAuth } from "@/contexts/AuthContext"
 import { toast } from "sonner"
+import QRCode from "qrcode"
 
 interface CampanhaData {
   nome: string
@@ -46,9 +48,83 @@ export function EnvioModal({ isOpen, onClose, campanha }: EnvioModalProps) {
   const [selectedPacientes, setSelectedPacientes] = useState<string[]>([])
   const [novoPaciente, setNovoPaciente] = useState({ nome: "", email: "", telefone: "" })
   const [loading, setLoading] = useState(false)
+  const [campanhaId, setCampanhaId] = useState<string>("")
+  const [qrCodeUrl, setQrCodeUrl] = useState<string>("")
   const { selectedHospital } = useHospital()
+  const { user } = useAuth()
 
-  // Carregar pacientes ao abrir o modal
+  // Gerar link da campanha
+  const linkCampanha = campanhaId ? `${window.location.origin}/pesquisa/${campanhaId}` : ""
+
+  // Salvar campanha e gerar QR code para campanhas do tipo link
+  const handleSalvarCampanha = async () => {
+    if (!selectedHospital || !user) return
+
+    setLoading(true)
+    try {
+      const { data, error } = await supabase
+        .from("campanhas")
+        .insert({
+          nome: campanha.nome,
+          tipo_campanha: campanha.tipo,
+          hospital_id: selectedHospital.id,
+          usuario_id: user.id,
+          ativa: false
+        })
+        .select()
+        .single()
+
+      if (error) throw error
+
+      setCampanhaId(data.id)
+
+      // Salvar configuração da campanha
+      const { error: configError } = await supabase
+        .from("campanha_configuracao")
+        .insert({
+          campanha_id: data.id,
+          pontos_contato: campanha.pontosContato,
+          problemas: campanha.problemas,
+          formularios_adicionais: campanha.formulariosAdicionais,
+          layout_envio: campanha.layoutEnvio
+        })
+
+      if (configError) throw configError
+
+      // Gerar QR code para campanhas do tipo link
+      if (campanha.tipo === 'link') {
+        const link = `${window.location.origin}/pesquisa/${data.id}`
+        const qrCodeDataUrl = await QRCode.toDataURL(link, {
+          width: 200,
+          margin: 2,
+          color: {
+            dark: '#000000',
+            light: '#FFFFFF',
+          }
+        })
+        setQrCodeUrl(qrCodeDataUrl)
+      }
+
+      toast.success("Campanha salva com sucesso!")
+    } catch (error) {
+      console.error("Erro ao salvar campanha:", error)
+      toast.error("Erro ao salvar campanha")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Copiar link para clipboard
+  const handleCopiarLink = async () => {
+    try {
+      await navigator.clipboard.writeText(linkCampanha)
+      toast.success("Link copiado para a área de transferência!")
+    } catch (error) {
+      toast.error("Erro ao copiar link")
+    }
+  }
+
+  // Carregar pacientes ao abrir o modal (apenas para campanhas que não são do tipo link)
   const loadPacientes = async () => {
     if (!selectedHospital) return
     
@@ -212,6 +288,84 @@ export function EnvioModal({ isOpen, onClose, campanha }: EnvioModalProps) {
     // Aqui implementaremos o envio da pesquisa
     toast.success(`Pesquisa será enviada para ${selectedPacientes.length} pacientes`)
     onClose()
+  }
+
+  // Verificar se é campanha do tipo link ao abrir
+  useEffect(() => {
+    if (isOpen && campanha.tipo === 'link' && !campanhaId) {
+      handleSalvarCampanha()
+    }
+  }, [isOpen, campanha.tipo])
+
+  // Se for campanha do tipo link, mostrar interface diferente
+  if (campanha.tipo === 'link') {
+    return (
+      <Dialog open={isOpen} onOpenChange={onClose}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Link da Pesquisa - {campanha.nome}</DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-6">
+            <div className="text-center">
+              <p className="text-lg font-medium mb-2">
+                Envie o mesmo link para diversos clientes. Eles podem se cadastrar ou não dependendo da sua configuração.
+              </p>
+            </div>
+
+            {loading ? (
+              <div className="text-center py-8">
+                <p>Gerando link da campanha...</p>
+              </div>
+            ) : (
+              <>
+                <Card>
+                  <CardContent className="p-6 space-y-4">
+                    <div>
+                      <Label>Link da Pesquisa</Label>
+                      <div className="flex gap-2 mt-2">
+                        <Input 
+                          value={linkCampanha} 
+                          readOnly 
+                          className="font-mono text-sm"
+                        />
+                        <Button 
+                          onClick={handleCopiarLink}
+                          variant="outline"
+                          size="icon"
+                        >
+                          <Copy className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+
+                    {qrCodeUrl && (
+                      <div className="text-center space-y-4">
+                        <div>
+                          <h3 className="font-semibold mb-2">Use este QR Code em seus projetos</h3>
+                          <p className="text-sm text-muted-foreground mb-4">
+                            Ideal para utilizar em qualquer tipo de material impresso.
+                          </p>
+                          <div className="flex justify-center">
+                            <img src={qrCodeUrl} alt="QR Code da pesquisa" className="border rounded" />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+
+                <div className="flex justify-end">
+                  <Button onClick={onClose}>
+                    Acompanhar Envios
+                  </Button>
+                </div>
+              </>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+    )
   }
 
   return (
