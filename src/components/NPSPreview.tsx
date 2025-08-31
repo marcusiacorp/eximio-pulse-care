@@ -17,17 +17,19 @@ interface NPSPreviewProps {
   onResponse?: (data: any) => void
 }
 
-export const NPSPreview = ({ 
-  trechoPergunta, 
-  recomendacao, 
-  autorizacao, 
-  oQueAgradou, 
+export const NPSPreview = ({
+  trechoPergunta = "",
+  recomendacao = "",
+  autorizacao = "",
+  oQueAgradou = "",
   setoresHospital = [],
-  nomeHospital = "Nome do Hospital",
+  nomeHospital = "",
   isPublicMode = false,
-  logoUrl,
-  onResponse
+  logoUrl
 }: NPSPreviewProps) => {
+  console.log('NPSPreview recebeu logoUrl:', logoUrl)
+  console.log('NPSPreview logoUrl existe?', !!logoUrl)
+  console.log('NPSPreview isPublicMode:', isPublicMode)
   const [selectedScore, setSelectedScore] = useState<number | null>(null)
   const [feedback, setFeedback] = useState("")
   const [selectedAuthorization, setSelectedAuthorization] = useState<boolean | null>(null)
@@ -106,39 +108,30 @@ export const NPSPreview = ({
 
   return (
     <div className="max-w-md mx-auto bg-white border rounded-lg shadow-sm p-6 space-y-6">
-      {/* Logo do Hospital */}
-      <div className="flex justify-center">
-        {(logoUrl || logoPreview) ? (
-          <div className="w-32 h-16 rounded-lg flex items-center justify-center">
-            <img 
-              src={logoUrl || logoPreview} 
-              alt="Logo do Hospital" 
-              className="w-full h-full object-contain rounded-lg"
-              onError={(e) => {
-                console.error('Erro ao carregar imagem:', logoUrl)
-                console.log('URL do banner:', logoUrl)
-              }}
-            />
-          </div>
-        ) : isPublicMode ? (
-          <div className="w-32 h-16 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center bg-gray-50">
-            <div className="text-center">
-              <p className="text-xs text-gray-500">Banner não configurado</p>
-              <p className="text-xs text-red-500">URL: {logoUrl || 'undefined'}</p>
+          {/* Logo do hospital */}
+          {logoUrl && (
+            <div className="flex justify-center mb-6">
+              <img 
+                src={logoUrl} 
+                alt={`Logo ${nomeHospital}`}
+                className="h-16 w-auto object-contain"
+                onError={(e) => {
+                  console.error('Erro ao carregar imagem:', logoUrl)
+                  console.error('Detalhes do erro:', e)
+                }}
+                onLoad={() => {
+                  console.log('Imagem carregada com sucesso:', logoUrl)
+                }}
+              />
             </div>
-          </div>
-        ) : !isPublicMode ? (
-          <div 
-            className="w-32 h-16 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center bg-gray-50 cursor-pointer hover:bg-gray-100 transition-colors"
-            onClick={() => setShowLogoDialog(true)}
-          >
-            <div className="text-center">
-              <Upload className="h-6 w-6 mx-auto text-gray-400 mb-1" />
-              <p className="text-xs text-gray-500">Logo do Hospital</p>
+          )}
+          
+          {!logoUrl && (
+            <div className="text-center text-muted-foreground mb-6">
+              Banner não configurado. URL: {logoUrl || 'undefined'}
+              {isPublicMode && <div className="text-xs mt-1">Modo público - sem banner configurado</div>}
             </div>
-          </div>
-        ) : null}
-      </div>
+          )}
 
       {/* Nome do Hospital */}
       <div className="text-center">

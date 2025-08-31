@@ -392,6 +392,7 @@ const CriarCampanhaPage = () => {
                                      
                                      console.log('Banner uploaded successfully:', publicUrl)
                                      setBannerUrl(publicUrl)
+                                     console.log('Banner URL set no estado:', publicUrl)
                                      toast.success("Banner enviado com sucesso!")
                                   } catch (error) {
                                     console.error('Erro ao fazer upload do banner:', error)

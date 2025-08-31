@@ -66,8 +66,15 @@ export default function PesquisaPublica() {
           toast.error("Esta pesquisa não está mais disponível")
         } else {
           console.log('Campanha carregada:', data)
-          console.log('Layout envio:', data.configuracao?.[0]?.layout_envio)
-          console.log('Banner URL:', (data.configuracao?.[0]?.layout_envio as any)?.bannerUrl)
+          console.log('Layout envio completo:', data.configuracao?.[0]?.layout_envio)
+          console.log('Tipo do layout_envio:', typeof data.configuracao?.[0]?.layout_envio)
+          
+          // Debug banner URL extraction
+          const layoutEnvio = data.configuracao?.[0]?.layout_envio
+          const bannerUrl = (layoutEnvio as any)?.bannerUrl
+          console.log('Banner URL extraído:', bannerUrl)
+          console.log('Banner URL existe?', !!bannerUrl)
+          
           setCampanha(data)
 
           // Definir etapas baseadas na configuração
@@ -156,18 +163,28 @@ export default function PesquisaPublica() {
     <div className="min-h-screen bg-background py-8">
       <div className="container mx-auto max-w-4xl px-4">
         {/* Renderizar o componente de preview apropriado para cada etapa */}
-        {etapaAtualNome === "pergunta_definitiva" && (
-          <NPSPreview
-            trechoPergunta={campanha.configuracao?.[0]?.trecho_pergunta || ""}
-            recomendacao={campanha.configuracao?.[0]?.recomendacao || ""}
-            autorizacao={campanha.configuracao?.[0]?.autorizacao || ""}
-            oQueAgradou={(campanha.configuracao?.[0]?.pergunta_definitiva as any)?.oQueAgradou}
-            setoresHospital={(campanha.configuracao?.[0]?.pergunta_definitiva as any)?.setoresHospital || []}
-            nomeHospital={campanha.nome}
-            isPublicMode={true}
-            logoUrl={(campanha.configuracao?.[0]?.layout_envio as any)?.bannerUrl}
-          />
-        )}
+        {etapaAtualNome === "pergunta_definitiva" && (() => {
+          const layoutEnvio = campanha.configuracao?.[0]?.layout_envio
+          const logoUrl = (layoutEnvio as any)?.bannerUrl
+          
+          console.log('Passando para NPSPreview:')
+          console.log('- layoutEnvio:', layoutEnvio)
+          console.log('- logoUrl:', logoUrl)
+          console.log('- logoUrl tipo:', typeof logoUrl)
+          
+          return (
+            <NPSPreview
+              trechoPergunta={campanha.configuracao?.[0]?.trecho_pergunta || ""}
+              recomendacao={campanha.configuracao?.[0]?.recomendacao || ""}
+              autorizacao={campanha.configuracao?.[0]?.autorizacao || ""}
+              oQueAgradou={(campanha.configuracao?.[0]?.pergunta_definitiva as any)?.oQueAgradou}
+              setoresHospital={(campanha.configuracao?.[0]?.pergunta_definitiva as any)?.setoresHospital || []}
+              nomeHospital={campanha.nome}
+              isPublicMode={true}
+              logoUrl={logoUrl}
+            />
+          )
+        })()}
 
         {etapaAtualNome === "pontos_contato" && campanha.configuracao?.[0]?.pontos_contato && (
           <PontosContatoPreview
