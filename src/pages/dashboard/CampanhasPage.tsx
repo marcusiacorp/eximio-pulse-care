@@ -14,54 +14,32 @@ import { Badge } from "@/components/ui/badge"
 import { supabase } from "@/integrations/supabase/client"
 import { useHospital } from "@/contexts/HospitalContext"
 import { toast } from "sonner"
-
-interface Campanha {
-  id: string
-  nome: string
-  tipo_campanha: string
-  data_criacao: string
-  ativa: boolean
-  link_campanha?: string
-}
+import { useCampanhaMetrics, useCampanhasByTypeMetrics } from "@/hooks/useCampanhaMetrics"
+import { CampanhaMetricsCard } from "@/components/CampanhaMetricsCard"
 
 const CampanhasPage = () => {
   const navigate = useNavigate()
   const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [campanhas, setCampanhas] = useState<Campanha[]>([])
-  const [loading, setLoading] = useState(true)
   const { selectedHospital } = useHospital()
+  
+  // Usar o hook para buscar métricas das campanhas
+  const { 
+    data: campanhasMetrics, 
+    isLoading: loadingMetrics, 
+    error: errorMetrics 
+  } = useCampanhaMetrics(selectedHospital?.id)
+  
+  const { 
+    data: typeMetrics, 
+    isLoading: loadingTypeMetrics 
+  } = useCampanhasByTypeMetrics(selectedHospital?.id)
 
   useEffect(() => {
-    carregarCampanhas()
-  }, [selectedHospital])
-
-  const carregarCampanhas = async () => {
-    if (!selectedHospital?.id) {
-      setLoading(false)
-      return
+    if (errorMetrics) {
+      console.error('Erro ao carregar métricas:', errorMetrics)
+      toast.error('Erro ao carregar métricas das campanhas')
     }
-
-    try {
-      setLoading(true)
-      const { data, error } = await supabase
-        .from('campanhas')
-        .select('*')
-        .eq('hospital_id', selectedHospital.id)
-        .order('created_at', { ascending: false })
-
-      if (error) {
-        console.error('Erro ao carregar campanhas:', error)
-        toast.error('Erro ao carregar campanhas')
-      } else {
-        setCampanhas(data || [])
-      }
-    } catch (error) {
-      console.error('Erro:', error)
-      toast.error('Erro inesperado ao carregar campanhas')
-    } finally {
-      setLoading(false)
-    }
-  }
+  }, [errorMetrics])
 
   const getTipoIcon = (tipo: string) => {
     switch (tipo) {
@@ -202,99 +180,119 @@ const CampanhasPage = () => {
         </Dialog>
       </div>
 
-      {/* Lista de campanhas existentes */}
-      <div className="grid gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Suas Campanhas</CardTitle>
-            {!selectedHospital ? (
-              <CardDescription>
-                Selecione um hospital para visualizar as campanhas.
-              </CardDescription>
-            ) : loading ? (
-              <CardDescription>
-                Carregando campanhas...
-              </CardDescription>
-            ) : campanhas.length === 0 ? (
-              <CardDescription>
-                Você ainda não possui campanhas criadas. Clique em "Nova Campanha" para começar.
-              </CardDescription>
-            ) : (
-              <CardDescription>
-                {campanhas.length} campanha(s) encontrada(s) para {selectedHospital.nome}
-              </CardDescription>
-            )}
-          </CardHeader>
-          <CardContent>
-            {loading ? (
-              <div className="text-center py-8 text-muted-foreground">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-                <p>Carregando campanhas...</p>
-              </div>
-            ) : campanhas.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">
-                <Network className="h-12 w-12 mx-auto mb-4" />
-                <p>Nenhuma campanha encontrada</p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {campanhas.map((campanha) => {
-                  const TipoIcon = getTipoIcon(campanha.tipo_campanha)
-                  return (
-                    <div key={campanha.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50">
-                      <div className="flex items-center space-x-4">
-                        <div className="p-2 rounded-lg bg-muted">
-                          <TipoIcon className="h-5 w-5" />
-                        </div>
-                        <div>
-                          <h3 className="font-semibold">{campanha.nome}</h3>
-                          <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                            <Calendar className="h-3 w-3" />
-                            <span>Criada em {formatarData(campanha.data_criacao)}</span>
-                            <Badge variant={campanha.ativa ? "default" : "secondary"}>
-                              {campanha.ativa ? "Ativa" : "Inativa"}
-                            </Badge>
-                            <Badge variant="outline">
-                              {getTipoLabel(campanha.tipo_campanha)}
-                            </Badge>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => navigate(`/dashboard/campanhas/criar/${campanha.tipo_campanha}/${campanha.id}`)}
-                        >
-                          <Edit className="h-4 w-4 mr-1" />
-                          Editar
-                        </Button>
-                        {campanha.link_campanha && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleAbrirLink(campanha.link_campanha!)}
-                          >
-                            <ExternalLink className="h-4 w-4 mr-1" />
-                            Abrir Link
-                          </Button>
-                        )}
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => navigate(`/dashboard/campanhas/${campanha.id}/resultados`)}
-                        >
-                          <BarChart3 className="h-4 w-4 mr-1" />
-                          Resultados
-                        </Button>
-                      </div>
+      {/* Métricas consolidadas por tipo */}
+      {typeMetrics && typeMetrics.length > 0 && (
+        <div className="grid gap-4">
+          <h2 className="text-xl font-semibold">Resumo por Tipo de Campanha</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {typeMetrics.map((type) => (
+              <Card key={type.tipo_campanha}>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm font-medium flex items-center gap-2">
+                    {getTipoIcon(type.tipo_campanha) && (() => {
+                      const IconComponent = getTipoIcon(type.tipo_campanha)
+                      return <IconComponent className="h-4 w-4" />
+                    })()}
+                    {getTipoLabel(type.tipo_campanha)}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <p className="text-muted-foreground">Campanhas</p>
+                      <p className="font-semibold">{type.total_campanhas}</p>
                     </div>
-                  )
-                })}
+                    <div>
+                      <p className="text-muted-foreground">Envios</p>
+                      <p className="font-semibold">{type.total_envios}</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">Respostas</p>
+                      <p className="font-semibold">{type.total_respondidas}</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">Taxa</p>
+                      <p className="font-semibold">{type.taxa_resposta_media}%</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Lista detalhada de campanhas com métricas */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-semibold">Campanhas Detalhadas</h2>
+          {campanhasMetrics && (
+            <p className="text-sm text-muted-foreground">
+              {campanhasMetrics.length} campanha(s) encontrada(s)
+            </p>
+          )}
+        </div>
+        
+        {!selectedHospital ? (
+          <Card>
+            <CardContent className="flex items-center justify-center py-8">
+              <p className="text-muted-foreground">
+                Selecione um hospital para visualizar as campanhas.
+              </p>
+            </CardContent>
+          </Card>
+        ) : loadingMetrics ? (
+          <Card>
+            <CardContent className="flex items-center justify-center py-8">
+              <div className="text-center text-muted-foreground">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+                <p>Carregando métricas das campanhas...</p>
               </div>
-            )}
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        ) : !campanhasMetrics || campanhasMetrics.length === 0 ? (
+          <Card>
+            <CardContent className="flex flex-col items-center justify-center py-8 space-y-4">
+              <Network className="h-12 w-12 text-muted-foreground" />
+              <div className="text-center">
+                <p className="text-muted-foreground mb-2">
+                  Nenhuma campanha encontrada
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  Clique em "Nova Campanha" para começar
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="grid gap-4">
+            {campanhasMetrics.map((metrics) => (
+              <div key={metrics.campanha_id} className="relative">
+                <CampanhaMetricsCard metrics={metrics} />
+                
+                {/* Botões de ação sobrepostos */}
+                <div className="absolute top-4 right-4 flex items-center space-x-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => navigate(`/dashboard/campanhas/criar/${metrics.tipo_campanha}/${metrics.campanha_id}`)}
+                  >
+                    <Edit className="h-4 w-4 mr-1" />
+                    Editar
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => navigate(`/dashboard/campanhas/${metrics.campanha_id}/resultados`)}
+                  >
+                    <BarChart3 className="h-4 w-4 mr-1" />
+                    Resultados
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   )

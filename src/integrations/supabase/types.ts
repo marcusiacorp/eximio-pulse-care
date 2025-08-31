@@ -343,6 +343,43 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_campanha_metrics: {
+        Args: { campanha_uuid: string }
+        Returns: {
+          aguardando_resposta: number
+          campanha_id: string
+          campanha_nome: string
+          taxa_resposta: number
+          tipo_campanha: string
+          total_envios: number
+          total_respondidas: number
+        }[]
+      }
+      get_campanhas_by_type_metrics: {
+        Args: { hospital_uuid?: string }
+        Returns: {
+          taxa_resposta_media: number
+          tipo_campanha: string
+          total_campanhas: number
+          total_envios: number
+          total_respondidas: number
+        }[]
+      }
+      get_hospital_campanhas_metrics: {
+        Args: { hospital_uuid?: string }
+        Returns: {
+          aguardando_resposta: number
+          ativa: boolean
+          campanha_id: string
+          campanha_nome: string
+          data_criacao: string
+          nps_medio: number
+          taxa_resposta: number
+          tipo_campanha: string
+          total_envios: number
+          total_respondidas: number
+        }[]
+      }
       get_user_hospital: {
         Args: Record<PropertyKey, never>
         Returns: string
