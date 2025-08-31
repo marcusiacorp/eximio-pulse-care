@@ -78,6 +78,16 @@ export function EnvioModal({ isOpen, onClose, campanha }: EnvioModalProps) {
 
       setCampanhaId(data.id)
 
+      // Atualizar com o link da campanha usando o ID real
+      const { error: updateError } = await supabase
+        .from('campanhas')
+        .update({
+          link_campanha: `${window.location.origin}/pesquisa/${data.id}`
+        })
+        .eq('id', data.id)
+
+      if (updateError) throw updateError
+
       // Salvar configuração da campanha
       const { error: configError } = await supabase
         .from("campanha_configuracao")

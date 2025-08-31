@@ -116,6 +116,16 @@ const CriarCampanhaPage = () => {
 
       if (campanhaError) throw campanhaError
 
+      // Atualizar com o link da campanha usando o ID real
+      const { error: updateError } = await supabase
+        .from('campanhas')
+        .update({
+          link_campanha: `${window.location.origin}/pesquisa/${campanha.id}`
+        })
+        .eq('id', campanha.id)
+
+      if (updateError) throw updateError
+
       // Criar configuração da campanha
       const { error: configError } = await supabase
         .from('campanha_configuracao')

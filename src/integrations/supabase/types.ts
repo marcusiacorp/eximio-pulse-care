@@ -77,6 +77,7 @@ export type Database = {
           data_criacao: string
           hospital_id: string | null
           id: string
+          link_campanha: string | null
           nome: string
           tipo_campanha: string
           updated_at: string
@@ -88,6 +89,7 @@ export type Database = {
           data_criacao?: string
           hospital_id?: string | null
           id?: string
+          link_campanha?: string | null
           nome: string
           tipo_campanha: string
           updated_at?: string
@@ -99,6 +101,7 @@ export type Database = {
           data_criacao?: string
           hospital_id?: string | null
           id?: string
+          link_campanha?: string | null
           nome?: string
           tipo_campanha?: string
           updated_at?: string
