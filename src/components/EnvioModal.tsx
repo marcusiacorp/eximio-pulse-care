@@ -239,15 +239,36 @@ export function EnvioModal({ isOpen, onClose, campaignData }: EnvioModalProps) {
 
       // Gerar QR code para campanhas do tipo link e ativar a campanha
       if (campaignData.tipo === 'link') {
+        console.log('DEBUG - Ativando campanha ID:', campanhaIdFinal)
+        
         // Ativar a campanha para que o link funcione
         const { error: ativarError } = await supabase
           .from('campanhas')
           .update({ ativa: true })
           .eq('id', campanhaIdFinal)
 
-        if (ativarError) throw ativarError
+        if (ativarError) {
+          console.error('Erro ao ativar campanha:', ativarError)
+          throw ativarError
+        }
+
+        // Verificar se a campanha foi realmente ativada
+        const { data: campanhaVerificacao, error: verificacaoError } = await supabase
+          .from('campanhas')
+          .select('ativa')
+          .eq('id', campanhaIdFinal)
+          .single()
+
+        if (verificacaoError) {
+          console.error('Erro ao verificar campanha:', verificacaoError)
+          throw verificacaoError
+        }
+
+        console.log('DEBUG - Campanha ativada?', campanhaVerificacao.ativa)
 
         const link = `${window.location.origin}/pesquisa/${campanhaIdFinal}`
+        console.log('DEBUG - Link gerado:', link)
+        
         const qrCodeDataUrl = await QRCode.toDataURL(link, {
           width: 200,
           margin: 2,

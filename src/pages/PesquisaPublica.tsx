@@ -76,7 +76,7 @@ export default function PesquisaPublica() {
           setCampanha(null)
           toast.error("Pesquisa não encontrada")
         } else if (!data.ativa) {
-          console.log('Campanha encontrada mas inativa')
+          console.log('DEBUG - Campanha encontrada mas inativa. ID:', campanhaId, 'Ativa:', data.ativa)
           setCampanha(null)
           toast.error("Esta pesquisa não está mais disponível")
         } else {
