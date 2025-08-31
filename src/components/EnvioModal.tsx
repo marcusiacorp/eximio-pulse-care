@@ -294,6 +294,8 @@ export function EnvioModal({ isOpen, onClose, campanha }: EnvioModalProps) {
   useEffect(() => {
     if (isOpen && campanha.tipo === 'link' && !campanhaId) {
       handleSalvarCampanha()
+    } else if (isOpen && campanha.tipo !== 'link') {
+      loadPacientes()
     }
   }, [isOpen, campanha.tipo])
 
