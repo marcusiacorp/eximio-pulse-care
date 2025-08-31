@@ -53,6 +53,32 @@ All colors MUST be HSL.
     --sidebar-border: 220 13% 91%;
 
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Escala de cores 0-10 para avaliações */
+    --scale-0: 1 82% 57%;      /* #EA3432 */
+    --scale-1: 359 92% 62%;    /* #F74445 */
+    --scale-2: 13 100% 64%;    /* #FF6443 */
+    --scale-3: 25 100% 61%;    /* #FF8538 */
+    --scale-4: 38 100% 58%;    /* #FFA52A */
+    --scale-5: 45 100% 50%;    /* #FFC000 */
+    --scale-6: 52 100% 45%;    /* #E3C400 */
+    --scale-7: 60 100% 39%;    /* #C0C900 */
+    --scale-8: 70 100% 40%;    /* #9DCB00 */
+    --scale-9: 82 100% 40%;    /* #79CA00 */
+    --scale-10: 100 100% 34%;  /* #32AE00 */
+
+    /* Versões mais claras da escala para estados não selecionados */
+    --scale-0-light: 1 82% 75%;
+    --scale-1-light: 359 92% 80%;
+    --scale-2-light: 13 100% 80%;
+    --scale-3-light: 25 100% 77%;
+    --scale-4-light: 38 100% 75%;
+    --scale-5-light: 45 100% 70%;
+    --scale-6-light: 52 100% 65%;
+    --scale-7-light: 60 100% 60%;
+    --scale-8-light: 70 100% 65%;
+    --scale-9-light: 82 100% 65%;
+    --scale-10-light: 100 100% 55%;
   }
 
   .dark {

@@ -61,6 +61,30 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				scale: {
+					0: 'hsl(var(--scale-0))',
+					1: 'hsl(var(--scale-1))',
+					2: 'hsl(var(--scale-2))',
+					3: 'hsl(var(--scale-3))',
+					4: 'hsl(var(--scale-4))',
+					5: 'hsl(var(--scale-5))',
+					6: 'hsl(var(--scale-6))',
+					7: 'hsl(var(--scale-7))',
+					8: 'hsl(var(--scale-8))',
+					9: 'hsl(var(--scale-9))',
+					10: 'hsl(var(--scale-10))',
+					'0-light': 'hsl(var(--scale-0-light))',
+					'1-light': 'hsl(var(--scale-1-light))',
+					'2-light': 'hsl(var(--scale-2-light))',
+					'3-light': 'hsl(var(--scale-3-light))',
+					'4-light': 'hsl(var(--scale-4-light))',
+					'5-light': 'hsl(var(--scale-5-light))',
+					'6-light': 'hsl(var(--scale-6-light))',
+					'7-light': 'hsl(var(--scale-7-light))',
+					'8-light': 'hsl(var(--scale-8-light))',
+					'9-light': 'hsl(var(--scale-9-light))',
+					'10-light': 'hsl(var(--scale-10-light))'
 				}
 			},
 			borderRadius: {
