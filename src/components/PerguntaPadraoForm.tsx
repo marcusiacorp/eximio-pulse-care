@@ -113,6 +113,15 @@ export const PerguntaPadraoForm = ({
     "Higiene e Limpeza"
   ]
 
+  const areasHospital = [
+    "Ambulatório",
+    "Pronto Socorro", 
+    "Unidade de Internação",
+    "Unidade de Terapia Intensiva (UTI)",
+    "Centro Cirúrgico",
+    "Exames e procedimentos"
+  ]
+
   return (
     <div className="space-y-6">
       <Card>
@@ -181,6 +190,33 @@ export const PerguntaPadraoForm = ({
                   </div>
                 </div>
               )}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Pergunta Inicial - Área do Hospital */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Pergunta Inicial</CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Pergunta inicial para identificar a área de atendimento
+          </p>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="bg-purple-50 dark:bg-purple-950 p-4 rounded-lg space-y-4">
+            <h4 className="font-semibold text-purple-900 dark:text-purple-100">Pergunta de Identificação da Área</h4>
+            
+            <div>
+              <Badge variant="outline">Múltipla Escolha</Badge>
+              <p className="mt-2 text-sm font-medium">Em qual área do hospital você foi atendido?</p>
+              <div className="flex flex-wrap gap-2 mt-2">
+                {areasHospital.map((area) => (
+                  <Badge key={area} variant="secondary" className="text-xs">
+                    {area}
+                  </Badge>
+                ))}
+              </div>
             </div>
           </div>
         </CardContent>

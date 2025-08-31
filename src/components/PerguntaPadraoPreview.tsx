@@ -23,6 +23,9 @@ export const PerguntaPadraoPreview = ({
   isPublicMode = false,
   onResponse
 }: PerguntaPadraoPreviewProps) => {
+  // Estado para área selecionada
+  const [areaSelecionada, setAreaSelecionada] = useState<string>("")
+  
   // Respostas por setor
   const [respostasSetores, setRespostasSetores] = useState<{[key: string]: any}>({
     "Pronto Socorro": {
@@ -63,6 +66,15 @@ export const PerguntaPadraoPreview = ({
     "Higiene e Limpeza"
   ]
 
+  const areasHospital = [
+    "Ambulatório",
+    "Pronto Socorro", 
+    "Unidade de Internação",
+    "Unidade de Terapia Intensiva (UTI)",
+    "Centro Cirúrgico",
+    "Exames e procedimentos"
+  ]
+
   const updateRespostaSetor = (setor: string, campo: string, valor: any) => {
     setRespostasSetores(prev => ({
       ...prev,
@@ -84,6 +96,7 @@ export const PerguntaPadraoPreview = ({
 
   const handleSubmitResponse = () => {
     const respostaCompleta = {
+      areaSelecionada,
       respostasSetores
     }
     
@@ -113,6 +126,34 @@ export const PerguntaPadraoPreview = ({
           )}
         </div>
       </div>
+
+      {/* Pergunta Inicial - Área do Hospital */}
+      <Card className="mb-8">
+        <CardHeader>
+          <CardTitle>Identificação da Área</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="bg-purple-50 dark:bg-purple-950 p-4 rounded-lg">
+            <Label className="text-base font-medium mb-4 block">
+              Em qual área do hospital você foi atendido?
+            </Label>
+            <RadioGroup 
+              value={areaSelecionada} 
+              onValueChange={setAreaSelecionada}
+              disabled={!isPublicMode}
+            >
+              {areasHospital.map((area) => (
+                <div key={area} className="flex items-center space-x-2">
+                  <RadioGroupItem value={area} id={area} />
+                  <Label htmlFor={area} className="cursor-pointer">
+                    {area}
+                  </Label>
+                </div>
+              ))}
+            </RadioGroup>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Todos os Setores */}
       <div className="space-y-8">
