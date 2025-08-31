@@ -16,10 +16,13 @@ import { useHospital } from "@/contexts/HospitalContext"
 import { toast } from "sonner"
 import { useCampanhaMetrics, useCampanhasByTypeMetrics } from "@/hooks/useCampanhaMetrics"
 import { CampanhaMetricsCard } from "@/components/CampanhaMetricsCard"
+import { ResultadosDetalhados } from "@/components/ResultadosDetalhados"
 
 const CampanhasPage = () => {
   const navigate = useNavigate()
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [resultadosModalOpen, setResultadosModalOpen] = useState(false)
+  const [campanhaIdSelecionada, setCampanhaIdSelecionada] = useState<string | null>(null)
   const { selectedHospital } = useHospital()
   
   // Usar o hook para buscar métricas das campanhas
@@ -120,6 +123,11 @@ const CampanhasPage = () => {
   const handleCampaignTypeSelect = (typeId: string) => {
     setIsDialogOpen(false)
     navigate(`/dashboard/campanhas/criar/${typeId}`)
+  }
+
+  const handleAbrirResultados = (campanhaId: string) => {
+    setCampanhaIdSelecionada(campanhaId)
+    setResultadosModalOpen(true)
   }
 
   return (
@@ -283,7 +291,7 @@ const CampanhasPage = () => {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => navigate(`/dashboard/campanhas/${metrics.campanha_id}/resultados`)}
+                    onClick={() => handleAbrirResultados(metrics.campanha_id)}
                   >
                     <BarChart3 className="h-4 w-4 mr-1" />
                     Resultados
@@ -294,6 +302,16 @@ const CampanhasPage = () => {
           </div>
         )}
       </div>
+
+      {/* Modal de Resultados Detalhados */}
+      <ResultadosDetalhados
+        campanhaId={campanhaIdSelecionada}
+        isOpen={resultadosModalOpen}
+        onClose={() => {
+          setResultadosModalOpen(false)
+          setCampanhaIdSelecionada(null)
+        }}
+      />
     </div>
   )
 }
