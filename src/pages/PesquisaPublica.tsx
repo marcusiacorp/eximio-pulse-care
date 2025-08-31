@@ -407,6 +407,7 @@ export default function PesquisaPublica() {
           const config = campanha.configuracao[0]
           const perguntaPadraoData = config.pergunta_padrao as any
           console.log('DEBUG - Renderizando pergunta padrão:', perguntaPadraoData)
+          console.log('DEBUG - Setores selecionados:', perguntaPadraoData?.setoresSelecionados)
           
           return (
             <PerguntaPadraoPreview
@@ -415,6 +416,7 @@ export default function PesquisaPublica() {
               hospitalName={campanha.nome}
               isPublicMode={true}
               onResponse={handleResponse}
+              setoresSelecionados={perguntaPadraoData?.setoresSelecionados || ["Pronto Socorro", "Ambulatório", "Unidade de Internação"]}
             />
           )
         })()}
