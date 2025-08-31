@@ -5,9 +5,11 @@ import { Card, CardContent } from "@/components/ui/card"
 interface ProblemasPreviewProps {
   problemasAtivos: boolean
   nomeHospital?: string
+  isPublicMode?: boolean
+  onResponse?: (data: any) => void
 }
 
-export const ProblemasPreview = ({ problemasAtivos, nomeHospital }: ProblemasPreviewProps) => {
+export const ProblemasPreview = ({ problemasAtivos, nomeHospital, isPublicMode = false, onResponse }: ProblemasPreviewProps) => {
   return (
     <div className={`space-y-6 p-4 ${!problemasAtivos ? 'opacity-50 grayscale' : ''}`}>
       {!problemasAtivos && (

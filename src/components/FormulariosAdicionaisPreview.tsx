@@ -8,12 +8,16 @@ interface FormulariosAdicionaisPreviewProps {
   formulariosAdicionaisAtivos: boolean
   nomeHospital?: string
   formulariosCriados?: any[]
+  isPublicMode?: boolean
+  onResponse?: (data: any) => void
 }
 
 export const FormulariosAdicionaisPreview = ({ 
   formulariosAdicionaisAtivos, 
   nomeHospital,
-  formulariosCriados = []
+  formulariosCriados = [],
+  isPublicMode = false,
+  onResponse
 }: FormulariosAdicionaisPreviewProps) => {
   return (
     <Card className={`w-full max-w-2xl mx-auto ${!formulariosAdicionaisAtivos ? 'opacity-50 grayscale' : ''}`}>

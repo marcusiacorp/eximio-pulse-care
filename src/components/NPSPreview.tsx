@@ -12,6 +12,9 @@ interface NPSPreviewProps {
   oQueAgradou?: string
   setoresHospital?: string[]
   nomeHospital?: string
+  isPublicMode?: boolean
+  logoUrl?: string
+  onResponse?: (data: any) => void
 }
 
 export const NPSPreview = ({ 
@@ -20,7 +23,10 @@ export const NPSPreview = ({
   autorizacao, 
   oQueAgradou, 
   setoresHospital = [],
-  nomeHospital = "Nome do Hospital"
+  nomeHospital = "Nome do Hospital",
+  isPublicMode = false,
+  logoUrl,
+  onResponse
 }: NPSPreviewProps) => {
   const [selectedScore, setSelectedScore] = useState<number | null>(null)
   const [feedback, setFeedback] = useState("")
@@ -101,23 +107,25 @@ export const NPSPreview = ({
     <div className="max-w-md mx-auto bg-white border rounded-lg shadow-sm p-6 space-y-6">
       {/* Logo do Hospital */}
       <div className="flex justify-center">
-        <div 
-          className="w-32 h-16 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center bg-gray-50 cursor-pointer hover:bg-gray-100 transition-colors"
-          onClick={() => setShowLogoDialog(true)}
-        >
-          {logoPreview ? (
+        {(logoUrl || logoPreview) ? (
+          <div className="w-32 h-16 rounded-lg flex items-center justify-center">
             <img 
-              src={logoPreview} 
+              src={logoUrl || logoPreview} 
               alt="Logo do Hospital" 
               className="w-full h-full object-contain rounded-lg"
             />
-          ) : (
+          </div>
+        ) : !isPublicMode ? (
+          <div 
+            className="w-32 h-16 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center bg-gray-50 cursor-pointer hover:bg-gray-100 transition-colors"
+            onClick={() => setShowLogoDialog(true)}
+          >
             <div className="text-center">
               <Upload className="h-6 w-6 mx-auto text-gray-400 mb-1" />
               <p className="text-xs text-gray-500">Logo do Hospital</p>
             </div>
-          )}
-        </div>
+          </div>
+        ) : null}
       </div>
 
       {/* Nome do Hospital */}
@@ -279,86 +287,90 @@ export const NPSPreview = ({
       )}
 
 
-      {/* Input oculto para upload de arquivo */}
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept="image/png,image/jpeg,image/jpg"
-        onChange={handleFileSelect}
-        className="hidden"
-      />
+      {!isPublicMode && (
+        <>
+          {/* Input oculto para upload de arquivo */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/png,image/jpeg,image/jpg"
+            onChange={handleFileSelect}
+            className="hidden"
+          />
 
-      {/* Dialog de upload de logo */}
-      <Dialog open={showLogoDialog} onOpenChange={setShowLogoDialog}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Logo do Hospital</DialogTitle>
-          </DialogHeader>
-          
-          <div className="space-y-4">
-            {/* Área de upload */}
-            <div 
-              className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-gray-400 transition-colors"
-              onClick={() => fileInputRef.current?.click()}
-            >
-              {tempLogoPreview ? (
-                <div className="space-y-2">
-                  <div className="w-32 h-32 mx-auto border rounded-lg overflow-hidden">
-                    <img 
-                      src={tempLogoPreview} 
-                      alt="Preview" 
-                      className="w-full h-full object-contain"
-                    />
-                  </div>
-                  <p className="text-sm text-gray-600">Clique para trocar a imagem</p>
+          {/* Dialog de upload de logo */}
+          <Dialog open={showLogoDialog} onOpenChange={setShowLogoDialog}>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>Logo do Hospital</DialogTitle>
+              </DialogHeader>
+              
+              <div className="space-y-4">
+                {/* Área de upload */}
+                <div 
+                  className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-gray-400 transition-colors"
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  {tempLogoPreview ? (
+                    <div className="space-y-2">
+                      <div className="w-32 h-32 mx-auto border rounded-lg overflow-hidden">
+                        <img 
+                          src={tempLogoPreview} 
+                          alt="Preview" 
+                          className="w-full h-full object-contain"
+                        />
+                      </div>
+                      <p className="text-sm text-gray-600">Clique para trocar a imagem</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      <Upload className="h-12 w-12 mx-auto text-gray-400" />
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">Clique para fazer upload</p>
+                        <p className="text-xs text-gray-500">PNG ou JPG (tamanho recomendado: 170x170px)</p>
+                      </div>
+                    </div>
+                  )}
                 </div>
-              ) : (
-                <div className="space-y-2">
-                  <Upload className="h-12 w-12 mx-auto text-gray-400" />
-                  <div>
-                    <p className="text-sm font-medium text-gray-900">Clique para fazer upload</p>
-                    <p className="text-xs text-gray-500">PNG ou JPG (tamanho recomendado: 170x170px)</p>
-                  </div>
-                </div>
-              )}
-            </div>
 
-            {/* Informações sobre o arquivo selecionado */}
-            {tempLogoFile && (
-              <div className="bg-gray-50 p-3 rounded-lg">
-                <p className="text-sm font-medium text-gray-900">{tempLogoFile.name}</p>
-                <p className="text-xs text-gray-500">
-                  {(tempLogoFile.size / 1024).toFixed(1)} KB
-                </p>
+                {/* Informações sobre o arquivo selecionado */}
+                {tempLogoFile && (
+                  <div className="bg-gray-50 p-3 rounded-lg">
+                    <p className="text-sm font-medium text-gray-900">{tempLogoFile.name}</p>
+                    <p className="text-xs text-gray-500">
+                      {(tempLogoFile.size / 1024).toFixed(1)} KB
+                    </p>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
 
-          <DialogFooter className="flex gap-2">
-            {logoPreview && (
-              <Button
-                variant="destructive"
-                onClick={handleRemoveLogo}
-                className="flex items-center gap-2"
-              >
-                <X className="h-4 w-4" />
-                Remover
-              </Button>
-            )}
-            <Button variant="outline" onClick={handleCancelLogo}>
-              Cancelar
-            </Button>
-            <Button 
-              onClick={handleSaveLogo} 
-              disabled={!tempLogoFile}
-              className="flex items-center gap-2"
-            >
-              <Check className="h-4 w-4" />
-              Salvar
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+              <DialogFooter className="flex gap-2">
+                {logoPreview && (
+                  <Button
+                    variant="destructive"
+                    onClick={handleRemoveLogo}
+                    className="flex items-center gap-2"
+                  >
+                    <X className="h-4 w-4" />
+                    Remover
+                  </Button>
+                )}
+                <Button variant="outline" onClick={handleCancelLogo}>
+                  Cancelar
+                </Button>
+                <Button 
+                  onClick={handleSaveLogo} 
+                  disabled={!tempLogoFile}
+                  className="flex items-center gap-2"
+                >
+                  <Check className="h-4 w-4" />
+                  Salvar
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </>
+      )}
     </div>
   )
 }

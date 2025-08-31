@@ -147,6 +147,9 @@ export default function PesquisaPublica() {
             trechoPergunta={campanha.configuracao?.trecho_pergunta || "Em uma escala de 0 a 10, o quanto você recomendaria nossos serviços?"}
             recomendacao={campanha.configuracao?.recomendacao || ""}
             autorizacao={campanha.configuracao?.autorizacao || ""}
+            nomeHospital={campanha.nome}
+            isPublicMode={true}
+            logoUrl={(campanha.configuracao?.layout_envio as any)?.logo_url}
           />
         )}
 
@@ -154,12 +157,16 @@ export default function PesquisaPublica() {
           <PontosContatoPreview
             pontosContatoAtivos={true}
             pontosContato={(campanha.configuracao.pontos_contato as any)?.pontos || []}
+            nomeHospital={campanha.nome}
+            isPublicMode={true}
           />
         )}
 
         {etapaAtualNome === "problemas" && (
           <ProblemasPreview
             problemasAtivos={true}
+            nomeHospital={campanha.nome}
+            isPublicMode={true}
           />
         )}
 
@@ -167,6 +174,8 @@ export default function PesquisaPublica() {
           <FormulariosAdicionaisPreview
             formulariosAdicionaisAtivos={true}
             formulariosCriados={(campanha.configuracao?.formularios_adicionais as any)?.formularios || []}
+            nomeHospital={campanha.nome}
+            isPublicMode={true}
           />
         )}
 

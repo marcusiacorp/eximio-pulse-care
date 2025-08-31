@@ -11,12 +11,16 @@ interface PontosContatoPreviewProps {
   pontosContatoAtivos: boolean
   pontosContato: PontoContato[]
   nomeHospital?: string
+  isPublicMode?: boolean
+  onResponse?: (data: any) => void
 }
 
 export const PontosContatoPreview = ({
   pontosContatoAtivos,
   pontosContato,
-  nomeHospital = "Nome do Hospital"
+  nomeHospital = "Nome do Hospital",
+  isPublicMode = false,
+  onResponse
 }: PontosContatoPreviewProps) => {
   const [selectedScores, setSelectedScores] = useState<{[key: string]: number}>({})
   const [feedbackPositivo, setFeedbackPositivo] = useState("")
@@ -223,7 +227,7 @@ export const PontosContatoPreview = ({
                   </label>
                 </div>
                 
-                {opcoesInfluenciaCustom.includes(opcao) && (
+                {!isPublicMode && opcoesInfluenciaCustom.includes(opcao) && (
                   <Button
                     variant="ghost"
                     size="sm"
@@ -236,22 +240,24 @@ export const PontosContatoPreview = ({
               </div>
             ))}
             
-            <div className="flex gap-2 mt-3 pt-3 border-t">
-              <Input
-                value={novaOpcaoInfluencia}
-                onChange={(e) => setNovaOpcaoInfluencia(e.target.value)}
-                placeholder="Adicionar nova opção de influência"
-                onKeyPress={(e) => e.key === 'Enter' && handleAdicionarOpcaoInfluencia()}
-              />
-              <Button 
-                onClick={handleAdicionarOpcaoInfluencia} 
-                variant="outline" 
-                size="sm"
-                disabled={!novaOpcaoInfluencia.trim()}
-              >
-                Adicionar
-              </Button>
-            </div>
+            {!isPublicMode && (
+              <div className="flex gap-2 mt-3 pt-3 border-t">
+                <Input
+                  value={novaOpcaoInfluencia}
+                  onChange={(e) => setNovaOpcaoInfluencia(e.target.value)}
+                  placeholder="Adicionar nova opção de influência"
+                  onKeyPress={(e) => e.key === 'Enter' && handleAdicionarOpcaoInfluencia()}
+                />
+                <Button 
+                  onClick={handleAdicionarOpcaoInfluencia} 
+                  variant="outline" 
+                  size="sm"
+                  disabled={!novaOpcaoInfluencia.trim()}
+                >
+                  Adicionar
+                </Button>
+              </div>
+            )}
           </div>
         </div>
 
