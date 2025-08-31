@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
+import { supabase } from "@/integrations/supabase/client"
+import { toast } from "sonner"
 
 interface NPSPreviewProps {
   trechoPergunta: string
@@ -15,6 +17,7 @@ interface NPSPreviewProps {
   isPublicMode?: boolean
   logoUrl?: string
   onResponse?: (data: any) => void
+  onBannerUpload?: (url: string | null) => void
 }
 
 export const NPSPreview = ({
@@ -26,7 +29,8 @@ export const NPSPreview = ({
   nomeHospital = "",
   isPublicMode = false,
   logoUrl,
-  onResponse
+  onResponse,
+  onBannerUpload
 }: NPSPreviewProps) => {
   console.log('NPSPreview recebeu logoUrl:', logoUrl)
   console.log('NPSPreview logoUrl existe?', !!logoUrl)
@@ -42,6 +46,7 @@ export const NPSPreview = ({
   const [showLogoDialog, setShowLogoDialog] = useState(false)
   const [tempLogoFile, setTempLogoFile] = useState<File | null>(null)
   const [tempLogoPreview, setTempLogoPreview] = useState<string | null>(null)
+  const [uploadingBanner, setUploadingBanner] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -57,14 +62,60 @@ export const NPSPreview = ({
     }
   }
 
-  const handleSaveLogo = () => {
-    if (tempLogoFile && tempLogoPreview) {
+  const handleSaveLogo = async () => {
+    if (!tempLogoFile) return
+    
+    setUploadingBanner(true)
+    try {
+      // Upload para Supabase Storage
+      const fileExt = tempLogoFile.name.split('.').pop()
+      const fileName = `banner-${Date.now()}.${fileExt}`
+      const filePath = `banners/${fileName}`
+
+      console.log('Iniciando upload do banner:', filePath)
+
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('banners')
+        .upload(filePath, tempLogoFile, {
+          cacheControl: '3600',
+          upsert: false
+        })
+
+      if (uploadError) {
+        console.error('Erro no upload:', uploadError)
+        toast.error('Erro ao fazer upload da imagem')
+        return
+      }
+
+      console.log('Upload realizado:', uploadData)
+
+      // Obter URL pública
+      const { data: { publicUrl } } = supabase.storage
+        .from('banners')
+        .getPublicUrl(filePath)
+
+      console.log('URL pública gerada:', publicUrl)
+
+      // Atualizar estados locais
       setLogoFile(tempLogoFile)
-      setLogoPreview(tempLogoPreview)
+      setLogoPreview(publicUrl)
+      
+      // Notificar componente pai com a URL
+      if (onBannerUpload) {
+        onBannerUpload(publicUrl)
+      }
+
+      toast.success('Banner salvo com sucesso!')
+      
+    } catch (error) {
+      console.error('Erro inesperado no upload:', error)
+      toast.error('Erro inesperado ao salvar banner')
+    } finally {
+      setUploadingBanner(false)
+      setShowLogoDialog(false)
+      setTempLogoFile(null)
+      setTempLogoPreview(null)
     }
-    setShowLogoDialog(false)
-    setTempLogoFile(null)
-    setTempLogoPreview(null)
   }
 
   const handleCancelLogo = () => {
@@ -82,6 +133,12 @@ export const NPSPreview = ({
     setShowLogoDialog(false)
     setTempLogoFile(null)
     setTempLogoPreview(null)
+    
+    // Notificar componente pai que banner foi removido
+    if (onBannerUpload) {
+      onBannerUpload(null)
+    }
+    
     if (fileInputRef.current) {
       fileInputRef.current.value = ""
     }
@@ -400,11 +457,17 @@ export const NPSPreview = ({
                 </Button>
                 <Button 
                   onClick={handleSaveLogo} 
-                  disabled={!tempLogoFile}
+                  disabled={!tempLogoFile || uploadingBanner}
                   className="flex items-center gap-2"
                 >
-                  <Check className="h-4 w-4" />
-                  Salvar
+                  {uploadingBanner ? (
+                    <>Salvando...</>
+                  ) : (
+                    <>
+                      <Check className="h-4 w-4" />
+                      Salvar
+                    </>
+                  )}
                 </Button>
               </DialogFooter>
             </DialogContent>

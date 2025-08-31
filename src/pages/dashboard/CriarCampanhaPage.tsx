@@ -42,6 +42,7 @@ const CriarCampanhaPage = () => {
   const [autorizacao, setAutorizacao] = useState("")
   const [oQueAgradou, setOQueAgradou] = useState("")
   const [setoresHospital, setSetoresHospital] = useState<string[]>([])
+  const [bannerUrl, setBannerUrl] = useState<string>("")
   const [activeTab, setActiveTab] = useState("pergunta-definitiva")
   
   // Estados dos pontos de contato
@@ -57,7 +58,6 @@ const CriarCampanhaPage = () => {
   
   // Estados do layout de envio
   const [assuntoEmail, setAssuntoEmail] = useState("")
-  const [bannerUrl, setBannerUrl] = useState("")
   const [mensagemPersonalizada, setMensagemPersonalizada] = useState("")
   const [mensagem, setMensagem] = useState("Nós valorizamos muito nosso relacionamento e o serviço aos nossos clientes e queremos melhorar a cada dia. Pedimos que você use apenas alguns minutos para nos dar sua sincera opinião sobre sua experiência conosco.")
   const [permitirDescadastro, setPermitirDescadastro] = useState(true)
@@ -630,6 +630,10 @@ const CriarCampanhaPage = () => {
                       setoresHospital={setoresHospital}
                       logoUrl={bannerUrl}
                       nomeHospital={selectedHospital?.nome || "Hospital"}
+                      onBannerUpload={(url) => {
+                        console.log('Banner URL recebida no CriarCampanha:', url)
+                        setBannerUrl(url || "")
+                      }}
                     />
                   )}
                 </CardContent>
@@ -659,28 +663,29 @@ const CriarCampanhaPage = () => {
         <EnvioModal 
           isOpen={showEnvioModal}
           onClose={() => setShowEnvioModal(false)}
-          campaignData={{
-            id: isExistingCampaign ? id : undefined,
-            nome: campaignName,
-            tipo: tipo!,
-            perguntaDefinitiva: {
-              trechoPergunta,
-              recomendacao,
-              autorizacao,
-              oQueAgradou,
-              setoresHospital
-            },
-            pontosContato: pontosContatoAtivos ? pontosContato : null,
-            problemas: problemasAtivos,
-            formulariosAdicionais: formulariosAdicionaisAtivos ? formulariosCriados : null,
-            layoutEnvio: {
-              assuntoEmail,
-              bannerUrl,
-              mensagemPersonalizada,
-              mensagem,
-              permitirDescadastro
-            }
-          }}
+            campaignData={{
+              id: isExistingCampaign ? id : undefined,
+              nome: campaignName,
+              tipo: tipo!,
+              perguntaDefinitiva: {
+                trechoPergunta,
+                recomendacao,
+                autorizacao,
+                oQueAgradou,
+                setoresHospital
+              },
+              pontosContato: pontosContatoAtivos ? pontosContato : null,
+              problemas: problemasAtivos,
+              formulariosAdicionais: formulariosAdicionaisAtivos ? formulariosCriados : null,
+              layoutEnvio: {
+                assuntoEmail,
+                bannerUrl,
+                mensagemPersonalizada,
+                mensagem,
+                permitirDescadastro
+              },
+              bannerUrl // Passar o bannerUrl separadamente para garantir que seja salvo na coluna banner_url
+            }}
         />
     </div>
   )

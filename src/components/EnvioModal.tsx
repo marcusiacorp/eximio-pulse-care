@@ -28,6 +28,7 @@ interface CampanhaData {
     mensagem: string
     permitirDescadastro: boolean
   }
+  bannerUrl?: string // Campo separado para garantir que seja salvo na coluna banner_url
 }
 
 interface EnvioModalProps {
@@ -126,7 +127,7 @@ export function EnvioModal({ isOpen, onClose, campaignData }: EnvioModalProps) {
             setores_selecionados: campaignData.perguntaDefinitiva?.setoresHospital,
             pergunta_recomendacao: campaignData.perguntaDefinitiva?.recomendacao,
             resposta_autorizacao: campaignData.perguntaDefinitiva?.autorizacao,
-            banner_url: campaignData.layoutEnvio?.bannerUrl,
+            banner_url: campaignData.bannerUrl || campaignData.layoutEnvio?.bannerUrl,
             // Manter JSONBs para dados complexos
             pergunta_definitiva: {
               oQueAgradou: campaignData.perguntaDefinitiva?.oQueAgradou,
@@ -153,7 +154,7 @@ export function EnvioModal({ isOpen, onClose, campaignData }: EnvioModalProps) {
             setores_selecionados: campaignData.perguntaDefinitiva?.setoresHospital,
             pergunta_recomendacao: campaignData.perguntaDefinitiva?.recomendacao,
             resposta_autorizacao: campaignData.perguntaDefinitiva?.autorizacao,
-            banner_url: campaignData.layoutEnvio?.bannerUrl,
+            banner_url: campaignData.bannerUrl || campaignData.layoutEnvio?.bannerUrl,
             // Manter JSONBs para dados complexos
             pergunta_definitiva: {
               oQueAgradou: campaignData.perguntaDefinitiva?.oQueAgradou,
