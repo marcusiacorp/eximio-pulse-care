@@ -8,6 +8,7 @@ import { NPSPreview } from "@/components/NPSPreview"
 import { PontosContatoPreview } from "@/components/PontosContatoPreview"
 import { ProblemasPreview } from "@/components/ProblemasPreview"
 import { FormulariosAdicionaisPreview } from "@/components/FormulariosAdicionaisPreview"
+import { DadosPessoaisForm } from "@/components/DadosPessoaisForm"
 
 interface CampanhaData {
   id: string
@@ -40,6 +41,9 @@ export default function PesquisaPublica() {
   const [etapas, setEtapas] = useState<string[]>([])
   const [respostas, setRespostas] = useState<any>({})
   const [envioId, setEnvioId] = useState<string | null>(null)
+  const [dadosPessoais, setDadosPessoais] = useState<{ nome: string; email: string; telefone: string } | null>(null)
+  const [pacienteId, setPacienteId] = useState<string | null>(null)
+  const [mostrandoDadosPessoais, setMostrandoDadosPessoais] = useState(true)
 
   // Carregar dados da campanha
   useEffect(() => {
@@ -131,6 +135,40 @@ export default function PesquisaPublica() {
     }
   }
 
+  const handleDadosPessoais = async (dados: { nome: string; email: string; telefone: string }) => {
+    try {
+      console.log('Salvando dados pessoais:', dados)
+      
+      // Criar ou encontrar paciente na tabela pacientes
+      const { data: novoPaciente, error: pacienteError } = await supabase
+        .from('pacientes')
+        .insert({
+          nome: dados.nome,
+          email: dados.email,
+          telefone: dados.telefone || null,
+          hospital_id: campanha?.hospital_id || null
+        })
+        .select()
+        .single()
+
+      if (pacienteError) {
+        console.error('Erro ao criar paciente:', pacienteError)
+        toast.error(`Erro ao salvar dados: ${pacienteError.message}`)
+        return
+      }
+
+      console.log('Paciente criado com sucesso:', novoPaciente)
+      setDadosPessoais(dados)
+      setPacienteId(novoPaciente.id)
+      setMostrandoDadosPessoais(false)
+      
+      toast.success('Dados salvos com sucesso!')
+    } catch (error) {
+      console.error('Erro inesperado ao salvar dados pessoais:', error)
+      toast.error('Erro inesperado ao salvar dados')
+    }
+  }
+
   // Função para coletar dados dos componentes
   const handleResponse = (data: any) => {
     setRespostas(prev => ({
@@ -151,12 +189,15 @@ export default function PesquisaPublica() {
       if (!currentEnvioId) {
         console.log('Criando novo envio para campanha:', campanhaId)
         
-        // Gerar UUID válido para paciente público
-        const publicPatientId = crypto.randomUUID()
+        if (!pacienteId) {
+          console.error('ID do paciente não encontrado')
+          toast.error('Erro: dados do paciente não encontrados')
+          return false
+        }
         
         const envioData = {
           campanha_id: campanhaId,
-          paciente_id: publicPatientId,
+          paciente_id: pacienteId,
           status: 'respondido',
           respondido_em: new Date().toISOString()
         }
@@ -259,6 +300,20 @@ export default function PesquisaPublica() {
 
   const etapaAtualNome = etapas[etapaAtual]
   const isUltimaEtapa = etapaAtual === etapas.length - 1
+
+  // Se ainda está coletando dados pessoais, mostrar formulário
+  if (mostrandoDadosPessoais) {
+    return (
+      <div className="min-h-screen bg-background py-8">
+        <div className="container mx-auto max-w-4xl px-4 flex items-center justify-center min-h-[80vh]">
+          <DadosPessoaisForm 
+            onSubmit={handleDadosPessoais}
+            loading={false}
+          />
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-background py-8">
