@@ -26,19 +26,19 @@ export function getScaleColor(score: number, isSelected: boolean = false, isDisa
     'bg-green-600'     // 10 - verde forte
   ]
 
-  // Cores mais claras para não selecionados
+  // Cores mais claras para não selecionados - mantém o degradê visível
   const lightColors = [
-    'bg-red-200',      // 0
-    'bg-red-200',      // 1
-    'bg-orange-200',   // 2
-    'bg-orange-200',   // 3
-    'bg-orange-100',   // 4
-    'bg-yellow-200',   // 5
-    'bg-yellow-100',   // 6
-    'bg-lime-200',     // 7
-    'bg-green-200',    // 8
-    'bg-green-200',    // 9
-    'bg-green-300'     // 10
+    'bg-red-300',      // 0 - vermelho claro
+    'bg-red-300',      // 1 - vermelho claro
+    'bg-orange-300',   // 2 - laranja claro
+    'bg-orange-300',   // 3 - laranja claro
+    'bg-orange-200',   // 4 - laranja mais claro
+    'bg-yellow-300',   // 5 - amarelo claro
+    'bg-yellow-200',   // 6 - amarelo mais claro
+    'bg-lime-300',     // 7 - verde limão claro
+    'bg-green-300',    // 8 - verde claro
+    'bg-green-300',    // 9 - verde claro
+    'bg-green-400'     // 10 - verde médio
   ]
 
   const bgColor = isSelected ? backgroundColors[score] : lightColors[score]
