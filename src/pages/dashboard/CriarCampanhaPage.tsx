@@ -23,6 +23,8 @@ import { ProblemasPreview } from "@/components/ProblemasPreview"
 import { FormulariosAdicionaisPreview } from "@/components/FormulariosAdicionaisPreview"
 import { NovoFormularioModal } from "@/components/NovoFormularioModal"
 import { LayoutEnvioPreview } from "@/components/LayoutEnvioPreview"
+import { PerguntaPadraoForm } from "@/components/PerguntaPadraoForm"
+import { PerguntaPadraoPreview } from "@/components/PerguntaPadraoPreview"
 
 const CriarCampanhaPage = () => {
   const { tipo, id } = useParams<{ tipo: string; id?: string }>()
@@ -44,6 +46,10 @@ const CriarCampanhaPage = () => {
   const [setoresHospital, setSetoresHospital] = useState<string[]>([])
   const [bannerUrl, setBannerUrl] = useState<string>("")
   const [activeTab, setActiveTab] = useState("pergunta-definitiva")
+  
+  // Estados da pergunta padrão
+  const [boasVindas, setBoasVindas] = useState("")
+  const [bannerPadraoUrl, setBannerPadraoUrl] = useState("")
   
   // Estados dos pontos de contato
   const [pontosContatoAtivos, setPontosContatoAtivos] = useState(false)
@@ -122,6 +128,11 @@ const CriarCampanhaPage = () => {
       setOQueAgradou(configData.o_que_agradou || "")
       setSetoresHospital(configData.setores_selecionados || [])
       setBannerUrl(configData.banner_url || "")
+      
+      // Popular dados da pergunta padrão
+      const perguntaPadraoData = configData.pergunta_padrao as any || {}
+      setBoasVindas(perguntaPadraoData.boasVindas || "")
+      setBannerPadraoUrl(configData.banner_padrao_url || "")
       
       // Popular outros dados do JSON
       const layoutEnvio = configData.layout_envio as any || {}
@@ -258,9 +269,12 @@ const CriarCampanhaPage = () => {
                 </div>
               )}
               <Tabs value={activeTab} onValueChange={setActiveTab} orientation="vertical">
-                <TabsList className="grid w-full grid-rows-7 h-auto">
+                <TabsList className="grid w-full grid-rows-8 h-auto">
                   <TabsTrigger value="pergunta-definitiva" className="justify-start">
                     Pergunta Definitiva
+                  </TabsTrigger>
+                  <TabsTrigger value="pergunta-padrao" className="justify-start">
+                    Pergunta Padrão
                   </TabsTrigger>
                   <TabsTrigger value="pontos-contato" className="justify-start">
                     Pontos de Contato
@@ -350,6 +364,16 @@ const CriarCampanhaPage = () => {
                         rows={3}
                       />
                     </div>
+                  </TabsContent>
+
+                  <TabsContent value="pergunta-padrao">
+                    <PerguntaPadraoForm
+                      boasVindas={boasVindas}
+                      setBoasVindas={setBoasVindas}
+                      bannerPadraoUrl={bannerPadraoUrl}
+                      setBannerPadraoUrl={setBannerPadraoUrl}
+                      hospitalName={selectedHospital?.nome || "Hospital"}
+                    />
                   </TabsContent>
 
                   <TabsContent value="pontos-contato">
@@ -617,15 +641,21 @@ const CriarCampanhaPage = () => {
                       nomeHospital={selectedHospital?.nome}
                       formulariosCriados={formulariosCriados}
                     />
-                  ) : activeTab === "layout-envio" ? (
-                    <LayoutEnvioPreview
-                      bannerUrl={bannerUrl}
-                      mensagemPersonalizada={mensagemPersonalizada}
-                      mensagem={mensagem}
-                      permitirDescadastro={permitirDescadastro}
-                      nomeHospital={selectedHospital?.nome}
-                    />
-                  ) : (
+                   ) : activeTab === "layout-envio" ? (
+                     <LayoutEnvioPreview
+                       bannerUrl={bannerUrl}
+                       mensagemPersonalizada={mensagemPersonalizada}
+                       mensagem={mensagem}
+                       permitirDescadastro={permitirDescadastro}
+                       nomeHospital={selectedHospital?.nome}
+                     />
+                   ) : activeTab === "pergunta-padrao" ? (
+                     <PerguntaPadraoPreview
+                       boasVindas={boasVindas}
+                       bannerPadraoUrl={bannerPadraoUrl}
+                       hospitalName={selectedHospital?.nome || "Hospital"}
+                     />
+                   ) : (
                     <NPSPreview
                       trechoPergunta={trechoPergunta}
                       recomendacao={recomendacao}
@@ -677,6 +707,10 @@ const CriarCampanhaPage = () => {
                 autorizacao,
                 oQueAgradou,
                 setoresHospital
+              },
+              perguntaPadrao: {
+                boasVindas,
+                bannerPadraoUrl
               },
               pontosContato: pontosContatoAtivos ? { pontos: pontosContato } : null,
               problemas: problemasAtivos ? {} : null,

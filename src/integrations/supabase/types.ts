@@ -17,6 +17,7 @@ export type Database = {
       campanha_configuracao: {
         Row: {
           autorizacao: string | null
+          banner_padrao_url: string | null
           banner_url: string | null
           campanha_id: string
           confirmacao_envio: Json | null
@@ -27,6 +28,7 @@ export type Database = {
           lembrete: Json | null
           o_que_agradou: string | null
           pergunta_definitiva: Json | null
+          pergunta_padrao: Json | null
           pergunta_recomendacao: string | null
           pontos_contato: Json | null
           problemas: Json | null
@@ -38,6 +40,7 @@ export type Database = {
         }
         Insert: {
           autorizacao?: string | null
+          banner_padrao_url?: string | null
           banner_url?: string | null
           campanha_id: string
           confirmacao_envio?: Json | null
@@ -48,6 +51,7 @@ export type Database = {
           lembrete?: Json | null
           o_que_agradou?: string | null
           pergunta_definitiva?: Json | null
+          pergunta_padrao?: Json | null
           pergunta_recomendacao?: string | null
           pontos_contato?: Json | null
           problemas?: Json | null
@@ -59,6 +63,7 @@ export type Database = {
         }
         Update: {
           autorizacao?: string | null
+          banner_padrao_url?: string | null
           banner_url?: string | null
           campanha_id?: string
           confirmacao_envio?: Json | null
@@ -69,6 +74,7 @@ export type Database = {
           lembrete?: Json | null
           o_que_agradou?: string | null
           pergunta_definitiva?: Json | null
+          pergunta_padrao?: Json | null
           pergunta_recomendacao?: string | null
           pontos_contato?: Json | null
           problemas?: Json | null

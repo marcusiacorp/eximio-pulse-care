@@ -18,6 +18,10 @@ interface CampanhaData {
   nome: string
   tipo: string
   perguntaDefinitiva: any
+  perguntaPadrao?: {
+    boasVindas: string
+    bannerPadraoUrl: string
+  }
   pontosContato: any
   problemas: any
   formulariosAdicionais: any
@@ -128,10 +132,14 @@ export function EnvioModal({ isOpen, onClose, campaignData }: EnvioModalProps) {
             pergunta_recomendacao: campaignData.perguntaDefinitiva?.recomendacao,
             resposta_autorizacao: campaignData.perguntaDefinitiva?.autorizacao,
             banner_url: campaignData.bannerUrl || campaignData.layoutEnvio?.bannerUrl,
+            banner_padrao_url: campaignData.perguntaPadrao?.bannerPadraoUrl,
             // Manter JSONBs para dados complexos
             pergunta_definitiva: {
               oQueAgradou: campaignData.perguntaDefinitiva?.oQueAgradou,
               setoresHospital: campaignData.perguntaDefinitiva?.setoresHospital
+            },
+            pergunta_padrao: {
+              boasVindas: campaignData.perguntaPadrao?.boasVindas
             },
             pontos_contato: campaignData.pontosContato,
             problemas: campaignData.problemas,
@@ -155,10 +163,14 @@ export function EnvioModal({ isOpen, onClose, campaignData }: EnvioModalProps) {
             pergunta_recomendacao: campaignData.perguntaDefinitiva?.recomendacao,
             resposta_autorizacao: campaignData.perguntaDefinitiva?.autorizacao,
             banner_url: campaignData.bannerUrl || campaignData.layoutEnvio?.bannerUrl,
+            banner_padrao_url: campaignData.perguntaPadrao?.bannerPadraoUrl,
             // Manter JSONBs para dados complexos
             pergunta_definitiva: {
               oQueAgradou: campaignData.perguntaDefinitiva?.oQueAgradou,
               setoresHospital: campaignData.perguntaDefinitiva?.setoresHospital
+            },
+            pergunta_padrao: {
+              boasVindas: campaignData.perguntaPadrao?.boasVindas
             },
             pontos_contato: campaignData.pontosContato,
             problemas: campaignData.problemas,
