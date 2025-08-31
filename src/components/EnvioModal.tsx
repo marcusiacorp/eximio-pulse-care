@@ -290,11 +290,9 @@ export function EnvioModal({ isOpen, onClose, campanha }: EnvioModalProps) {
     onClose()
   }
 
-  // Verificar se é campanha do tipo link ao abrir
+  // Carregar pacientes ao abrir modal para campanhas que não são do tipo link
   useEffect(() => {
-    if (isOpen && campanha.tipo === 'link' && !campanhaId) {
-      handleSalvarCampanha()
-    } else if (isOpen && campanha.tipo !== 'link') {
+    if (isOpen && campanha.tipo !== 'link') {
       loadPacientes()
     }
   }, [isOpen, campanha.tipo])
