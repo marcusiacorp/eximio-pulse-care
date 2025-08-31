@@ -14,6 +14,7 @@ import { toast } from "sonner"
 import QRCode from "qrcode"
 
 interface CampanhaData {
+  id?: string
   nome: string
   tipo: string
   perguntaDefinitiva: any
@@ -32,7 +33,7 @@ interface CampanhaData {
 interface EnvioModalProps {
   isOpen: boolean
   onClose: () => void
-  campanha: CampanhaData
+  campaignData: CampanhaData
 }
 
 interface Paciente {
@@ -42,7 +43,7 @@ interface Paciente {
   telefone: string
 }
 
-export function EnvioModal({ isOpen, onClose, campanha }: EnvioModalProps) {
+export function EnvioModal({ isOpen, onClose, campaignData }: EnvioModalProps) {
   const [activeTab, setActiveTab] = useState("selecionar")
   const [pacientes, setPacientes] = useState<Paciente[]>([])
   const [selectedPacientes, setSelectedPacientes] = useState<string[]>([])
@@ -62,66 +63,114 @@ export function EnvioModal({ isOpen, onClose, campanha }: EnvioModalProps) {
 
     setLoading(true)
     try {
-      const { data, error } = await supabase
-        .from("campanhas")
-        .insert({
-          nome: campanha.nome,
-          tipo_campanha: campanha.tipo,
-          hospital_id: selectedHospital.id,
-          usuario_id: user.id,
-          ativa: false
-        })
-        .select()
-        .single()
+      let campanhaIdFinal = campaignData.id
 
-      if (error) throw error
+      if (campaignData.id) {
+        // UPDATE - Atualizar campanha existente
+        const { error } = await supabase
+          .from("campanhas")
+          .update({
+            nome: campaignData.nome,
+            tipo_campanha: campaignData.tipo,
+            ativa: true
+          })
+          .eq('id', campaignData.id)
 
-      setCampanhaId(data.id)
+        if (error) throw error
+        campanhaIdFinal = campaignData.id
+      } else {
+        // INSERT - Criar nova campanha
+        const { data, error } = await supabase
+          .from("campanhas")
+          .insert({
+            nome: campaignData.nome,
+            tipo_campanha: campaignData.tipo,
+            hospital_id: selectedHospital.id,
+            usuario_id: user.id,
+            ativa: false
+          })
+          .select()
+          .single()
+
+        if (error) throw error
+        campanhaIdFinal = data.id
+      }
+
+      setCampanhaId(campanhaIdFinal)
 
       // Atualizar com o link da campanha usando o ID real
       const { error: updateError } = await supabase
         .from('campanhas')
         .update({
-          link_campanha: `${window.location.origin}/pesquisa/${data.id}`
+          link_campanha: `${window.location.origin}/pesquisa/${campanhaIdFinal}`
         })
-        .eq('id', data.id)
+        .eq('id', campanhaIdFinal)
 
       if (updateError) throw updateError
 
       // Salvar configuração da campanha com colunas normalizadas  
       console.log('DEBUGGING BANNER - Salvando configuração:', {
-        bannerUrl: campanha.layoutEnvio?.bannerUrl,
-        layoutEnvio: campanha.layoutEnvio
+        bannerUrl: campaignData.layoutEnvio?.bannerUrl,
+        layoutEnvio: campaignData.layoutEnvio
       });
-      
-      const { error: configError } = await supabase
-        .from("campanha_configuracao")
-        .insert({
-          campanha_id: data.id,
-          trecho_pergunta: campanha.perguntaDefinitiva?.trechoPergunta,
-          recomendacao: campanha.perguntaDefinitiva?.recomendacao,
-          autorizacao: campanha.perguntaDefinitiva?.autorizacao,
-          o_que_agradou: campanha.perguntaDefinitiva?.oQueAgradou,
-          setores_selecionados: campanha.perguntaDefinitiva?.setoresHospital,
-          pergunta_recomendacao: campanha.perguntaDefinitiva?.recomendacao,
-          resposta_autorizacao: campanha.perguntaDefinitiva?.autorizacao,
-          banner_url: campanha.layoutEnvio?.bannerUrl,
-          // Manter JSONBs para dados complexos
-          pergunta_definitiva: {
-            oQueAgradou: campanha.perguntaDefinitiva?.oQueAgradou,
-            setoresHospital: campanha.perguntaDefinitiva?.setoresHospital
-          },
-          pontos_contato: campanha.pontosContato,
-          problemas: campanha.problemas,
-          formularios_adicionais: campanha.formulariosAdicionais,
-          layout_envio: campanha.layoutEnvio
-        })
 
-      if (configError) throw configError
+      if (campaignData.id) {
+        // UPDATE configuração existente
+        const { error: configError } = await supabase
+          .from("campanha_configuracao")
+          .update({
+            trecho_pergunta: campaignData.perguntaDefinitiva?.trechoPergunta,
+            recomendacao: campaignData.perguntaDefinitiva?.recomendacao,
+            autorizacao: campaignData.perguntaDefinitiva?.autorizacao,
+            o_que_agradou: campaignData.perguntaDefinitiva?.oQueAgradou,
+            setores_selecionados: campaignData.perguntaDefinitiva?.setoresHospital,
+            pergunta_recomendacao: campaignData.perguntaDefinitiva?.recomendacao,
+            resposta_autorizacao: campaignData.perguntaDefinitiva?.autorizacao,
+            banner_url: campaignData.layoutEnvio?.bannerUrl,
+            // Manter JSONBs para dados complexos
+            pergunta_definitiva: {
+              oQueAgradou: campaignData.perguntaDefinitiva?.oQueAgradou,
+              setoresHospital: campaignData.perguntaDefinitiva?.setoresHospital
+            },
+            pontos_contato: campaignData.pontosContato,
+            problemas: campaignData.problemas,
+            formularios_adicionais: campaignData.formulariosAdicionais,
+            layout_envio: campaignData.layoutEnvio
+          })
+          .eq('campanha_id', campaignData.id)
+
+        if (configError) throw configError
+      } else {
+        // INSERT nova configuração
+        const { error: configError } = await supabase
+          .from("campanha_configuracao")
+          .insert({
+            campanha_id: campanhaIdFinal,
+            trecho_pergunta: campaignData.perguntaDefinitiva?.trechoPergunta,
+            recomendacao: campaignData.perguntaDefinitiva?.recomendacao,
+            autorizacao: campaignData.perguntaDefinitiva?.autorizacao,
+            o_que_agradou: campaignData.perguntaDefinitiva?.oQueAgradou,
+            setores_selecionados: campaignData.perguntaDefinitiva?.setoresHospital,
+            pergunta_recomendacao: campaignData.perguntaDefinitiva?.recomendacao,
+            resposta_autorizacao: campaignData.perguntaDefinitiva?.autorizacao,
+            banner_url: campaignData.layoutEnvio?.bannerUrl,
+            // Manter JSONBs para dados complexos
+            pergunta_definitiva: {
+              oQueAgradou: campaignData.perguntaDefinitiva?.oQueAgradou,
+              setoresHospital: campaignData.perguntaDefinitiva?.setoresHospital
+            },
+            pontos_contato: campaignData.pontosContato,
+            problemas: campaignData.problemas,
+            formularios_adicionais: campaignData.formulariosAdicionais,
+            layout_envio: campaignData.layoutEnvio
+          })
+
+        if (configError) throw configError
+      }
 
       // Gerar QR code para campanhas do tipo link
-      if (campanha.tipo === 'link') {
-        const link = `${window.location.origin}/pesquisa/${data.id}`
+      if (campaignData.tipo === 'link') {
+        const link = `${window.location.origin}/pesquisa/${campanhaIdFinal}`
         const qrCodeDataUrl = await QRCode.toDataURL(link, {
           width: 200,
           margin: 2,
@@ -133,7 +182,7 @@ export function EnvioModal({ isOpen, onClose, campanha }: EnvioModalProps) {
         setQrCodeUrl(qrCodeDataUrl)
       }
 
-      toast.success("Campanha salva com sucesso!")
+      toast.success(campaignData.id ? "Campanha atualizada com sucesso!" : "Campanha salva com sucesso!")
     } catch (error) {
       console.error("Erro ao salvar campanha:", error)
       toast.error("Erro ao salvar campanha")
@@ -320,20 +369,20 @@ export function EnvioModal({ isOpen, onClose, campanha }: EnvioModalProps) {
 
   // Gerar link e QR code automaticamente para campanhas do tipo link
   useEffect(() => {
-    if (isOpen && campanha.tipo === 'link' && !campanhaId) {
+    if (isOpen && campaignData.tipo === 'link' && !campaignData.id) {
       handleSalvarCampanha()
-    } else if (isOpen && campanha.tipo !== 'link') {
+    } else if (isOpen && campaignData.tipo !== 'link') {
       loadPacientes()
     }
-  }, [isOpen, campanha.tipo])
+  }, [isOpen, campaignData.tipo])
 
   // Se for campanha do tipo link, mostrar interface diferente
-  if (campanha.tipo === 'link') {
+  if (campaignData.tipo === 'link') {
     return (
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Link da Pesquisa - {campanha.nome}</DialogTitle>
+            <DialogTitle>Link da Pesquisa - {campaignData.nome}</DialogTitle>
           </DialogHeader>
 
           <div className="space-y-6">
@@ -402,7 +451,7 @@ export function EnvioModal({ isOpen, onClose, campanha }: EnvioModalProps) {
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Envio da Pesquisa - {campanha.nome}</DialogTitle>
+          <DialogTitle>Envio da Pesquisa - {campaignData.nome}</DialogTitle>
         </DialogHeader>
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>

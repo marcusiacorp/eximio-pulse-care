@@ -25,10 +25,13 @@ import { NovoFormularioModal } from "@/components/NovoFormularioModal"
 import { LayoutEnvioPreview } from "@/components/LayoutEnvioPreview"
 
 const CriarCampanhaPage = () => {
-  const { tipo } = useParams<{ tipo: string }>()
+  const { tipo, id } = useParams<{ tipo: string; id?: string }>()
   const navigate = useNavigate()
   const { user } = useAuth()
   const { selectedHospital } = useHospital()
+  
+  const [isExistingCampaign, setIsExistingCampaign] = useState(!!id)
+  const [loadingCampaign, setLoadingCampaign] = useState(false)
   
   const [campaignName, setCampaignName] = useState("")
   const [currentDate] = useState(new Date().toLocaleDateString('pt-BR'))
@@ -81,6 +84,84 @@ const CriarCampanhaPage = () => {
     fetchUserData()
   }, [user])
 
+  // Carregar dados da campanha se for edição
+  useEffect(() => {
+    if (id && user) {
+      loadExistingCampaign()
+    }
+  }, [id, user])
+
+  const loadExistingCampaign = async () => {
+    if (!id) return
+    
+    setLoadingCampaign(true)
+    try {
+      // Buscar dados da campanha
+      const { data: campanhaData, error: campanhaError } = await supabase
+        .from('campanhas')
+        .select('*')
+        .eq('id', id)
+        .single()
+
+      if (campanhaError) throw campanhaError
+
+      // Buscar configuração da campanha
+      const { data: configData, error: configError } = await supabase
+        .from('campanha_configuracao')
+        .select('*')
+        .eq('campanha_id', id)
+        .single()
+
+      if (configError) throw configError
+
+      // Popular os estados com os dados carregados
+      setCampaignName(campanhaData.nome)
+      setTrechoPergunta(configData.trecho_pergunta || "")
+      setRecomendacao(configData.recomendacao || "")
+      setAutorizacao(configData.autorizacao || "")
+      setOQueAgradou(configData.o_que_agradou || "")
+      setSetoresHospital(configData.setores_selecionados || [])
+      setBannerUrl(configData.banner_url || "")
+      
+      // Popular outros dados do JSON
+      const layoutEnvio = configData.layout_envio as any || {}
+      setAssuntoEmail(layoutEnvio.assuntoEmail || "")
+      setMensagemPersonalizada(layoutEnvio.mensagemPersonalizada || "")
+      setMensagem(layoutEnvio.mensagem || "Nós valorizamos muito nosso relacionamento e o serviço aos nossos clientes e queremos melhorar a cada dia. Pedimos que você use apenas alguns minutos para nos dar sua sincera opinião sobre sua experiência conosco.")
+      setPermitirDescadastro(layoutEnvio.permitirDescadastro ?? true)
+      
+      // Popular pontos de contato
+      if (configData.pontos_contato) {
+        setPontosContatoAtivos(true)
+        setPontosContato(configData.pontos_contato as any)
+      }
+      
+      // Popular problemas
+      if (configData.problemas) {
+        setProblemasAtivos(true)
+      }
+      
+      // Popular formulários adicionais
+      if (configData.formularios_adicionais) {
+        setFormulariosAdicionaisAtivos(true)
+        setFormulariosCriados(configData.formularios_adicionais as any)
+      }
+
+      console.log('DEBUGGING BANNER - Dados carregados:', {
+        banner_url: configData.banner_url,
+        layout_envio: configData.layout_envio
+      });
+
+      toast.success("Dados da campanha carregados com sucesso!")
+    } catch (error) {
+      console.error("Erro ao carregar campanha:", error)
+      toast.error("Erro ao carregar dados da campanha")
+      navigate('/dashboard/campanhas')
+    } finally {
+      setLoadingCampaign(false)
+    }
+  }
+
 
   const setoresDisponiveis = [
     "AMBULATÓRIO",
@@ -123,7 +204,7 @@ const CriarCampanhaPage = () => {
           </Button>
           <div className="flex-1">
             <h1 className="text-2xl font-bold text-foreground">
-              Criar Campanha - {getTipoTitle(tipo!)}
+              {isExistingCampaign ? 'Editar' : 'Criar'} Campanha - {getTipoTitle(tipo!)}
             </h1>
           </div>
         </div>
@@ -133,21 +214,28 @@ const CriarCampanhaPage = () => {
         {/* Header com nome e data */}
         <Card className="mb-6">
           <CardContent className="p-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="nome">Nome da Campanha NPS</Label>
-                <Input
-                  id="nome"
-                  value={campaignName}
-                  onChange={(e) => setCampaignName(e.target.value)}
-                  placeholder="Digite o nome da campanha"
-                />
+            {loadingCampaign ? (
+              <div className="text-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+                <p className="text-muted-foreground">Carregando dados da campanha...</p>
               </div>
-              <div>
-                <Label>Data de Criação</Label>
-                <Input value={currentDate} disabled />
+            ) : (
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="nome">Nome da Campanha NPS</Label>
+                  <Input
+                    id="nome"
+                    value={campaignName}
+                    onChange={(e) => setCampaignName(e.target.value)}
+                    placeholder="Digite o nome da campanha"
+                  />
+                </div>
+                <div>
+                  <Label>Data de Criação</Label>
+                  <Input value={currentDate} disabled />
+                </div>
               </div>
-            </div>
+            )}
           </CardContent>
         </Card>
 
@@ -159,6 +247,12 @@ const CriarCampanhaPage = () => {
           {/* Painel esquerdo - Formulário */}
           <ResizablePanel defaultSize={50} minSize={40}>
             <div className="p-6">
+              {loadingCampaign && (
+                <div className="text-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+                  <p className="text-muted-foreground">Carregando...</p>
+                </div>
+              )}
               <Tabs value={activeTab} onValueChange={setActiveTab} orientation="vertical">
                 <TabsList className="grid w-full grid-rows-7 h-auto">
                   <TabsTrigger value="pergunta-definitiva" className="justify-start">
@@ -534,7 +628,8 @@ const CriarCampanhaPage = () => {
                       autorizacao={autorizacao}
                       oQueAgradou={oQueAgradou}
                       setoresHospital={setoresHospital}
-                      nomeHospital={selectedHospital?.nome}
+                      logoUrl={bannerUrl}
+                      nomeHospital={selectedHospital?.nome || "Hospital"}
                     />
                   )}
                 </CardContent>
@@ -561,31 +656,32 @@ const CriarCampanhaPage = () => {
       </div>
 
       {/* Modal de Envios */}
-      <EnvioModal 
-        isOpen={showEnvioModal}
-        onClose={() => setShowEnvioModal(false)}
-        campanha={{
-          nome: campaignName,
-          tipo: tipo!,
-          perguntaDefinitiva: {
-            trechoPergunta,
-            recomendacao,
-            autorizacao,
-            oQueAgradou,
-            setoresHospital
-          },
-          pontosContato: pontosContatoAtivos ? { ativo: true, pontos: pontosContato } : { ativo: false },
-          problemas: { ativo: problemasAtivos },
-          formulariosAdicionais: { ativo: formulariosAdicionaisAtivos, formularios: formulariosCriados },
-          layoutEnvio: {
-            assuntoEmail,
-            bannerUrl,
-            mensagemPersonalizada,
-            mensagem,
-            permitirDescadastro
-          }
-        }}
-      />
+        <EnvioModal 
+          isOpen={showEnvioModal}
+          onClose={() => setShowEnvioModal(false)}
+          campaignData={{
+            id: isExistingCampaign ? id : undefined,
+            nome: campaignName,
+            tipo: tipo!,
+            perguntaDefinitiva: {
+              trechoPergunta,
+              recomendacao,
+              autorizacao,
+              oQueAgradou,
+              setoresHospital
+            },
+            pontosContato: pontosContatoAtivos ? pontosContato : null,
+            problemas: problemasAtivos,
+            formulariosAdicionais: formulariosAdicionaisAtivos ? formulariosCriados : null,
+            layoutEnvio: {
+              assuntoEmail,
+              bannerUrl,
+              mensagemPersonalizada,
+              mensagem,
+              permitirDescadastro
+            }
+          }}
+        />
     </div>
   )
 }

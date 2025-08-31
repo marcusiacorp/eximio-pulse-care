@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
-import { Plus, Mail, Link, Network, Zap, QrCode, ExternalLink, Calendar, BarChart3 } from "lucide-react"
+import { Plus, Mail, Link, Network, Zap, QrCode, ExternalLink, Calendar, BarChart3, Edit } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -261,6 +261,14 @@ const CampanhasPage = () => {
                         </div>
                       </div>
                       <div className="flex items-center space-x-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => navigate(`/dashboard/campanhas/criar/${campanha.tipo_campanha}/${campanha.id}`)}
+                        >
+                          <Edit className="h-4 w-4 mr-1" />
+                          Editar
+                        </Button>
                         {campanha.link_campanha && (
                           <Button
                             variant="outline"
