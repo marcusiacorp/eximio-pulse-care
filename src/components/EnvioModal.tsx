@@ -96,7 +96,11 @@ export function EnvioModal({ isOpen, onClose, campanha }: EnvioModalProps) {
           trecho_pergunta: campanha.perguntaDefinitiva?.trechoPergunta,
           recomendacao: campanha.perguntaDefinitiva?.recomendacao,
           autorizacao: campanha.perguntaDefinitiva?.autorizacao,
-          pontos_contato: campanha.pontosContato,
+          pontos_contato: {
+            ...campanha.pontosContato,
+            pergunta_agradou: campanha.perguntaDefinitiva?.oQueAgradou,
+            setores_hospital: campanha.perguntaDefinitiva?.setoresHospital
+          },
           problemas: campanha.problemas,
           formularios_adicionais: campanha.formulariosAdicionais,
           layout_envio: campanha.layoutEnvio

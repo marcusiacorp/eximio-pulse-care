@@ -158,6 +158,8 @@ export default function PesquisaPublica() {
             trechoPergunta={campanha.configuracao?.[0]?.trecho_pergunta || ""}
             recomendacao={campanha.configuracao?.[0]?.recomendacao || ""}
             autorizacao={campanha.configuracao?.[0]?.autorizacao || ""}
+            oQueAgradou={(campanha.configuracao?.[0]?.pontos_contato as any)?.pergunta_agradou}
+            setoresHospital={(campanha.configuracao?.[0]?.pontos_contato as any)?.setores_hospital || []}
             nomeHospital={campanha.nome}
             isPublicMode={true}
             logoUrl={(campanha.configuracao?.[0]?.layout_envio as any)?.logo_url}

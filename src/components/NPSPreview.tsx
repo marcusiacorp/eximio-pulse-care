@@ -31,6 +31,7 @@ export const NPSPreview = ({
   const [selectedScore, setSelectedScore] = useState<number | null>(null)
   const [feedback, setFeedback] = useState("")
   const [selectedAuthorization, setSelectedAuthorization] = useState<boolean | null>(null)
+  const [selectedRecomendacao, setSelectedRecomendacao] = useState<boolean | null>(null)
   const [respostaAgradou, setRespostaAgradou] = useState("")
   const [setoresSelecionados, setSetoresSelecionados] = useState<string[]>([])
   const [logoFile, setLogoFile] = useState<File | null>(null)
@@ -239,19 +240,19 @@ export const NPSPreview = ({
           </p>
           <div className="flex gap-3">
             <Button
-              variant={selectedScore !== null && selectedScore >= 9 ? "default" : "outline"}
+              variant={selectedRecomendacao === true ? "default" : "outline"}
               size="sm"
               className="flex-1"
-              onClick={() => setSelectedScore(selectedScore || 9)}
+              onClick={() => setSelectedRecomendacao(true)}
             >
               <Star className="h-4 w-4 mr-2" />
               Sim
             </Button>
             <Button
-              variant={selectedScore !== null && selectedScore <= 6 ? "default" : "outline"}
+              variant={selectedRecomendacao === false ? "default" : "outline"}
               size="sm"
               className="flex-1"
-              onClick={() => setSelectedScore(selectedScore || 6)}
+              onClick={() => setSelectedRecomendacao(false)}
             >
               Não
             </Button>
