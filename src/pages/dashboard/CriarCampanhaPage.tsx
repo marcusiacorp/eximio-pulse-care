@@ -187,9 +187,6 @@ const CriarCampanhaPage = () => {
               Criar Campanha - {getTipoTitle(tipo!)}
             </h1>
           </div>
-          <Button onClick={handleSave} className="bg-primary hover:bg-primary/90">
-            Salvar Campanha
-          </Button>
         </div>
       </div>
 
