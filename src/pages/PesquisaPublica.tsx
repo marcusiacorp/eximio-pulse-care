@@ -139,27 +139,45 @@ export default function PesquisaPublica() {
     try {
       console.log('Salvando dados pessoais:', dados)
       
-      // Criar ou encontrar paciente na tabela pacientes
-      const { data: novoPaciente, error: pacienteError } = await supabase
+      // Primeiro, verificar se já existe um paciente com este email
+      const { data: pacienteExistente, error: buscaError } = await supabase
         .from('pacientes')
-        .insert({
-          nome: dados.nome,
-          email: dados.email,
-          telefone: dados.telefone || null,
-          hospital_id: campanha?.hospital_id || null
-        })
-        .select()
+        .select('id, nome, email, telefone')
+        .eq('email', dados.email)
         .single()
 
-      if (pacienteError) {
-        console.error('Erro ao criar paciente:', pacienteError)
-        toast.error(`Erro ao salvar dados: ${pacienteError.message}`)
-        return
+      let paciente = null
+
+      if (pacienteExistente && !buscaError) {
+        // Paciente já existe, usar o existente
+        console.log('Paciente já existe, usando existente:', pacienteExistente)
+        paciente = pacienteExistente
+      } else {
+        // Paciente não existe, criar novo
+        console.log('Criando novo paciente')
+        const { data: novoPaciente, error: pacienteError } = await supabase
+          .from('pacientes')
+          .insert({
+            nome: dados.nome,
+            email: dados.email,
+            telefone: dados.telefone || null,
+            hospital_id: campanha?.hospital_id || null
+          })
+          .select()
+          .single()
+
+        if (pacienteError) {
+          console.error('Erro ao criar paciente:', pacienteError)
+          toast.error(`Erro ao salvar dados: ${pacienteError.message}`)
+          return
+        }
+
+        paciente = novoPaciente
+        console.log('Paciente criado com sucesso:', novoPaciente)
       }
 
-      console.log('Paciente criado com sucesso:', novoPaciente)
       setDadosPessoais(dados)
-      setPacienteId(novoPaciente.id)
+      setPacienteId(paciente.id)
       setMostrandoDadosPessoais(false)
       
       toast.success('Dados salvos com sucesso!')
