@@ -145,20 +145,43 @@ export const PerguntaPadraoPreview = ({
                 De 0 a 10, o quanto você recomendaria o {hospitalName} para amigos e familiares?
               </Label>
               
-              <div className="grid grid-cols-11 gap-2">
-                {Array.from({ length: 11 }, (_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setNpsScoreGlobal(i)}
-                    className={`
-                      w-12 h-12 rounded-full font-bold text-sm cursor-pointer
-                      ${getScaleColor(i, npsScoreGlobal === i, false)}
-                    `}
-                    disabled={!isPublicMode}
-                  >
-                    {i}
-                  </button>
-                ))}
+              <div className="space-y-2">
+                {/* Primeira fileira: 0-5 */}
+                <div className="grid grid-cols-6 gap-2 justify-center">
+                  {Array.from({ length: 6 }, (_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setNpsScoreGlobal(i)}
+                      className={`
+                        w-12 h-12 rounded-full font-bold text-sm cursor-pointer
+                        ${getScaleColor(i, npsScoreGlobal === i, false)}
+                      `}
+                      disabled={!isPublicMode}
+                    >
+                      {i}
+                    </button>
+                  ))}
+                </div>
+                
+                {/* Segunda fileira: 6-10 */}
+                <div className="grid grid-cols-5 gap-2 justify-center">
+                  {Array.from({ length: 5 }, (_, i) => {
+                    const value = i + 6;
+                    return (
+                      <button
+                        key={value}
+                        onClick={() => setNpsScoreGlobal(value)}
+                        className={`
+                          w-12 h-12 rounded-full font-bold text-sm cursor-pointer
+                          ${getScaleColor(value, npsScoreGlobal === value, false)}
+                        `}
+                        disabled={!isPublicMode}
+                      >
+                        {value}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
               
               <div className="flex justify-between text-xs text-muted-foreground mt-2">
@@ -226,20 +249,43 @@ export const PerguntaPadraoPreview = ({
                     De 0 a 10, como você avalia sua experiência durante seu atendimento no {setor}?
                   </Label>
                   
-                  <div className="grid grid-cols-11 gap-2">
-                    {Array.from({ length: 11 }, (_, i) => (
-                      <button
-                        key={i}
-                        onClick={() => updateRespostaSetor(setor, 'avaliacaoSetor', i)}
-                        className={`
-                          w-12 h-12 rounded-full font-bold text-sm cursor-pointer
-                          ${getScaleColor(i, respostasSetores[setor].avaliacaoSetor === i, false)}
-                        `}
-                        disabled={!isPublicMode}
-                      >
-                        {i}
-                      </button>
-                    ))}
+                  <div className="space-y-2">
+                    {/* Primeira fileira: 0-5 */}
+                    <div className="grid grid-cols-6 gap-2 justify-center">
+                      {Array.from({ length: 6 }, (_, i) => (
+                        <button
+                          key={i}
+                          onClick={() => updateRespostaSetor(setor, 'avaliacaoSetor', i)}
+                          className={`
+                            w-12 h-12 rounded-full font-bold text-sm cursor-pointer
+                            ${getScaleColor(i, respostasSetores[setor].avaliacaoSetor === i, false)}
+                          `}
+                          disabled={!isPublicMode}
+                        >
+                          {i}
+                        </button>
+                      ))}
+                    </div>
+                    
+                    {/* Segunda fileira: 6-10 */}
+                    <div className="grid grid-cols-5 gap-2 justify-center">
+                      {Array.from({ length: 5 }, (_, i) => {
+                        const value = i + 6;
+                        return (
+                          <button
+                            key={value}
+                            onClick={() => updateRespostaSetor(setor, 'avaliacaoSetor', value)}
+                            className={`
+                              w-12 h-12 rounded-full font-bold text-sm cursor-pointer
+                              ${getScaleColor(value, respostasSetores[setor].avaliacaoSetor === value, false)}
+                            `}
+                            disabled={!isPublicMode}
+                          >
+                            {value}
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
 

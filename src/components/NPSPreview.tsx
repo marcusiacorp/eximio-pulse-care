@@ -229,19 +229,41 @@ export const NPSPreview = ({
 
       {/* Escala NPS */}
       <div className="space-y-4">
-        <div className="grid grid-cols-11 gap-1">
-          {Array.from({ length: 11 }, (_, i) => (
-            <button
-              key={i}
-              onClick={() => setSelectedScore(i)}
-              className={`
-                h-10 w-10 rounded-full text-sm font-medium
-                ${getScaleColor(i, selectedScore === i)}
-              `}
-            >
-              {i}
-            </button>
-          ))}
+        <div className="space-y-2">
+          {/* Primeira fileira: 0-5 */}
+          <div className="grid grid-cols-6 gap-1 justify-center">
+            {Array.from({ length: 6 }, (_, i) => (
+              <button
+                key={i}
+                onClick={() => setSelectedScore(i)}
+                className={`
+                  h-10 w-10 rounded-full text-sm font-medium
+                  ${getScaleColor(i, selectedScore === i)}
+                `}
+              >
+                {i}
+              </button>
+            ))}
+          </div>
+          
+          {/* Segunda fileira: 6-10 */}
+          <div className="grid grid-cols-5 gap-1 justify-center">
+            {Array.from({ length: 5 }, (_, i) => {
+              const value = i + 6;
+              return (
+                <button
+                  key={value}
+                  onClick={() => setSelectedScore(value)}
+                  className={`
+                    h-10 w-10 rounded-full text-sm font-medium
+                    ${getScaleColor(value, selectedScore === value)}
+                  `}
+                >
+                  {value}
+                </button>
+              );
+            })}
+          </div>
         </div>
         
         {/* Labels */}
