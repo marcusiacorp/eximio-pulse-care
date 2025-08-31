@@ -39,14 +39,8 @@ export const useRespostasDetalhadas = (campanhaId: string | null) => {
       // Buscar respostas da campanha
       const { data: respostas, error: respostasError } = await supabase
         .from('respostas_pesquisa')
-        .select(`
-          *,
-          envio:envios_pesquisa!inner(
-            campanha_id,
-            created_at
-          )
-        `)
-        .eq('envio.campanha_id', campanhaId)
+        .select('*')
+        .eq('campanha_id', campanhaId)
         .order('created_at', { ascending: false })
 
       if (respostasError) {
