@@ -89,7 +89,7 @@ export function EnvioModal({ isOpen, onClose, campanha }: EnvioModalProps) {
       if (updateError) throw updateError
 
       // Salvar configuração da campanha com colunas normalizadas  
-      console.log('Salvando configuração:', {
+      console.log('DEBUGGING BANNER - Salvando configuração:', {
         bannerUrl: campanha.layoutEnvio?.bannerUrl,
         layoutEnvio: campanha.layoutEnvio
       });

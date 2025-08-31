@@ -390,9 +390,9 @@ const CriarCampanhaPage = () => {
                                        .from('banners')
                                        .getPublicUrl(fileName)
                                      
-                                     console.log('Banner uploaded successfully:', publicUrl)
-                                     setBannerUrl(publicUrl)
-                                     console.log('Banner URL set no estado:', publicUrl)
+                                      console.log('Banner uploaded successfully:', publicUrl)
+                                      setBannerUrl(publicUrl)
+                                      console.log('Banner URL set no estado:', publicUrl)
                                      toast.success("Banner enviado com sucesso!")
                                   } catch (error) {
                                     console.error('Erro ao fazer upload do banner:', error)
@@ -551,7 +551,7 @@ const CriarCampanhaPage = () => {
           <Button 
             className="bg-primary text-primary-foreground hover:bg-primary/90"
             onClick={() => {
-              console.log('Banner URL antes de abrir modal:', bannerUrl)
+              console.log('DEBUGGING BANNER - Banner URL antes de abrir modal:', bannerUrl)
               setShowEnvioModal(true)
             }}
           >
@@ -574,17 +574,9 @@ const CriarCampanhaPage = () => {
             oQueAgradou,
             setoresHospital
           },
-          pontosContato: {
-            ativos: pontosContatoAtivos,
-            dados: pontosContato
-          },
-          problemas: {
-            ativos: problemasAtivos
-          },
-          formulariosAdicionais: {
-            ativos: formulariosAdicionaisAtivos,
-            formularios: formulariosCriados
-          },
+          pontosContato: pontosContatoAtivos ? { ativo: true, pontos: pontosContato } : { ativo: false },
+          problemas: { ativo: problemasAtivos },
+          formulariosAdicionais: { ativo: formulariosAdicionaisAtivos, formularios: formulariosCriados },
           layoutEnvio: {
             assuntoEmail,
             bannerUrl,

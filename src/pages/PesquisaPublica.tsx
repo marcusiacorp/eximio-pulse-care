@@ -322,9 +322,10 @@ export default function PesquisaPublica() {
         {etapaAtualNome === "pergunta_definitiva" && (() => {
           const bannerUrl = campanha.configuracao?.[0]?.banner_url
           
-          console.log('Passando para NPSPreview:')
-          console.log('- banner_url da nova coluna:', bannerUrl)
+          console.log('DEBUGGING BANNER - PesquisaPublica:')
+          console.log('- banner_url da coluna banner_url:', bannerUrl)
           console.log('- banner_url existe?', !!bannerUrl)
+          console.log('- configuracao completa:', campanha.configuracao?.[0])
           
           return (
             <NPSPreview
