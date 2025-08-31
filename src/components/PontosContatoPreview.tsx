@@ -268,11 +268,6 @@ export const PontosContatoPreview = ({
           />
         </div>
 
-        <div className="pt-4">
-          <Button className="w-full">
-            Enviar Avaliação
-          </Button>
-        </div>
       </CardContent>
     </Card>
   )

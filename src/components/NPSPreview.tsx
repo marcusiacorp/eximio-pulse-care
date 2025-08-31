@@ -278,12 +278,6 @@ export const NPSPreview = ({
         </div>
       )}
 
-      {/* Botão de Envio */}
-      <div className="pt-4">
-        <Button className="w-full bg-primary hover:bg-primary/90">
-          Enviar Pesquisa
-        </Button>
-      </div>
 
       {/* Input oculto para upload de arquivo */}
       <input
