@@ -286,17 +286,17 @@ export default function PesquisaPublica() {
         pergunta_padrao_identificacao_da_area: respostas.areaSelecionada || null,
         // Campos por setor - Ambulatório
         avaliacao_ambulatorio_nota: respostas.respostasSetores?.Ambulatório?.avaliacaoSetor || null,
-        avaliacao_ambulatorio_o_que_mais_contribuiu: respostas.respostasSetores?.Ambulatório?.contribuicoes?.join(', ') || null,
+        avaliacao_ambulatorio_o_que_mais_contribuiu: respostas.respostasSetores?.Ambulatório?.satisfacaoSetor || null,
         avaliacao_ambulatorio_o_que_mais_influenciou: respostas.respostasSetores?.Ambulatório?.influencias?.join(', ') || null,
         avaliacao_ambulatorio_sugestoes: respostas.respostasSetores?.Ambulatório?.sugestoes || null,
         // Campos por setor - Pronto Socorro  
         avaliacao_prontosocorro_nota: respostas.respostasSetores?.["Pronto Socorro"]?.avaliacaoSetor || null,
-        avaliacao_prontosocorro_o_que_mais_contribuiu: respostas.respostasSetores?.["Pronto Socorro"]?.contribuicoes?.join(', ') || null,
+        avaliacao_prontosocorro_o_que_mais_contribuiu: respostas.respostasSetores?.["Pronto Socorro"]?.satisfacaoSetor || null,
         avaliacao_prontosocorro_o_que_mais_influenciou: respostas.respostasSetores?.["Pronto Socorro"]?.influencias?.join(', ') || null,
         avaliacao_prontosocorro_sugestoes: respostas.respostasSetores?.["Pronto Socorro"]?.sugestoes || null,
         // Campos por setor - Unidade de Internação
         avaliacao_unidadeinternacao_nota: respostas.respostasSetores?.["Unidade de Internação"]?.avaliacaoSetor || null,
-        avaliacao_unidadeinternacao_o_que_mais_contribuiu: respostas.respostasSetores?.["Unidade de Internação"]?.contribuicoes?.join(', ') || null,
+        avaliacao_unidadeinternacao_o_que_mais_contribuiu: respostas.respostasSetores?.["Unidade de Internação"]?.satisfacaoSetor || null,
         avaliacao_unidadeinternacao_o_que_mais_influenciou: respostas.respostasSetores?.["Unidade de Internação"]?.influencias?.join(', ') || null,
         avaliacao_unidadeinternacao_sugestoes: respostas.respostasSetores?.["Unidade de Internação"]?.sugestoes || null,
         // Adicionar dados pessoais do respondente
