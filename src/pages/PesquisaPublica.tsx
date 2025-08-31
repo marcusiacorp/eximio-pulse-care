@@ -96,30 +96,48 @@ export default function PesquisaPublica() {
           console.log('DEBUG - Configuração completa:', config)
           
           // Verificar pontos de contato - deve ter pelo menos um ponto ativo
-          if (config?.pontos_contato && typeof config.pontos_contato === 'object') {
-            const pontosData = config.pontos_contato as any
-            const pontos = pontosData?.pontos || []
-            const temPontosAtivos = pontos.some((ponto: any) => ponto?.ativo === true)
-            console.log('DEBUG - Pontos de contato:', { pontosData, pontos, temPontosAtivos })
-            if (temPontosAtivos) {
+          if (config?.pontos_contato) {
+            console.log('DEBUG - Verificando pontos de contato:', config.pontos_contato)
+            // Verificar se é um objeto com propriedade ativo: true (formato booleano simples)
+            if (config.pontos_contato === true) {
               etapasDisponiveis.push("pontos_contato")
+            }
+            // Ou verificar se é um objeto com array de pontos ativos
+            else if (typeof config.pontos_contato === 'object') {
+              const pontosData = config.pontos_contato as any
+              const pontos = pontosData?.pontos || []
+              const temPontosAtivos = Array.isArray(pontos) && pontos.some((ponto: any) => ponto?.ativo === true)
+              console.log('DEBUG - Pontos de contato detalhados:', { pontosData, pontos, temPontosAtivos })
+              if (temPontosAtivos) {
+                etapasDisponiveis.push("pontos_contato")
+              }
             }
           }
           
-          // Verificar problemas - deve ser true (boolean)
-          if (config?.problemas === true) {
-            console.log('DEBUG - Problemas ativo:', true)
-            etapasDisponiveis.push("problemas")
+          // Verificar problemas - pode ser true (boolean) ou objeto
+          if (config?.problemas) {
+            console.log('DEBUG - Verificando problemas:', config.problemas)
+            if (config.problemas === true || (typeof config.problemas === 'object' && config.problemas !== null)) {
+              etapasDisponiveis.push("problemas")
+            }
           }
           
-          // Verificar formulários adicionais - deve ter pelo menos um formulário
-          if (config?.formularios_adicionais && typeof config.formularios_adicionais === 'object') {
-            const formulariosData = config.formularios_adicionais as any
-            const formularios = formulariosData?.formularios || []
-            const temFormularios = Array.isArray(formularios) && formularios.length > 0
-            console.log('DEBUG - Formulários adicionais:', { formulariosData, formularios, temFormularios })
-            if (temFormularios) {
+          // Verificar formulários adicionais - pode ser true (boolean) ou objeto com formulários
+          if (config?.formularios_adicionais) {
+            console.log('DEBUG - Verificando formulários adicionais:', config.formularios_adicionais)
+            // Verificar se é um boolean true
+            if (config.formularios_adicionais === true) {
               etapasDisponiveis.push("formularios_adicionais")
+            }
+            // Ou verificar se é um objeto com array de formulários
+            else if (typeof config.formularios_adicionais === 'object') {
+              const formulariosData = config.formularios_adicionais as any
+              const formularios = formulariosData?.formularios || []
+              const temFormularios = Array.isArray(formularios) && formularios.length > 0
+              console.log('DEBUG - Formulários adicionais detalhados:', { formulariosData, formularios, temFormularios })
+              if (temFormularios) {
+                etapasDisponiveis.push("formularios_adicionais")
+              }
             }
           }
           
@@ -337,13 +355,6 @@ export default function PesquisaPublica() {
           </div>
         </div>
 
-        {/* Debug: mostrar respostas coletadas */}
-        {process.env.NODE_ENV === 'development' && (
-          <div className="mb-4 p-2 bg-muted rounded text-xs">
-            <strong>DEBUG - Respostas coletadas:</strong>
-            <pre>{JSON.stringify(respostas, null, 2)}</pre>
-          </div>
-        )}
 
         {/* Renderizar o componente de preview apropriado para cada etapa */}
         {etapaAtualNome === "pergunta_definitiva" && (() => {
