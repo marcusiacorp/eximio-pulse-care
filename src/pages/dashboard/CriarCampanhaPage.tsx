@@ -51,15 +51,15 @@ const CriarCampanhaPage = () => {
   const [boasVindas, setBoasVindas] = useState("")
   const [bannerPadraoUrl, setBannerPadraoUrl] = useState("")
   
-  // Estados dos pontos de contato
+  // Estados de ativação das sessões
+  const [perguntaDefinitivaAtiva, setPerguntaDefinitivaAtiva] = useState(true)
+  const [perguntaPadraoAtiva, setPerguntaPadraoAtiva] = useState(false)
   const [pontosContatoAtivos, setPontosContatoAtivos] = useState(false)
-  const [pontosContato, setPontosContato] = useState<PontoContato[]>([])
-  
-  // Estados dos problemas
   const [problemasAtivos, setProblemasAtivos] = useState(false)
-  
-  // Estados dos formulários adicionais
   const [formulariosAdicionaisAtivos, setFormulariosAdicionaisAtivos] = useState(false)
+  
+  // Estados dos pontos de contato
+  const [pontosContato, setPontosContato] = useState<PontoContato[]>([])
   const [formulariosCriados, setFormulariosCriados] = useState<any[]>([])
   
   // Estados do layout de envio
@@ -141,22 +141,24 @@ const CriarCampanhaPage = () => {
       setMensagem(layoutEnvio.mensagem || "Nós valorizamos muito nosso relacionamento e o serviço aos nossos clientes e queremos melhorar a cada dia. Pedimos que você use apenas alguns minutos para nos dar sua sincera opinião sobre sua experiência conosco.")
       setPermitirDescadastro(layoutEnvio.permitirDescadastro ?? true)
       
+      // Popular ativação das sessões se existir campo sessoes_ativas
+      const sessoesAtivas = layoutEnvio.sessoes_ativas || {}
+      
+      setPerguntaDefinitivaAtiva(sessoesAtivas.pergunta_definitiva ?? true)
+      setPerguntaPadraoAtiva(sessoesAtivas.pergunta_padrao ?? false)
+      setPontosContatoAtivos(sessoesAtivas.pontos_contato ?? false)
+      setProblemasAtivos(sessoesAtivas.problemas ?? false)
+      setFormulariosAdicionaisAtivos(sessoesAtivas.formularios_adicionais ?? false)
+      
       // Popular pontos de contato
       if (configData.pontos_contato) {
-        setPontosContatoAtivos(true)
         const pontosData = configData.pontos_contato as any
         // Se tem estrutura com pontos, usar ela; senão, usar diretamente como array
         setPontosContato(pontosData?.pontos || pontosData || [])
       }
       
-      // Popular problemas
-      if (configData.problemas) {
-        setProblemasAtivos(true)
-      }
-      
       // Popular formulários adicionais
       if (configData.formularios_adicionais) {
-        setFormulariosAdicionaisAtivos(true)
         const formulariosData = configData.formularios_adicionais as any
         // Se tem estrutura com formularios, usar ela; senão, usar diretamente como array
         setFormulariosCriados(formulariosData?.formularios || formulariosData || [])
@@ -270,20 +272,45 @@ const CriarCampanhaPage = () => {
               )}
               <Tabs value={activeTab} onValueChange={setActiveTab} orientation="vertical">
                 <TabsList className="grid w-full grid-rows-8 h-auto">
-                  <TabsTrigger value="pergunta-definitiva" className="justify-start">
-                    Pergunta Definitiva
+                  <TabsTrigger value="pergunta-definitiva" className="justify-between">
+                    <span>Pergunta Definitiva</span>
+                    <Switch
+                      checked={perguntaDefinitivaAtiva}
+                      onCheckedChange={setPerguntaDefinitivaAtiva}
+                      onClick={(e) => e.stopPropagation()}
+                    />
                   </TabsTrigger>
-                  <TabsTrigger value="pergunta-padrao" className="justify-start">
-                    Pergunta Padrão
+                  <TabsTrigger value="pergunta-padrao" className="justify-between">
+                    <span>Pergunta Padrão</span>
+                    <Switch
+                      checked={perguntaPadraoAtiva}
+                      onCheckedChange={setPerguntaPadraoAtiva}
+                      onClick={(e) => e.stopPropagation()}
+                    />
                   </TabsTrigger>
-                  <TabsTrigger value="pontos-contato" className="justify-start">
-                    Pontos de Contato
+                  <TabsTrigger value="pontos-contato" className="justify-between">
+                    <span>Pontos de Contato</span>
+                    <Switch
+                      checked={pontosContatoAtivos}
+                      onCheckedChange={setPontosContatoAtivos}
+                      onClick={(e) => e.stopPropagation()}
+                    />
                   </TabsTrigger>
-                  <TabsTrigger value="problemas" className="justify-start">
-                    Problemas
+                  <TabsTrigger value="problemas" className="justify-between">
+                    <span>Problemas</span>
+                    <Switch
+                      checked={problemasAtivos}
+                      onCheckedChange={setProblemasAtivos}
+                      onClick={(e) => e.stopPropagation()}
+                    />
                   </TabsTrigger>
-                  <TabsTrigger value="formularios-adicionais" className="justify-start">
-                    Formulários Adicionais
+                  <TabsTrigger value="formularios-adicionais" className="justify-between">
+                    <span>Formulários Adicionais</span>
+                    <Switch
+                      checked={formulariosAdicionaisAtivos}
+                      onCheckedChange={setFormulariosAdicionaisAtivos}
+                      onClick={(e) => e.stopPropagation()}
+                    />
                   </TabsTrigger>
                   {(tipo === "email" || tipo === "multiple") && (
                     <TabsTrigger value="layout-envio" className="justify-start">
@@ -300,6 +327,13 @@ const CriarCampanhaPage = () => {
 
                 <div className="ml-6">
                   <TabsContent value="pergunta-definitiva" className="space-y-4">
+                    {!perguntaDefinitivaAtiva ? (
+                      <div className="text-center py-8">
+                        <p className="text-muted-foreground">Esta sessão está desativada</p>
+                        <p className="text-sm text-muted-foreground mt-2">Use o switch acima para ativá-la</p>
+                      </div>
+                    ) : (
+                      <>
                     <div>
                       <Label htmlFor="trecho-pergunta">Trecho da Pergunta *</Label>
                       <Textarea
@@ -364,9 +398,17 @@ const CriarCampanhaPage = () => {
                         rows={3}
                       />
                     </div>
+                      </>
+                    )}
                   </TabsContent>
 
                   <TabsContent value="pergunta-padrao">
+                    {!perguntaPadraoAtiva ? (
+                      <div className="text-center py-8">
+                        <p className="text-muted-foreground">Esta sessão está desativada</p>
+                        <p className="text-sm text-muted-foreground mt-2">Use o switch acima para ativá-la</p>
+                      </div>
+                    ) : (
                     <PerguntaPadraoForm
                       boasVindas={boasVindas}
                       setBoasVindas={setBoasVindas}
@@ -374,18 +416,33 @@ const CriarCampanhaPage = () => {
                       setBannerPadraoUrl={setBannerPadraoUrl}
                       hospitalName={selectedHospital?.nome || "Hospital"}
                     />
+                    )}
                   </TabsContent>
 
                   <TabsContent value="pontos-contato">
+                    {!pontosContatoAtivos ? (
+                      <div className="text-center py-8">
+                        <p className="text-muted-foreground">Esta sessão está desativada</p>
+                        <p className="text-sm text-muted-foreground mt-2">Use o switch acima para ativá-la</p>
+                      </div>
+                    ) : (
                     <PontosContatoForm
                       pontosContatoAtivos={pontosContatoAtivos}
                       setPontosContatoAtivos={setPontosContatoAtivos}
                       pontosContato={pontosContato}
                       setPontosContato={setPontosContato}
                     />
+                    )}
                   </TabsContent>
 
                   <TabsContent value="problemas" className="space-y-4">
+                    {!problemasAtivos ? (
+                      <div className="text-center py-8">
+                        <p className="text-muted-foreground">Esta sessão está desativada</p>
+                        <p className="text-sm text-muted-foreground mt-2">Use o switch acima para ativá-la</p>
+                      </div>
+                    ) : (
+                      <>
                     <div className="bg-muted/30 p-4 rounded-lg">
                       <p className="text-sm text-muted-foreground mb-4">
                         Pergunte aos seus clientes se eles tiveram algum tipo de problema
@@ -418,11 +475,20 @@ const CriarCampanhaPage = () => {
                             </Label>
                           </div>
                         </div>
-                      </div>
-                    </div>
+                        </div>
+                        </div>
+                      </>
+                    )}
                   </TabsContent>
 
                   <TabsContent value="formularios-adicionais" className="space-y-4">
+                    {!formulariosAdicionaisAtivos ? (
+                      <div className="text-center py-8">
+                        <p className="text-muted-foreground">Esta sessão está desativada</p>
+                        <p className="text-sm text-muted-foreground mt-2">Use o switch acima para ativá-la</p>
+                      </div>
+                    ) : (
+                      <>
                     <div className="bg-muted/30 p-4 rounded-lg">
                       <p className="text-sm text-muted-foreground mb-4">
                         Crie formulários para pedir mais detalhes sobre as respostas de seus clientes
@@ -464,9 +530,9 @@ const CriarCampanhaPage = () => {
                               </Button>
                             </NovoFormularioModal>
                           </div>
-                        )}
-                      </div>
-                    </div>
+                        </div>
+                      </>
+                    )}
                   </TabsContent>
 
                   <TabsContent value="layout-envio" className="space-y-4">
@@ -535,11 +601,12 @@ const CriarCampanhaPage = () => {
                                   Remover
                                 </Button>
                               </div>
-                            )}
-                          </div>
-                        </div>
-
-                        <div>
+                         )}
+                       </div>
+                     </div>
+                    </>
+                    )}
+                  </TabsContent>
                           <Label htmlFor="mensagem-personalizada">Mensagem personalizada (até 144 caracteres)</Label>
                           <Textarea
                             id="mensagem-personalizada"
@@ -619,62 +686,103 @@ const CriarCampanhaPage = () => {
           {/* Painel direito - Preview */}
           <ResizablePanel defaultSize={50} minSize={40}>
             <div className="p-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Preview da Pesquisa</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {activeTab === "pontos-contato" ? (
-                    <PontosContatoPreview
-                      pontosContatoAtivos={pontosContatoAtivos}
-                      pontosContato={pontosContato}
-                      nomeHospital={selectedHospital?.nome}
-                    />
-                  ) : activeTab === "problemas" ? (
-                    <ProblemasPreview
-                      problemasAtivos={problemasAtivos}
-                      nomeHospital={selectedHospital?.nome}
-                    />
-                  ) : activeTab === "formularios-adicionais" ? (
-                    <FormulariosAdicionaisPreview
-                      formulariosAdicionaisAtivos={formulariosAdicionaisAtivos}
-                      nomeHospital={selectedHospital?.nome}
-                      formulariosCriados={formulariosCriados}
-                    />
-                   ) : activeTab === "layout-envio" ? (
-                     <LayoutEnvioPreview
-                       bannerUrl={bannerUrl}
-                       mensagemPersonalizada={mensagemPersonalizada}
-                       mensagem={mensagem}
-                       permitirDescadastro={permitirDescadastro}
-                       nomeHospital={selectedHospital?.nome}
-                     />
-                   ) : activeTab === "pergunta-padrao" ? (
-                     <PerguntaPadraoPreview
-                       boasVindas={boasVindas}
-                       bannerPadraoUrl={bannerPadraoUrl}
-                       hospitalName={selectedHospital?.nome || "Hospital"}
-                     />
-                   ) : (
+                <h3 className="text-lg font-semibold mb-4">Preview</h3>
+                
+                {activeTab === "pergunta-definitiva" && (
+                  perguntaDefinitivaAtiva ? (
                     <NPSPreview
                       trechoPergunta={trechoPergunta}
                       recomendacao={recomendacao}
                       autorizacao={autorizacao}
                       oQueAgradou={oQueAgradou}
                       setoresHospital={setoresHospital}
-                      logoUrl={bannerUrl}
                       nomeHospital={selectedHospital?.nome || "Hospital"}
-                      onBannerUpload={(url) => {
-                        console.log('Banner URL recebida no CriarCampanha:', url)
-                        setBannerUrl(url || "")
-                      }}
+                      logoUrl={bannerUrl}
+                      isPublicMode={false}
                     />
-                  )}
-                </CardContent>
-              </Card>
-            </div>
-          </ResizablePanel>
-        </ResizablePanelGroup>
+                  ) : (
+                    <div className="text-center py-8">
+                      <p className="text-muted-foreground">Esta sessão está desativada</p>
+                      <p className="text-sm text-muted-foreground mt-2">Ative a sessão para ver o preview</p>
+                    </div>
+                  )
+                )}
+
+                {activeTab === "pergunta-padrao" && (
+                  perguntaPadraoAtiva ? (
+                    <PerguntaPadraoPreview
+                      boasVindas={boasVindas}
+                      bannerPadraoUrl={bannerPadraoUrl}
+                      hospitalName={selectedHospital?.nome || "Hospital"}
+                      isPublicMode={false}
+                    />
+                  ) : (
+                    <div className="text-center py-8">
+                      <p className="text-muted-foreground">Esta sessão está desativada</p>
+                      <p className="text-sm text-muted-foreground mt-2">Ative a sessão para ver o preview</p>
+                    </div>
+                  )
+                )}
+
+                {activeTab === "pontos-contato" && (
+                  pontosContatoAtivos ? (
+                    <PontosContatoPreview
+                      pontosContatoAtivos={pontosContatoAtivos}
+                      pontosContato={pontosContato}
+                      nomeHospital={selectedHospital?.nome || "Hospital"}
+                      isPublicMode={false}
+                    />
+                  ) : (
+                    <div className="text-center py-8">
+                      <p className="text-muted-foreground">Esta sessão está desativada</p>
+                      <p className="text-sm text-muted-foreground mt-2">Ative a sessão para ver o preview</p>
+                    </div>
+                  )
+                )}
+
+                {activeTab === "problemas" && (
+                  problemasAtivos ? (
+                    <ProblemasPreview
+                      problemasAtivos={problemasAtivos}
+                      nomeHospital={selectedHospital?.nome || "Hospital"}
+                      isPublicMode={false}
+                    />
+                  ) : (
+                    <div className="text-center py-8">
+                      <p className="text-muted-foreground">Esta sessão está desativada</p>
+                      <p className="text-sm text-muted-foreground mt-2">Ative a sessão para ver o preview</p>
+                    </div>
+                  )
+                )}
+
+                {activeTab === "formularios-adicionais" && (
+                  formulariosAdicionaisAtivos ? (
+                    <FormulariosAdicionaisPreview
+                      formulariosAdicionaisAtivos={formulariosAdicionaisAtivos}
+                      formulariosCriados={formulariosCriados}
+                      nomeHospital={selectedHospital?.nome || "Hospital"}
+                      isPublicMode={false}
+                    />
+                  ) : (
+                    <div className="text-center py-8">
+                      <p className="text-muted-foreground">Esta sessão está desativada</p>
+                      <p className="text-sm text-muted-foreground mt-2">Ative a sessão para ver o preview</p>
+                    </div>
+                  )
+                )}
+
+                {activeTab === "layout-envio" && (
+                  <LayoutEnvioPreview
+                    bannerUrl={bannerUrl}
+                    mensagemPersonalizada={mensagemPersonalizada}
+                    mensagem={mensagem}
+                    permitirDescadastro={permitirDescadastro}
+                    nomeHospital={selectedHospital?.nome || "Hospital"}
+                  />
+                )}
+              </div>
+            </ResizablePanel>
+          </ResizablePanelGroup>
 
         {/* Botões de Navegação */}
         <div className="flex justify-between mt-6">
@@ -712,17 +820,32 @@ const CriarCampanhaPage = () => {
                 boasVindas,
                 bannerPadraoUrl
               },
-              pontosContato: pontosContatoAtivos ? { pontos: pontosContato } : null,
-              problemas: problemasAtivos ? {} : null,
-              formulariosAdicionais: formulariosAdicionaisAtivos ? { formularios: formulariosCriados } : null,
+              pontosContato: {
+                ativo: pontosContatoAtivos,
+                pontos: pontosContato
+              },
+              problemas: {
+                ativo: problemasAtivos
+              },
+              formulariosAdicionais: {
+                ativo: formulariosAdicionaisAtivos,
+                formularios: formulariosCriados
+              },
               layoutEnvio: {
                 assuntoEmail,
                 bannerUrl,
                 mensagemPersonalizada,
                 mensagem,
-                permitirDescadastro
+                permitirDescadastro,
+                sessoes_ativas: {
+                  pergunta_definitiva: perguntaDefinitivaAtiva,
+                  pergunta_padrao: perguntaPadraoAtiva,
+                  pontos_contato: pontosContatoAtivos,
+                  problemas: problemasAtivos,
+                  formularios_adicionais: formulariosAdicionaisAtivos
+                }
               },
-              bannerUrl // Passar o bannerUrl separadamente para garantir que seja salvo na coluna banner_url
+              bannerUrl
             }}
         />
     </div>

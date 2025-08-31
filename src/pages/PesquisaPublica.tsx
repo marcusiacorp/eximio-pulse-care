@@ -89,14 +89,29 @@ export default function PesquisaPublica() {
           
           setCampanha(data)
 
-          // Definir etapas baseadas na configuração
-          const etapasDisponiveis = ["pergunta_definitiva"]
+          // Definir etapas baseadas na configuração e ativação
+          const etapasDisponiveis: string[] = []
           
           const config = data.configuracao?.[0] // Access first element of array
           console.log('DEBUG - Configuração completa:', config)
           
+          // Verificar sessões ativas no layout_envio
+          const layoutEnvio = config?.layout_envio as any
+          const sessoesAtivas = layoutEnvio?.sessoes_ativas || {}
+          console.log('DEBUG - Sessões ativas:', sessoesAtivas)
+          
+          // Adicionar pergunta definitiva se ativa (padrão true se não especificado)
+          if (sessoesAtivas.pergunta_definitiva !== false) {
+            etapasDisponiveis.push("pergunta_definitiva")
+          }
+          
+          // Adicionar pergunta padrão se ativa
+          if (sessoesAtivas.pergunta_padrao === true && config?.pergunta_padrao) {
+            etapasDisponiveis.push("pergunta_padrao")
+          }
+          
           // Verificar pontos de contato
-          if (config?.pontos_contato) {
+          if (sessoesAtivas.pontos_contato === true && config?.pontos_contato) {
             // Se é boolean true, adiciona a seção
             if (config.pontos_contato === true) {
               etapasDisponiveis.push("pontos_contato")
@@ -119,7 +134,7 @@ export default function PesquisaPublica() {
           }
           
           // Verificar problemas
-          if (config?.problemas) {
+          if (sessoesAtivas.problemas === true && config?.problemas) {
             // Se é boolean true ou qualquer objeto não nulo, adiciona
             if (config.problemas === true || (typeof config.problemas === 'object' && config.problemas !== null)) {
               etapasDisponiveis.push("problemas")
@@ -127,7 +142,7 @@ export default function PesquisaPublica() {
           }
           
           // Verificar formulários adicionais
-          if (config?.formularios_adicionais) {
+          if (sessoesAtivas.formularios_adicionais === true && config?.formularios_adicionais) {
             // Se é boolean true, adiciona a seção
             if (config.formularios_adicionais === true) {
               etapasDisponiveis.push("formularios_adicionais")
@@ -385,6 +400,20 @@ export default function PesquisaPublica() {
           )
         })()}
 
+        {etapaAtualNome === "pergunta_padrao" && campanha.configuracao?.[0]?.pergunta_padrao && (() => {
+          const perguntaPadraoData = campanha.configuracao[0].pergunta_padrao as any
+          console.log('DEBUG - Renderizando pergunta padrão:', perguntaPadraoData)
+          
+          return (
+            <PerguntaPadraoPreview
+              boasVindas={perguntaPadraoData.boasVindas || ""}
+              bannerPadraoUrl={campanha.configuracao[0].banner_padrao_url || ""}
+              hospitalName={campanha.nome}
+              isPublicMode={true}
+              onResponse={handleResponse}
+            />
+          )
+        })()}
         {etapaAtualNome === "pontos_contato" && campanha.configuracao?.[0]?.pontos_contato && (() => {
           const pontosData = campanha.configuracao[0].pontos_contato as any
           const pontosAtivos = (pontosData?.pontos || []).filter((ponto: any) => ponto?.ativo === true)
