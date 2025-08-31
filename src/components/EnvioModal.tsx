@@ -31,8 +31,15 @@ interface CampanhaData {
     mensagemPersonalizada: string
     mensagem: string
     permitirDescadastro: boolean
+    sessoes_ativas?: {
+      pergunta_definitiva?: boolean
+      pergunta_padrao?: boolean
+      pontos_contato?: boolean
+      problemas?: boolean
+      formularios_adicionais?: boolean
+    }
   }
-  bannerUrl?: string // Campo separado para garantir que seja salvo na coluna banner_url
+  bannerUrl?: string
 }
 
 interface EnvioModalProps {

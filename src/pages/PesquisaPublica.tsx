@@ -9,6 +9,7 @@ import { PontosContatoPreview } from "@/components/PontosContatoPreview"
 import { ProblemasPreview } from "@/components/ProblemasPreview"
 import { FormulariosAdicionaisPreview } from "@/components/FormulariosAdicionaisPreview"
 import { DadosPessoaisForm } from "@/components/DadosPessoaisForm"
+import { PerguntaPadraoPreview } from "@/components/PerguntaPadraoPreview"
 
 interface CampanhaData {
   id: string
@@ -25,7 +26,9 @@ interface CampanhaData {
     pergunta_recomendacao?: string
     resposta_autorizacao?: string
     banner_url?: string
+    banner_padrao_url?: string
     pergunta_definitiva?: any
+    pergunta_padrao?: any
     pontos_contato?: any
     problemas?: any
     formularios_adicionais?: any
@@ -96,8 +99,8 @@ export default function PesquisaPublica() {
           console.log('DEBUG - Configuração completa:', config)
           
           // Verificar sessões ativas no layout_envio
-          const layoutEnvio = config?.layout_envio as any
-          const sessoesAtivas = layoutEnvio?.sessoes_ativas || {}
+          const configLayoutEnvio = config?.layout_envio as any
+          const sessoesAtivas = configLayoutEnvio?.sessoes_ativas || {}
           console.log('DEBUG - Sessões ativas:', sessoesAtivas)
           
           // Adicionar pergunta definitiva se ativa (padrão true se não especificado)
@@ -400,14 +403,15 @@ export default function PesquisaPublica() {
           )
         })()}
 
-        {etapaAtualNome === "pergunta_padrao" && campanha.configuracao?.[0]?.pergunta_padrao && (() => {
-          const perguntaPadraoData = campanha.configuracao[0].pergunta_padrao as any
+        {etapaAtualNome === "pergunta_padrao" && campanha.configuracao?.[0] && (() => {
+          const config = campanha.configuracao[0]
+          const perguntaPadraoData = config.pergunta_padrao as any
           console.log('DEBUG - Renderizando pergunta padrão:', perguntaPadraoData)
           
           return (
             <PerguntaPadraoPreview
-              boasVindas={perguntaPadraoData.boasVindas || ""}
-              bannerPadraoUrl={campanha.configuracao[0].banner_padrao_url || ""}
+              boasVindas={perguntaPadraoData?.boasVindas || ""}
+              bannerPadraoUrl={config.banner_padrao_url || ""}
               hospitalName={campanha.nome}
               isPublicMode={true}
               onResponse={handleResponse}

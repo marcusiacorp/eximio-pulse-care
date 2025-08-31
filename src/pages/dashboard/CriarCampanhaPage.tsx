@@ -58,7 +58,7 @@ const CriarCampanhaPage = () => {
   const [problemasAtivos, setProblemasAtivos] = useState(false)
   const [formulariosAdicionaisAtivos, setFormulariosAdicionaisAtivos] = useState(false)
   
-  // Estados dos pontos de contato
+  // Estados dos pontos de contato e formulários
   const [pontosContato, setPontosContato] = useState<PontoContato[]>([])
   const [formulariosCriados, setFormulariosCriados] = useState<any[]>([])
   
@@ -143,7 +143,6 @@ const CriarCampanhaPage = () => {
       
       // Popular ativação das sessões se existir campo sessoes_ativas
       const sessoesAtivas = layoutEnvio.sessoes_ativas || {}
-      
       setPerguntaDefinitivaAtiva(sessoesAtivas.pergunta_definitiva ?? true)
       setPerguntaPadraoAtiva(sessoesAtivas.pergunta_padrao ?? false)
       setPontosContatoAtivos(sessoesAtivas.pontos_contato ?? false)
@@ -153,21 +152,14 @@ const CriarCampanhaPage = () => {
       // Popular pontos de contato
       if (configData.pontos_contato) {
         const pontosData = configData.pontos_contato as any
-        // Se tem estrutura com pontos, usar ela; senão, usar diretamente como array
         setPontosContato(pontosData?.pontos || pontosData || [])
       }
       
       // Popular formulários adicionais
       if (configData.formularios_adicionais) {
         const formulariosData = configData.formularios_adicionais as any
-        // Se tem estrutura com formularios, usar ela; senão, usar diretamente como array
         setFormulariosCriados(formulariosData?.formularios || formulariosData || [])
       }
-
-      console.log('DEBUGGING BANNER - Dados carregados:', {
-        banner_url: configData.banner_url,
-        layout_envio: configData.layout_envio
-      });
 
       toast.success("Dados da campanha carregados com sucesso!")
     } catch (error) {
@@ -178,7 +170,6 @@ const CriarCampanhaPage = () => {
       setLoadingCampaign(false)
     }
   }
-
 
   const setoresDisponiveis = [
     "AMBULATÓRIO",
@@ -334,70 +325,70 @@ const CriarCampanhaPage = () => {
                       </div>
                     ) : (
                       <>
-                    <div>
-                      <Label htmlFor="trecho-pergunta">Trecho da Pergunta *</Label>
-                      <Textarea
-                        id="trecho-pergunta"
-                        value={trechoPergunta}
-                        onChange={(e) => setTrechoPergunta(e.target.value)}
-                        placeholder="Ex: Como você avalia a qualidade do atendimento recebido?"
-                        rows={3}
-                      />
-                    </div>
+                        <div>
+                          <Label htmlFor="trecho-pergunta">Trecho da Pergunta *</Label>
+                          <Textarea
+                            id="trecho-pergunta"
+                            value={trechoPergunta}
+                            onChange={(e) => setTrechoPergunta(e.target.value)}
+                            placeholder="Ex: Como você avalia a qualidade do atendimento recebido?"
+                            rows={3}
+                          />
+                        </div>
 
-                    <div>
-                      <Label htmlFor="o-que-agradou">O que mais te agradou em sua experiência conosco? *</Label>
-                      <Textarea
-                        id="o-que-agradou"
-                        value={oQueAgradou}
-                        onChange={(e) => setOQueAgradou(e.target.value)}
-                        placeholder="Ex: O que mais te chamou atenção durante seu atendimento?"
-                        rows={3}
-                      />
-                    </div>
+                        <div>
+                          <Label htmlFor="o-que-agradou">O que mais te agradou em sua experiência conosco? *</Label>
+                          <Textarea
+                            id="o-que-agradou"
+                            value={oQueAgradou}
+                            onChange={(e) => setOQueAgradou(e.target.value)}
+                            placeholder="Ex: O que mais te chamou atenção durante seu atendimento?"
+                            rows={3}
+                          />
+                        </div>
 
-                    <div>
-                      <Label className="text-base font-medium">Em qual área do hospital você foi atendido?</Label>
-                      <div className="space-y-2 mt-2">
-                        {setoresDisponiveis.map((setor) => (
-                          <div key={setor} className="flex items-center space-x-2">
-                            <Checkbox
-                              id={setor}
-                              checked={setoresHospital.includes(setor)}
-                              onCheckedChange={() => handleSetorToggle(setor)}
-                            />
-                            <Label
-                              htmlFor={setor}
-                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
-                            >
-                              {setor}
-                            </Label>
+                        <div>
+                          <Label className="text-base font-medium">Em qual área do hospital você foi atendido?</Label>
+                          <div className="space-y-2 mt-2">
+                            {setoresDisponiveis.map((setor) => (
+                              <div key={setor} className="flex items-center space-x-2">
+                                <Checkbox
+                                  id={setor}
+                                  checked={setoresHospital.includes(setor)}
+                                  onCheckedChange={() => handleSetorToggle(setor)}
+                                />
+                                <Label
+                                  htmlFor={setor}
+                                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                                >
+                                  {setor}
+                                </Label>
+                              </div>
+                            ))}
                           </div>
-                        ))}
-                      </div>
-                    </div>
+                        </div>
 
-                    <div>
-                      <Label htmlFor="recomendacao">Recomendação *</Label>
-                      <Textarea
-                        id="recomendacao"
-                        value={recomendacao}
-                        onChange={(e) => setRecomendacao(e.target.value)}
-                        placeholder="Ex: Com base na sua experiência, você nos recomendaria para amigos e familiares?"
-                        rows={3}
-                      />
-                    </div>
+                        <div>
+                          <Label htmlFor="recomendacao">Recomendação *</Label>
+                          <Textarea
+                            id="recomendacao"
+                            value={recomendacao}
+                            onChange={(e) => setRecomendacao(e.target.value)}
+                            placeholder="Ex: Com base na sua experiência, você nos recomendaria para amigos e familiares?"
+                            rows={3}
+                          />
+                        </div>
 
-                    <div>
-                      <Label htmlFor="autorizacao">Autorização *</Label>
-                      <Textarea
-                        id="autorizacao"
-                        value={autorizacao}
-                        onChange={(e) => setAutorizacao(e.target.value)}
-                        placeholder="Ex: Você autoriza o uso do seu depoimento em nossas comunicações?"
-                        rows={3}
-                      />
-                    </div>
+                        <div>
+                          <Label htmlFor="autorizacao">Autorização *</Label>
+                          <Textarea
+                            id="autorizacao"
+                            value={autorizacao}
+                            onChange={(e) => setAutorizacao(e.target.value)}
+                            placeholder="Ex: Você autoriza o uso do seu depoimento em nossas comunicações?"
+                            rows={3}
+                          />
+                        </div>
                       </>
                     )}
                   </TabsContent>
@@ -409,13 +400,13 @@ const CriarCampanhaPage = () => {
                         <p className="text-sm text-muted-foreground mt-2">Use o switch acima para ativá-la</p>
                       </div>
                     ) : (
-                    <PerguntaPadraoForm
-                      boasVindas={boasVindas}
-                      setBoasVindas={setBoasVindas}
-                      bannerPadraoUrl={bannerPadraoUrl}
-                      setBannerPadraoUrl={setBannerPadraoUrl}
-                      hospitalName={selectedHospital?.nome || "Hospital"}
-                    />
+                      <PerguntaPadraoForm
+                        boasVindas={boasVindas}
+                        setBoasVindas={setBoasVindas}
+                        bannerPadraoUrl={bannerPadraoUrl}
+                        setBannerPadraoUrl={setBannerPadraoUrl}
+                        hospitalName={selectedHospital?.nome || "Hospital"}
+                      />
                     )}
                   </TabsContent>
 
@@ -426,12 +417,12 @@ const CriarCampanhaPage = () => {
                         <p className="text-sm text-muted-foreground mt-2">Use o switch acima para ativá-la</p>
                       </div>
                     ) : (
-                    <PontosContatoForm
-                      pontosContatoAtivos={pontosContatoAtivos}
-                      setPontosContatoAtivos={setPontosContatoAtivos}
-                      pontosContato={pontosContato}
-                      setPontosContato={setPontosContato}
-                    />
+                      <PontosContatoForm
+                        pontosContatoAtivos={pontosContatoAtivos}
+                        setPontosContatoAtivos={setPontosContatoAtivos}
+                        pontosContato={pontosContato}
+                        setPontosContato={setPontosContato}
+                      />
                     )}
                   </TabsContent>
 
@@ -442,42 +433,40 @@ const CriarCampanhaPage = () => {
                         <p className="text-sm text-muted-foreground mt-2">Use o switch acima para ativá-la</p>
                       </div>
                     ) : (
-                      <>
-                    <div className="bg-muted/30 p-4 rounded-lg">
-                      <p className="text-sm text-muted-foreground mb-4">
-                        Pergunte aos seus clientes se eles tiveram algum tipo de problema
-                      </p>
-                      
-                      <div className="space-y-3">
-                        <Label className="text-base font-medium">
-                          Você deseja perguntar aos seus clientes se eles tiveram algum tipo de problema?
-                        </Label>
+                      <div className="bg-muted/30 p-4 rounded-lg">
+                        <p className="text-sm text-muted-foreground mb-4">
+                          Pergunte aos seus clientes se eles tiveram algum tipo de problema
+                        </p>
                         
-                        <div className="flex gap-4">
-                          <div className="flex items-center space-x-2">
-                            <Checkbox
-                              id="problemas-sim"
-                              checked={problemasAtivos}
-                              onCheckedChange={(checked) => setProblemasAtivos(checked as boolean)}
-                            />
-                            <Label htmlFor="problemas-sim" className="cursor-pointer">
-                              Sim
-                            </Label>
+                        <div className="space-y-3">
+                          <Label className="text-base font-medium">
+                            Você deseja perguntar aos seus clientes se eles tiveram algum tipo de problema?
+                          </Label>
+                          
+                          <div className="flex gap-4">
+                            <div className="flex items-center space-x-2">
+                              <Checkbox
+                                id="problemas-sim"
+                                checked={problemasAtivos}
+                                onCheckedChange={(checked) => setProblemasAtivos(checked as boolean)}
+                              />
+                              <Label htmlFor="problemas-sim" className="cursor-pointer">
+                                Sim
+                              </Label>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <Checkbox
+                                id="problemas-nao"
+                                checked={!problemasAtivos}
+                                onCheckedChange={(checked) => setProblemasAtivos(!(checked as boolean))}
+                              />
+                              <Label htmlFor="problemas-nao" className="cursor-pointer">
+                                Não
+                              </Label>
+                            </div>
                           </div>
-                          <div className="flex items-center space-x-2">
-                            <Checkbox
-                              id="problemas-nao"
-                              checked={!problemasAtivos}
-                              onCheckedChange={(checked) => setProblemasAtivos(!(checked as boolean))}
-                            />
-                            <Label htmlFor="problemas-nao" className="cursor-pointer">
-                              Não
-                            </Label>
-                          </div>
                         </div>
-                        </div>
-                        </div>
-                      </>
+                      </div>
                     )}
                   </TabsContent>
 
@@ -488,50 +477,50 @@ const CriarCampanhaPage = () => {
                         <p className="text-sm text-muted-foreground mt-2">Use o switch acima para ativá-la</p>
                       </div>
                     ) : (
-                      <>
-                    <div className="bg-muted/30 p-4 rounded-lg">
-                      <p className="text-sm text-muted-foreground mb-4">
-                        Crie formulários para pedir mais detalhes sobre as respostas de seus clientes
-                      </p>
-                      
-                      <div className="space-y-3">
-                        <Label className="text-base font-medium">
-                          Você gostaria de fazer perguntas adicionais aos seus clientes?
-                        </Label>
+                      <div className="bg-muted/30 p-4 rounded-lg">
+                        <p className="text-sm text-muted-foreground mb-4">
+                          Crie formulários para pedir mais detalhes sobre as respostas de seus clientes
+                        </p>
                         
-                        <div className="flex gap-4">
-                          <div className="flex items-center space-x-2">
-                            <Checkbox
-                              id="formularios-sim"
-                              checked={formulariosAdicionaisAtivos}
-                              onCheckedChange={(checked) => setFormulariosAdicionaisAtivos(checked as boolean)}
-                            />
-                            <Label htmlFor="formularios-sim" className="cursor-pointer">
-                              Sim
-                            </Label>
+                        <div className="space-y-3">
+                          <Label className="text-base font-medium">
+                            Você gostaria de fazer perguntas adicionais aos seus clientes?
+                          </Label>
+                          
+                          <div className="flex gap-4">
+                            <div className="flex items-center space-x-2">
+                              <Checkbox
+                                id="formularios-sim"
+                                checked={formulariosAdicionaisAtivos}
+                                onCheckedChange={(checked) => setFormulariosAdicionaisAtivos(checked as boolean)}
+                              />
+                              <Label htmlFor="formularios-sim" className="cursor-pointer">
+                                Sim
+                              </Label>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <Checkbox
+                                id="formularios-nao"
+                                checked={!formulariosAdicionaisAtivos}
+                                onCheckedChange={(checked) => setFormulariosAdicionaisAtivos(!(checked as boolean))}
+                              />
+                              <Label htmlFor="formularios-nao" className="cursor-pointer">
+                                Não
+                              </Label>
+                            </div>
                           </div>
-                          <div className="flex items-center space-x-2">
-                            <Checkbox
-                              id="formularios-nao"
-                              checked={!formulariosAdicionaisAtivos}
-                              onCheckedChange={(checked) => setFormulariosAdicionaisAtivos(!(checked as boolean))}
-                            />
-                            <Label htmlFor="formularios-nao" className="cursor-pointer">
-                              Não
-                            </Label>
-                          </div>
+                          
+                          {formulariosAdicionaisAtivos && (
+                            <div className="mt-4">
+                              <NovoFormularioModal onSave={(formulario) => setFormulariosCriados(prev => [...prev, formulario])}>
+                                <Button variant="outline" className="w-full">
+                                  + Novo formulário
+                                </Button>
+                              </NovoFormularioModal>
+                            </div>
+                          )}
                         </div>
-                        
-                        {formulariosAdicionaisAtivos && (
-                          <div className="mt-4">
-                            <NovoFormularioModal onSave={(formulario) => setFormulariosCriados(prev => [...prev, formulario])}>
-                              <Button variant="outline" className="w-full">
-                                + Novo formulário
-                              </Button>
-                            </NovoFormularioModal>
-                          </div>
-                        </div>
-                      </>
+                      </div>
                     )}
                   </TabsContent>
 
@@ -563,25 +552,21 @@ const CriarCampanhaPage = () => {
                                 const file = e.target.files?.[0]
                                 if (file && selectedHospital) {
                                   try {
-                                    // Upload para o Supabase Storage
                                     const fileExt = file.name.split('.').pop()
                                     const fileName = `${selectedHospital.id}_${Date.now()}.${fileExt}`
                                     
-                                     const { data, error } = await supabase.storage
-                                       .from('banners')
-                                       .upload(fileName, file)
-                                     
-                                     if (error) throw error
-                                     
-                                     // Get public URL
-                                     const { data: { publicUrl } } = supabase.storage
-                                       .from('banners')
-                                       .getPublicUrl(fileName)
-                                     
-                                      console.log('Banner uploaded successfully:', publicUrl)
-                                      setBannerUrl(publicUrl)
-                                      console.log('Banner URL set no estado:', publicUrl)
-                                     toast.success("Banner enviado com sucesso!")
+                                    const { data, error } = await supabase.storage
+                                      .from('banners')
+                                      .upload(fileName, file)
+                                    
+                                    if (error) throw error
+                                    
+                                    const { data: { publicUrl } } = supabase.storage
+                                      .from('banners')
+                                      .getPublicUrl(fileName)
+                                    
+                                    setBannerUrl(publicUrl)
+                                    toast.success("Banner enviado com sucesso!")
                                   } catch (error) {
                                     console.error('Erro ao fazer upload do banner:', error)
                                     toast.error("Erro ao fazer upload do banner")
@@ -601,12 +586,11 @@ const CriarCampanhaPage = () => {
                                   Remover
                                 </Button>
                               </div>
-                         )}
-                       </div>
-                     </div>
-                    </>
-                    )}
-                  </TabsContent>
+                            )}
+                          </div>
+                        </div>
+
+                        <div>
                           <Label htmlFor="mensagem-personalizada">Mensagem personalizada (até 144 caracteres)</Label>
                           <Textarea
                             id="mensagem-personalizada"
@@ -686,103 +670,103 @@ const CriarCampanhaPage = () => {
           {/* Painel direito - Preview */}
           <ResizablePanel defaultSize={50} minSize={40}>
             <div className="p-6">
-                <h3 className="text-lg font-semibold mb-4">Preview</h3>
-                
-                {activeTab === "pergunta-definitiva" && (
-                  perguntaDefinitivaAtiva ? (
-                    <NPSPreview
-                      trechoPergunta={trechoPergunta}
-                      recomendacao={recomendacao}
-                      autorizacao={autorizacao}
-                      oQueAgradou={oQueAgradou}
-                      setoresHospital={setoresHospital}
-                      nomeHospital={selectedHospital?.nome || "Hospital"}
-                      logoUrl={bannerUrl}
-                      isPublicMode={false}
-                    />
-                  ) : (
-                    <div className="text-center py-8">
-                      <p className="text-muted-foreground">Esta sessão está desativada</p>
-                      <p className="text-sm text-muted-foreground mt-2">Ative a sessão para ver o preview</p>
-                    </div>
-                  )
-                )}
-
-                {activeTab === "pergunta-padrao" && (
-                  perguntaPadraoAtiva ? (
-                    <PerguntaPadraoPreview
-                      boasVindas={boasVindas}
-                      bannerPadraoUrl={bannerPadraoUrl}
-                      hospitalName={selectedHospital?.nome || "Hospital"}
-                      isPublicMode={false}
-                    />
-                  ) : (
-                    <div className="text-center py-8">
-                      <p className="text-muted-foreground">Esta sessão está desativada</p>
-                      <p className="text-sm text-muted-foreground mt-2">Ative a sessão para ver o preview</p>
-                    </div>
-                  )
-                )}
-
-                {activeTab === "pontos-contato" && (
-                  pontosContatoAtivos ? (
-                    <PontosContatoPreview
-                      pontosContatoAtivos={pontosContatoAtivos}
-                      pontosContato={pontosContato}
-                      nomeHospital={selectedHospital?.nome || "Hospital"}
-                      isPublicMode={false}
-                    />
-                  ) : (
-                    <div className="text-center py-8">
-                      <p className="text-muted-foreground">Esta sessão está desativada</p>
-                      <p className="text-sm text-muted-foreground mt-2">Ative a sessão para ver o preview</p>
-                    </div>
-                  )
-                )}
-
-                {activeTab === "problemas" && (
-                  problemasAtivos ? (
-                    <ProblemasPreview
-                      problemasAtivos={problemasAtivos}
-                      nomeHospital={selectedHospital?.nome || "Hospital"}
-                      isPublicMode={false}
-                    />
-                  ) : (
-                    <div className="text-center py-8">
-                      <p className="text-muted-foreground">Esta sessão está desativada</p>
-                      <p className="text-sm text-muted-foreground mt-2">Ative a sessão para ver o preview</p>
-                    </div>
-                  )
-                )}
-
-                {activeTab === "formularios-adicionais" && (
-                  formulariosAdicionaisAtivos ? (
-                    <FormulariosAdicionaisPreview
-                      formulariosAdicionaisAtivos={formulariosAdicionaisAtivos}
-                      formulariosCriados={formulariosCriados}
-                      nomeHospital={selectedHospital?.nome || "Hospital"}
-                      isPublicMode={false}
-                    />
-                  ) : (
-                    <div className="text-center py-8">
-                      <p className="text-muted-foreground">Esta sessão está desativada</p>
-                      <p className="text-sm text-muted-foreground mt-2">Ative a sessão para ver o preview</p>
-                    </div>
-                  )
-                )}
-
-                {activeTab === "layout-envio" && (
-                  <LayoutEnvioPreview
-                    bannerUrl={bannerUrl}
-                    mensagemPersonalizada={mensagemPersonalizada}
-                    mensagem={mensagem}
-                    permitirDescadastro={permitirDescadastro}
+              <h3 className="text-lg font-semibold mb-4">Preview</h3>
+              
+              {activeTab === "pergunta-definitiva" && (
+                perguntaDefinitivaAtiva ? (
+                  <NPSPreview
+                    trechoPergunta={trechoPergunta}
+                    recomendacao={recomendacao}
+                    autorizacao={autorizacao}
+                    oQueAgradou={oQueAgradou}
+                    setoresHospital={setoresHospital}
                     nomeHospital={selectedHospital?.nome || "Hospital"}
+                    logoUrl={bannerUrl}
+                    isPublicMode={false}
                   />
-                )}
-              </div>
-            </ResizablePanel>
-          </ResizablePanelGroup>
+                ) : (
+                  <div className="text-center py-8">
+                    <p className="text-muted-foreground">Esta sessão está desativada</p>
+                    <p className="text-sm text-muted-foreground mt-2">Ative a sessão para ver o preview</p>
+                  </div>
+                )
+              )}
+
+              {activeTab === "pergunta-padrao" && (
+                perguntaPadraoAtiva ? (
+                  <PerguntaPadraoPreview
+                    boasVindas={boasVindas}
+                    bannerPadraoUrl={bannerPadraoUrl}
+                    hospitalName={selectedHospital?.nome || "Hospital"}
+                    isPublicMode={false}
+                  />
+                ) : (
+                  <div className="text-center py-8">
+                    <p className="text-muted-foreground">Esta sessão está desativada</p>
+                    <p className="text-sm text-muted-foreground mt-2">Ative a sessão para ver o preview</p>
+                  </div>
+                )
+              )}
+
+              {activeTab === "pontos-contato" && (
+                pontosContatoAtivos ? (
+                  <PontosContatoPreview
+                    pontosContatoAtivos={pontosContatoAtivos}
+                    pontosContato={pontosContato}
+                    nomeHospital={selectedHospital?.nome || "Hospital"}
+                    isPublicMode={false}
+                  />
+                ) : (
+                  <div className="text-center py-8">
+                    <p className="text-muted-foreground">Esta sessão está desativada</p>
+                    <p className="text-sm text-muted-foreground mt-2">Ative a sessão para ver o preview</p>
+                  </div>
+                )
+              )}
+
+              {activeTab === "problemas" && (
+                problemasAtivos ? (
+                  <ProblemasPreview
+                    problemasAtivos={problemasAtivos}
+                    nomeHospital={selectedHospital?.nome || "Hospital"}
+                    isPublicMode={false}
+                  />
+                ) : (
+                  <div className="text-center py-8">
+                    <p className="text-muted-foreground">Esta sessão está desativada</p>
+                    <p className="text-sm text-muted-foreground mt-2">Ative a sessão para ver o preview</p>
+                  </div>
+                )
+              )}
+
+              {activeTab === "formularios-adicionais" && (
+                formulariosAdicionaisAtivos ? (
+                  <FormulariosAdicionaisPreview
+                    formulariosAdicionaisAtivos={formulariosAdicionaisAtivos}
+                    formulariosCriados={formulariosCriados}
+                    nomeHospital={selectedHospital?.nome || "Hospital"}
+                    isPublicMode={false}
+                  />
+                ) : (
+                  <div className="text-center py-8">
+                    <p className="text-muted-foreground">Esta sessão está desativada</p>
+                    <p className="text-sm text-muted-foreground mt-2">Ative a sessão para ver o preview</p>
+                  </div>
+                )
+              )}
+
+              {activeTab === "layout-envio" && (
+                <LayoutEnvioPreview
+                  bannerUrl={bannerUrl}
+                  mensagemPersonalizada={mensagemPersonalizada}
+                  mensagem={mensagem}
+                  permitirDescadastro={permitirDescadastro}
+                  nomeHospital={selectedHospital?.nome || "Hospital"}
+                />
+              )}
+            </div>
+          </ResizablePanel>
+        </ResizablePanelGroup>
 
         {/* Botões de Navegação */}
         <div className="flex justify-between mt-6">
@@ -791,10 +775,7 @@ const CriarCampanhaPage = () => {
           </Button>
           <Button 
             className="bg-primary text-primary-foreground hover:bg-primary/90"
-            onClick={() => {
-              console.log('DEBUGGING BANNER - Banner URL antes de abrir modal:', bannerUrl)
-              setShowEnvioModal(true)
-            }}
+            onClick={() => setShowEnvioModal(true)}
           >
             Passo 2 - incluir envios
           </Button>
@@ -802,52 +783,52 @@ const CriarCampanhaPage = () => {
       </div>
 
       {/* Modal de Envios */}
-        <EnvioModal 
-          isOpen={showEnvioModal}
-          onClose={() => setShowEnvioModal(false)}
-            campaignData={{
-              id: isExistingCampaign ? id : undefined,
-              nome: campaignName,
-              tipo: tipo!,
-              perguntaDefinitiva: {
-                trechoPergunta,
-                recomendacao,
-                autorizacao,
-                oQueAgradou,
-                setoresHospital
-              },
-              perguntaPadrao: {
-                boasVindas,
-                bannerPadraoUrl
-              },
-              pontosContato: {
-                ativo: pontosContatoAtivos,
-                pontos: pontosContato
-              },
-              problemas: {
-                ativo: problemasAtivos
-              },
-              formulariosAdicionais: {
-                ativo: formulariosAdicionaisAtivos,
-                formularios: formulariosCriados
-              },
-              layoutEnvio: {
-                assuntoEmail,
-                bannerUrl,
-                mensagemPersonalizada,
-                mensagem,
-                permitirDescadastro,
-                sessoes_ativas: {
-                  pergunta_definitiva: perguntaDefinitivaAtiva,
-                  pergunta_padrao: perguntaPadraoAtiva,
-                  pontos_contato: pontosContatoAtivos,
-                  problemas: problemasAtivos,
-                  formularios_adicionais: formulariosAdicionaisAtivos
-                }
-              },
-              bannerUrl
-            }}
-        />
+      <EnvioModal 
+        isOpen={showEnvioModal}
+        onClose={() => setShowEnvioModal(false)}
+        campaignData={{
+          id: isExistingCampaign ? id : undefined,
+          nome: campaignName,
+          tipo: tipo!,
+          perguntaDefinitiva: {
+            trechoPergunta,
+            recomendacao,
+            autorizacao,
+            oQueAgradou,
+            setoresHospital
+          },
+          perguntaPadrao: {
+            boasVindas,
+            bannerPadraoUrl
+          },
+          pontosContato: {
+            ativo: pontosContatoAtivos,
+            pontos: pontosContato
+          },
+          problemas: {
+            ativo: problemasAtivos
+          },
+          formulariosAdicionais: {
+            ativo: formulariosAdicionaisAtivos,
+            formularios: formulariosCriados
+          },
+          layoutEnvio: {
+            assuntoEmail,
+            bannerUrl,
+            mensagemPersonalizada,
+            mensagem,
+            permitirDescadastro,
+            sessoes_ativas: {
+              pergunta_definitiva: perguntaDefinitivaAtiva,
+              pergunta_padrao: perguntaPadraoAtiva,
+              pontos_contato: pontosContatoAtivos,
+              problemas: problemasAtivos,
+              formularios_adicionais: formulariosAdicionaisAtivos
+            }
+          },
+          bannerUrl
+        }}
+      />
     </div>
   )
 }
