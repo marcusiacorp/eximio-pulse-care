@@ -68,7 +68,18 @@ export function EnvioModal({ isOpen, onClose, campaignData }: EnvioModalProps) {
   const { user } = useAuth()
 
   // Gerar link da campanha
-  const linkCampanha = campanhaId ? `${window.location.origin}/pesquisa/${campanhaId}` : ""
+  const getCurrentBaseUrl = () => {
+    const currentHost = window.location.hostname
+    const isLovableEnv = currentHost.includes('lovable.dev') || currentHost.includes('sandbox')
+    
+    if (isLovableEnv) {
+      return `https://${currentHost}`
+    } else {
+      return window.location.origin
+    }
+  }
+  
+  const linkCampanha = campanhaId ? `${getCurrentBaseUrl()}/pesquisa/${campanhaId}` : ""
 
   // Salvar campanha e gerar QR code para campanhas do tipo link
   const handleSalvarCampanha = async () => {
@@ -115,7 +126,7 @@ export function EnvioModal({ isOpen, onClose, campaignData }: EnvioModalProps) {
       const { error: updateError } = await supabase
         .from('campanhas')
         .update({
-          link_campanha: `${window.location.origin}/pesquisa/${campanhaIdFinal}`
+          link_campanha: `${getCurrentBaseUrl()}/pesquisa/${campanhaIdFinal}`
         })
         .eq('id', campanhaIdFinal)
 
@@ -266,8 +277,8 @@ export function EnvioModal({ isOpen, onClose, campaignData }: EnvioModalProps) {
 
         console.log('DEBUG - Campanha ativada?', campanhaVerificacao.ativa)
 
-        const link = `${window.location.origin}/pesquisa/${campanhaIdFinal}`
-        console.log('DEBUG - Link gerado:', link)
+        const link = `${getCurrentBaseUrl()}/pesquisa/${campanhaIdFinal}`
+        console.log('DEBUG - Link final gerado:', link)
         
         const qrCodeDataUrl = await QRCode.toDataURL(link, {
           width: 200,
