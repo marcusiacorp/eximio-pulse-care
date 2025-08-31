@@ -27,9 +27,13 @@ export type Database = {
           layout_envio: Json | null
           lembrete: Json | null
           o_que_agradou: string | null
+          pergunta_area_atendimento: string | null
           pergunta_definitiva: Json | null
+          pergunta_nps_global: string | null
+          pergunta_o_que_agradou_global: string | null
           pergunta_padrao: Json | null
           pergunta_recomendacao: string | null
+          perguntas_setores: Json | null
           pontos_contato: Json | null
           problemas: Json | null
           recomendacao: string | null
@@ -50,9 +54,13 @@ export type Database = {
           layout_envio?: Json | null
           lembrete?: Json | null
           o_que_agradou?: string | null
+          pergunta_area_atendimento?: string | null
           pergunta_definitiva?: Json | null
+          pergunta_nps_global?: string | null
+          pergunta_o_que_agradou_global?: string | null
           pergunta_padrao?: Json | null
           pergunta_recomendacao?: string | null
+          perguntas_setores?: Json | null
           pontos_contato?: Json | null
           problemas?: Json | null
           recomendacao?: string | null
@@ -73,9 +81,13 @@ export type Database = {
           layout_envio?: Json | null
           lembrete?: Json | null
           o_que_agradou?: string | null
+          pergunta_area_atendimento?: string | null
           pergunta_definitiva?: Json | null
+          pergunta_nps_global?: string | null
+          pergunta_o_que_agradou_global?: string | null
           pergunta_padrao?: Json | null
           pergunta_recomendacao?: string | null
+          perguntas_setores?: Json | null
           pontos_contato?: Json | null
           problemas?: Json | null
           recomendacao?: string | null
@@ -242,6 +254,7 @@ export type Database = {
       }
       respostas_pesquisa: {
         Row: {
+          area_selecionada: string | null
           campanha_id: string | null
           created_at: string
           email_respondente: string | null
@@ -250,19 +263,23 @@ export type Database = {
           id: string
           nome_respondente: string | null
           nps_score: number | null
+          nps_score_global: number | null
           pergunta_definitiva: Json | null
           pontos_contato: Json | null
           problemas: Json | null
           resposta_autorizacao: boolean | null
           resposta_o_que_agradou: string | null
+          resposta_o_que_agradou_global: string | null
           resposta_porque_nota: string | null
           resposta_recomendacao: boolean | null
           resposta_trecho_pergunta: string | null
+          respostas_setores: Json | null
           setores_atendimento: string[] | null
           telefone_respondente: string | null
           updated_at: string
         }
         Insert: {
+          area_selecionada?: string | null
           campanha_id?: string | null
           created_at?: string
           email_respondente?: string | null
@@ -271,19 +288,23 @@ export type Database = {
           id?: string
           nome_respondente?: string | null
           nps_score?: number | null
+          nps_score_global?: number | null
           pergunta_definitiva?: Json | null
           pontos_contato?: Json | null
           problemas?: Json | null
           resposta_autorizacao?: boolean | null
           resposta_o_que_agradou?: string | null
+          resposta_o_que_agradou_global?: string | null
           resposta_porque_nota?: string | null
           resposta_recomendacao?: boolean | null
           resposta_trecho_pergunta?: string | null
+          respostas_setores?: Json | null
           setores_atendimento?: string[] | null
           telefone_respondente?: string | null
           updated_at?: string
         }
         Update: {
+          area_selecionada?: string | null
           campanha_id?: string | null
           created_at?: string
           email_respondente?: string | null
@@ -292,14 +313,17 @@ export type Database = {
           id?: string
           nome_respondente?: string | null
           nps_score?: number | null
+          nps_score_global?: number | null
           pergunta_definitiva?: Json | null
           pontos_contato?: Json | null
           problemas?: Json | null
           resposta_autorizacao?: boolean | null
           resposta_o_que_agradou?: string | null
+          resposta_o_que_agradou_global?: string | null
           resposta_porque_nota?: string | null
           resposta_recomendacao?: boolean | null
           resposta_trecho_pergunta?: string | null
+          respostas_setores?: Json | null
           setores_atendimento?: string[] | null
           telefone_respondente?: string | null
           updated_at?: string

@@ -154,6 +154,27 @@ export function EnvioModal({ isOpen, onClose, campaignData }: EnvioModalProps) {
               boasVindas: campaignData.perguntaPadrao?.boasVindas,
               setoresSelecionados: campaignData.perguntaPadrao?.setoresSelecionados
             },
+            // Novos campos para perguntas padrão
+            pergunta_nps_global: "Como você avalia sua experiência geral no hospital?",
+            pergunta_o_que_agradou_global: "O que mais te agradou durante o atendimento?",
+            pergunta_area_atendimento: "Em qual área você foi atendido?",
+            perguntas_setores: {
+              "Pronto Socorro": {
+                "avaliacaoSetor": "Como você avalia o atendimento no Pronto Socorro?",
+                "satisfacao": "Você ficou satisfeito com o tempo de espera?",
+                "sugestoes": "Alguma sugestão para melhorar o atendimento?"
+              },
+              "Ambulatório": {
+                "avaliacaoSetor": "Como você avalia o atendimento no Ambulatório?",
+                "satisfacao": "Você ficou satisfeito com o tempo de espera?",
+                "sugestoes": "Alguma sugestão para melhorar o atendimento?"
+              },
+              "Unidade de Internação": {
+                "avaliacaoSetor": "Como você avalia o atendimento na Unidade de Internação?",
+                "satisfacao": "Você ficou satisfeito com o tempo de espera?",
+                "sugestoes": "Alguma sugestão para melhorar o atendimento?"
+              }
+            },
             pontos_contato: campaignData.pontosContato,
             problemas: campaignData.problemas,
             formularios_adicionais: campaignData.formulariosAdicionais,
@@ -185,6 +206,27 @@ export function EnvioModal({ isOpen, onClose, campaignData }: EnvioModalProps) {
             pergunta_padrao: {
               boasVindas: campaignData.perguntaPadrao?.boasVindas,
               setoresSelecionados: campaignData.perguntaPadrao?.setoresSelecionados
+            },
+            // Novos campos para perguntas padrão
+            pergunta_nps_global: "Como você avalia sua experiência geral no hospital?",
+            pergunta_o_que_agradou_global: "O que mais te agradou durante o atendimento?",
+            pergunta_area_atendimento: "Em qual área você foi atendido?",
+            perguntas_setores: {
+              "Pronto Socorro": {
+                "avaliacaoSetor": "Como você avalia o atendimento no Pronto Socorro?",
+                "satisfacao": "Você ficou satisfeito com o tempo de espera?",
+                "sugestoes": "Alguma sugestão para melhorar o atendimento?"
+              },
+              "Ambulatório": {
+                "avaliacaoSetor": "Como você avalia o atendimento no Ambulatório?",
+                "satisfacao": "Você ficou satisfeito com o tempo de espera?",
+                "sugestoes": "Alguma sugestão para melhorar o atendimento?"
+              },
+              "Unidade de Internação": {
+                "avaliacaoSetor": "Como você avalia o atendimento na Unidade de Internação?",
+                "satisfacao": "Você ficou satisfeito com o tempo de espera?",
+                "sugestoes": "Alguma sugestão para melhorar o atendimento?"
+              }
             },
             pontos_contato: campaignData.pontosContato,
             problemas: campaignData.problemas,

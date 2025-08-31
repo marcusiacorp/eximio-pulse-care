@@ -16,6 +16,11 @@ export interface RespostaDetalhada {
   pontos_contato?: any
   problemas?: any
   formularios_adicionais?: any
+  // Novos campos da pergunta padrão
+  area_selecionada?: string
+  nps_score_global?: number
+  resposta_o_que_agradou_global?: string
+  respostas_setores?: any
   created_at: string
 }
 
@@ -28,6 +33,11 @@ export interface ConfiguracaoCampanha {
   pontos_contato?: any
   problemas?: any
   formularios_adicionais?: any
+  // Novos campos para perguntas padrão
+  pergunta_nps_global?: string
+  pergunta_o_que_agradou_global?: string
+  pergunta_area_atendimento?: string
+  perguntas_setores?: any
 }
 
 export const useRespostasDetalhadas = (campanhaId: string | null) => {

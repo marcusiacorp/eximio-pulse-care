@@ -274,6 +274,11 @@ export default function PesquisaPublica() {
         pontos_contato: respostas.pontos_contato || null,
         problemas: respostas.problemas || null,
         formularios_adicionais: respostas.formularios_adicionais || null,
+        // Campos da pergunta padrão
+        area_selecionada: respostas.areaSelecionada || null,
+        nps_score_global: respostas.npsScoreGlobal || null,
+        resposta_o_que_agradou_global: respostas.oQueAgradouGlobal || null,
+        respostas_setores: respostas.respostasSetores || null,
         // Adicionar dados pessoais do respondente
         nome_respondente: dadosPessoaisFinais?.nome || null,
         email_respondente: dadosPessoaisFinais?.email || null,
