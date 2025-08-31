@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
+import { Checkbox } from "@/components/ui/checkbox"
 import { supabase } from "@/integrations/supabase/client"
 import { toast } from "sonner"
 
@@ -16,6 +17,8 @@ interface PerguntaPadraoFormProps {
   bannerPadraoUrl: string
   setBannerPadraoUrl: (value: string) => void
   hospitalName?: string
+  setoresSelecionados: string[]
+  setSetoresSelecionados: (setores: string[]) => void
 }
 
 export const PerguntaPadraoForm = ({
@@ -23,7 +26,9 @@ export const PerguntaPadraoForm = ({
   setBoasVindas,
   bannerPadraoUrl,
   setBannerPadraoUrl,
-  hospitalName = "Hospital"
+  hospitalName = "Hospital",
+  setoresSelecionados,
+  setSetoresSelecionados
 }: PerguntaPadraoFormProps) => {
   const [uploading, setUploading] = useState(false)
 
@@ -121,6 +126,14 @@ export const PerguntaPadraoForm = ({
     "Centro Cirúrgico",
     "Exames e procedimentos"
   ]
+
+  const handleSetorToggle = (setor: string) => {
+    setSetoresSelecionados(
+      setoresSelecionados.includes(setor)
+        ? setoresSelecionados.filter(item => item !== setor)
+        : [...setoresSelecionados, setor]
+    )
+  }
 
   return (
     <div className="space-y-6">
@@ -241,11 +254,36 @@ export const PerguntaPadraoForm = ({
               </div>
             </div>
           </div>
+
+          {/* Seleção de Setores para Análise */}
+          <div className="bg-orange-50 dark:bg-orange-950 p-4 rounded-lg">
+            <h4 className="font-semibold text-orange-900 dark:text-orange-100 mb-4">Setores para Análise</h4>
+            <Label className="text-base font-medium mb-4 block">
+              Selecione quais setores você deseja analisar nesta campanha:
+            </Label>
+            <div className="space-y-2">
+              {areasHospital.map((setor) => (
+                <div key={setor} className="flex items-center space-x-2">
+                  <Checkbox
+                    id={`setor-${setor}`}
+                    checked={setoresSelecionados.includes(setor)}
+                    onCheckedChange={() => handleSetorToggle(setor)}
+                  />
+                  <Label htmlFor={`setor-${setor}`} className="cursor-pointer">
+                    {setor}
+                  </Label>
+                </div>
+              ))}
+            </div>
+            <p className="text-sm text-muted-foreground mt-2">
+              Mesmo selecionando setores específicos, a pergunta padrão e identificação da área sempre serão exibidas.
+            </p>
+          </div>
         </CardContent>
       </Card>
 
       {/* Avaliações por Setor */}
-      {setoresData.map((setor) => (
+      {setoresData.filter(setor => setoresSelecionados.includes(setor.nome)).map((setor) => (
         <Card key={setor.id}>
           <CardHeader>
             <CardTitle>Avaliação - {setor.nome}</CardTitle>

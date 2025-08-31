@@ -50,6 +50,7 @@ const CriarCampanhaPage = () => {
   // Estados da pergunta padrão
   const [boasVindas, setBoasVindas] = useState("")
   const [bannerPadraoUrl, setBannerPadraoUrl] = useState("")
+  const [setoresSelecionados, setSetoresSelecionados] = useState<string[]>(["Pronto Socorro", "Ambulatório", "Unidade de Internação"])
   
   // Estados de ativação das sessões
   const [perguntaDefinitivaAtiva, setPerguntaDefinitivaAtiva] = useState(true)
@@ -133,6 +134,7 @@ const CriarCampanhaPage = () => {
       const perguntaPadraoData = configData.pergunta_padrao as any || {}
       setBoasVindas(perguntaPadraoData.boasVindas || "")
       setBannerPadraoUrl(configData.banner_padrao_url || "")
+      setSetoresSelecionados(perguntaPadraoData.setoresSelecionados || ["Pronto Socorro", "Ambulatório", "Unidade de Internação"])
       
       // Popular outros dados do JSON
       const layoutEnvio = configData.layout_envio as any || {}
@@ -406,6 +408,8 @@ const CriarCampanhaPage = () => {
                         bannerPadraoUrl={bannerPadraoUrl}
                         setBannerPadraoUrl={setBannerPadraoUrl}
                         hospitalName={selectedHospital?.nome || "Hospital"}
+                        setoresSelecionados={setoresSelecionados}
+                        setSetoresSelecionados={setSetoresSelecionados}
                       />
                     )}
                   </TabsContent>
@@ -699,6 +703,7 @@ const CriarCampanhaPage = () => {
                     bannerPadraoUrl={bannerPadraoUrl}
                     hospitalName={selectedHospital?.nome || "Hospital"}
                     isPublicMode={false}
+                    setoresSelecionados={setoresSelecionados}
                   />
                 ) : (
                   <div className="text-center py-8">
@@ -799,8 +804,9 @@ const CriarCampanhaPage = () => {
           },
           perguntaPadrao: {
             boasVindas,
-            bannerPadraoUrl
-          },
+            bannerPadraoUrl,
+            setoresSelecionados
+          } as any,
           pontosContato: {
             ativo: pontosContatoAtivos,
             pontos: pontosContato

@@ -14,6 +14,7 @@ interface PerguntaPadraoPreviewProps {
   hospitalName?: string
   isPublicMode?: boolean
   onResponse?: (respostaData: any) => void
+  setoresSelecionados?: string[]
 }
 
 export const PerguntaPadraoPreview = ({
@@ -21,7 +22,8 @@ export const PerguntaPadraoPreview = ({
   bannerPadraoUrl,
   hospitalName = "Hospital",
   isPublicMode = false,
-  onResponse
+  onResponse,
+  setoresSelecionados = ["Pronto Socorro", "Ambulatório", "Unidade de Internação"]
 }: PerguntaPadraoPreviewProps) => {
   // Estado para área selecionada
   const [areaSelecionada, setAreaSelecionada] = useState<string>("")
@@ -52,7 +54,7 @@ export const PerguntaPadraoPreview = ({
     }
   })
 
-  const setoresDisponiveis = ["Pronto Socorro", "Ambulatório", "Unidade de Internação"]
+  const setoresDisponiveis = setoresSelecionados
   
   const opcoesInfluencia = [
     "Atendimento da equipe médica",
