@@ -23,17 +23,33 @@ export const PerguntaPadraoPreview = ({
   isPublicMode = false,
   onResponse
 }: PerguntaPadraoPreviewProps) => {
-  const [selectedSetor, setSelectedSetor] = useState<string>("Pronto Socorro")
-  
-  // Respostas das perguntas padrão por setor
-  const [npsScorePadrao, setNpsScorePadrao] = useState<number | null>(null)
-  const [oQueAgradouPadrao, setOQueAgradouPadrao] = useState("")
-  
-  // Respostas direcionadas por setor
-  const [avaliacaoSetor, setAvaliacaoSetor] = useState<number | null>(null)
-  const [satisfacaoSetor, setSatisfacaoSetor] = useState("")
-  const [influencias, setInfluencias] = useState<string[]>([])
-  const [sugestoes, setSugestoes] = useState("")
+  // Respostas por setor
+  const [respostasSetores, setRespostasSetores] = useState<{[key: string]: any}>({
+    "Pronto Socorro": {
+      npsScorePadrao: null,
+      oQueAgradouPadrao: "",
+      avaliacaoSetor: null,
+      satisfacaoSetor: "",
+      influencias: [],
+      sugestoes: ""
+    },
+    "Ambulatório": {
+      npsScorePadrao: null,
+      oQueAgradouPadrao: "",
+      avaliacaoSetor: null,
+      satisfacaoSetor: "",
+      influencias: [],
+      sugestoes: ""
+    },
+    "Unidade de Internação": {
+      npsScorePadrao: null,
+      oQueAgradouPadrao: "",
+      avaliacaoSetor: null,
+      satisfacaoSetor: "",
+      influencias: [],
+      sugestoes: ""
+    }
+  })
 
   const setoresDisponiveis = ["Pronto Socorro", "Ambulatório", "Unidade de Internação"]
   
@@ -47,51 +63,33 @@ export const PerguntaPadraoPreview = ({
     "Higiene e Limpeza"
   ]
 
-  const handleSetorChange = (setor: string) => {
-    setSelectedSetor(setor)
-    // Reset das respostas quando trocar de setor
-    setNpsScorePadrao(null)
-    setOQueAgradouPadrao("")
-    setAvaliacaoSetor(null)
-    setSatisfacaoSetor("")
-    setInfluencias([])
-    setSugestoes("")
+  const updateRespostaSetor = (setor: string, campo: string, valor: any) => {
+    setRespostasSetores(prev => ({
+      ...prev,
+      [setor]: {
+        ...prev[setor],
+        [campo]: valor
+      }
+    }))
   }
 
-  const handleInfluenciaToggle = (opcao: string) => {
-    setInfluencias(prev => 
-      prev.includes(opcao) 
-        ? prev.filter(item => item !== opcao)
-        : [...prev, opcao]
-    )
+  const handleInfluenciaToggle = (setor: string, opcao: string) => {
+    const influenciasAtuais = respostasSetores[setor].influencias
+    const novasInfluencias = influenciasAtuais.includes(opcao)
+      ? influenciasAtuais.filter((item: string) => item !== opcao)
+      : [...influenciasAtuais, opcao]
+    
+    updateRespostaSetor(setor, 'influencias', novasInfluencias)
   }
 
   const handleSubmitResponse = () => {
     const respostaCompleta = {
-      setor: selectedSetor,
-      perguntasPadrao: {
-        npsScore: npsScorePadrao,
-        oQueAgradou: oQueAgradouPadrao
-      },
-      perguntasDirecionadas: {
-        avaliacaoSetor,
-        satisfacaoSetor,
-        influencias,
-        sugestoes
-      }
+      respostasSetores
     }
     
     if (onResponse) {
       onResponse(respostaCompleta)
     }
-  }
-
-  const canSubmit = () => {
-    return npsScorePadrao !== null && 
-           oQueAgradouPadrao.trim() !== "" && 
-           avaliacaoSetor !== null && 
-           satisfacaoSetor.trim() !== "" && 
-           sugestoes.trim() !== ""
   }
 
   return (
@@ -116,182 +114,159 @@ export const PerguntaPadraoPreview = ({
         </div>
       </div>
 
-      {/* Seleção de Setor */}
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle>Selecione o Setor</CardTitle>
-          <p className="text-sm text-muted-foreground">
-            Escolha o setor onde você foi atendido para responder as perguntas específicas
-          </p>
-        </CardHeader>
-        <CardContent>
-          <RadioGroup
-            value={selectedSetor}
-            onValueChange={handleSetorChange}
-            disabled={!isPublicMode}
-          >
-            {setoresDisponiveis.map((setor) => (
-              <div key={setor} className="flex items-center space-x-2">
-                <RadioGroupItem value={setor} id={setor} />
-                <Label htmlFor={setor} className="cursor-pointer">
-                  {setor}
-                </Label>
-              </div>
-            ))}
-          </RadioGroup>
-        </CardContent>
-      </Card>
-
-      {/* Formulário do Setor Selecionado */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Avaliação - {selectedSetor}</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {/* Perguntas Padrão */}
-          <div className="bg-blue-50 dark:bg-blue-950 p-4 rounded-lg space-y-4">
-            <h4 className="font-semibold text-blue-900 dark:text-blue-100">Perguntas Padrão - {selectedSetor}</h4>
-            
-            {/* NPS Padrão */}
-            <div>
-              <Label className="text-base font-medium mb-4 block">
-                De 0 a 10, o quanto você recomendaria o {hospitalName} para amigos e familiares?
-              </Label>
-              
-              <div className="grid grid-cols-11 gap-2">
-                {Array.from({ length: 11 }, (_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setNpsScorePadrao(i)}
-                    className={`
-                      w-12 h-12 rounded-full font-bold text-sm cursor-pointer
-                      ${getScaleColor(i, npsScorePadrao === i, false)}
-                    `}
-                    disabled={!isPublicMode}
-                  >
-                    {i}
-                  </button>
-                ))}
-              </div>
-              
-              <div className="flex justify-between text-xs text-muted-foreground mt-2">
-                <span>Não recomendaria</span>
-                <span>Recomendaria totalmente</span>
-              </div>
-            </div>
-
-            <Separator />
-
-            {/* O que agradou padrão */}
-            <div>
-              <Label className="text-base font-medium mb-2 block">
-                O que mais te agradou em sua experiência conosco?
-              </Label>
-              <Textarea
-                value={oQueAgradouPadrao}
-                onChange={(e) => setOQueAgradouPadrao(e.target.value)}
-                placeholder="Conte-nos sobre sua experiência..."
-                rows={3}
-                disabled={!isPublicMode}
-              />
-            </div>
-          </div>
-
-          {/* Perguntas Direcionadas */}
-          <div className="bg-green-50 dark:bg-green-950 p-4 rounded-lg space-y-4">
-            <h4 className="font-semibold text-green-900 dark:text-green-100">Perguntas Direcionadas - {selectedSetor}</h4>
-            
-            {/* Avaliação do setor */}
-            <div>
-              <Label className="text-base font-medium mb-4 block">
-                De 0 a 10, como você avalia sua experiência durante seu atendimento no {selectedSetor}?
-              </Label>
-              
-              <div className="grid grid-cols-11 gap-2">
-                {Array.from({ length: 11 }, (_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setAvaliacaoSetor(i)}
-                    className={`
-                      w-12 h-12 rounded-full font-bold text-sm cursor-pointer
-                      ${getScaleColor(i, avaliacaoSetor === i, false)}
-                    `}
-                    disabled={!isPublicMode}
-                  >
-                    {i}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <Separator />
-
-            {/* Satisfação */}
-            <div>
-              <Label className="text-base font-medium mb-2 block">
-                Que bom saber que sua experiência foi positiva! O que mais contribuiu para sua satisfação?
-              </Label>
-              <Textarea
-                value={satisfacaoSetor}
-                onChange={(e) => setSatisfacaoSetor(e.target.value)}
-                placeholder="Compartilhe o que mais contribuiu para sua satisfação..."
-                rows={3}
-                disabled={!isPublicMode}
-              />
-            </div>
-
-            <Separator />
-
-            {/* Influências */}
-            <div>
-              <Label className="text-base font-medium mb-4 block">
-                O que mais influenciou sua experiência no hospital?
-              </Label>
-              <div className="space-y-2">
-                {opcoesInfluencia.map((opcao) => (
-                  <div key={opcao} className="flex items-center space-x-2">
-                    <Checkbox
-                      id={opcao}
-                      checked={influencias.includes(opcao)}
-                      onCheckedChange={() => handleInfluenciaToggle(opcao)}
-                      disabled={!isPublicMode}
-                    />
-                    <Label htmlFor={opcao} className="cursor-pointer text-sm">
-                      {opcao}
-                    </Label>
+      {/* Todos os Setores */}
+      <div className="space-y-8">
+        {setoresDisponiveis.map((setor) => (
+          <Card key={setor}>
+            <CardHeader>
+              <CardTitle>Avaliação - {setor}</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Perguntas Padrão */}
+              <div className="bg-blue-50 dark:bg-blue-950 p-4 rounded-lg space-y-4">
+                <h4 className="font-semibold text-blue-900 dark:text-blue-100">Perguntas Padrão - {setor}</h4>
+                
+                {/* NPS Padrão */}
+                <div>
+                  <Label className="text-base font-medium mb-4 block">
+                    De 0 a 10, o quanto você recomendaria o {hospitalName} para amigos e familiares?
+                  </Label>
+                  
+                  <div className="grid grid-cols-11 gap-2">
+                    {Array.from({ length: 11 }, (_, i) => (
+                      <button
+                        key={i}
+                        onClick={() => updateRespostaSetor(setor, 'npsScorePadrao', i)}
+                        className={`
+                          w-12 h-12 rounded-full font-bold text-sm cursor-pointer
+                          ${getScaleColor(i, respostasSetores[setor].npsScorePadrao === i, false)}
+                        `}
+                        disabled={!isPublicMode}
+                      >
+                        {i}
+                      </button>
+                    ))}
                   </div>
-                ))}
+                  
+                  <div className="flex justify-between text-xs text-muted-foreground mt-2">
+                    <span>Não recomendaria</span>
+                    <span>Recomendaria totalmente</span>
+                  </div>
+                </div>
+
+                <Separator />
+
+                {/* O que agradou padrão */}
+                <div>
+                  <Label className="text-base font-medium mb-2 block">
+                    O que mais te agradou em sua experiência conosco?
+                  </Label>
+                  <Textarea
+                    value={respostasSetores[setor].oQueAgradouPadrao}
+                    onChange={(e) => updateRespostaSetor(setor, 'oQueAgradouPadrao', e.target.value)}
+                    placeholder="Conte-nos sobre sua experiência..."
+                    rows={3}
+                    disabled={!isPublicMode}
+                  />
+                </div>
               </div>
-            </div>
 
-            <Separator />
+              {/* Perguntas Direcionadas */}
+              <div className="bg-green-50 dark:bg-green-950 p-4 rounded-lg space-y-4">
+                <h4 className="font-semibold text-green-900 dark:text-green-100">Perguntas Direcionadas - {setor}</h4>
+                
+                {/* Avaliação do setor */}
+                <div>
+                  <Label className="text-base font-medium mb-4 block">
+                    De 0 a 10, como você avalia sua experiência durante seu atendimento no {setor}?
+                  </Label>
+                  
+                  <div className="grid grid-cols-11 gap-2">
+                    {Array.from({ length: 11 }, (_, i) => (
+                      <button
+                        key={i}
+                        onClick={() => updateRespostaSetor(setor, 'avaliacaoSetor', i)}
+                        className={`
+                          w-12 h-12 rounded-full font-bold text-sm cursor-pointer
+                          ${getScaleColor(i, respostasSetores[setor].avaliacaoSetor === i, false)}
+                        `}
+                        disabled={!isPublicMode}
+                      >
+                        {i}
+                      </button>
+                    ))}
+                  </div>
+                </div>
 
-            {/* Sugestões */}
-            <div>
-              <Label className="text-base font-medium mb-2 block">
-                Se houver algo mais que você gostaria de compartilhar ou sugerir, por favor, nos conte.
-              </Label>
-              <Textarea
-                value={sugestoes}
-                onChange={(e) => setSugestoes(e.target.value)}
-                placeholder="Suas sugestões são muito importantes para nós..."
-                rows={3}
-                disabled={!isPublicMode}
-              />
-            </div>
-          </div>
+                <Separator />
 
-          {isPublicMode && (
-            <Button 
-              onClick={handleSubmitResponse} 
-              className="w-full mt-6"
-              disabled={!canSubmit()}
-            >
-              Finalizar Avaliação
-            </Button>
-          )}
-        </CardContent>
-      </Card>
+                {/* Satisfação */}
+                <div>
+                  <Label className="text-base font-medium mb-2 block">
+                    Que bom saber que sua experiência foi positiva! O que mais contribuiu para sua satisfação?
+                  </Label>
+                  <Textarea
+                    value={respostasSetores[setor].satisfacaoSetor}
+                    onChange={(e) => updateRespostaSetor(setor, 'satisfacaoSetor', e.target.value)}
+                    placeholder="Compartilhe o que mais contribuiu para sua satisfação..."
+                    rows={3}
+                    disabled={!isPublicMode}
+                  />
+                </div>
+
+                <Separator />
+
+                {/* Influências */}
+                <div>
+                  <Label className="text-base font-medium mb-4 block">
+                    O que mais influenciou sua experiência no hospital?
+                  </Label>
+                  <div className="space-y-2">
+                    {opcoesInfluencia.map((opcao) => (
+                      <div key={opcao} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={`${setor}-${opcao}`}
+                          checked={respostasSetores[setor].influencias.includes(opcao)}
+                          onCheckedChange={() => handleInfluenciaToggle(setor, opcao)}
+                          disabled={!isPublicMode}
+                        />
+                        <Label htmlFor={`${setor}-${opcao}`} className="cursor-pointer text-sm">
+                          {opcao}
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <Separator />
+
+                {/* Sugestões */}
+                <div>
+                  <Label className="text-base font-medium mb-2 block">
+                    Se houver algo mais que você gostaria de compartilhar ou sugerir, por favor, nos conte.
+                  </Label>
+                  <Textarea
+                    value={respostasSetores[setor].sugestoes}
+                    onChange={(e) => updateRespostaSetor(setor, 'sugestoes', e.target.value)}
+                    placeholder="Suas sugestões são muito importantes para nós..."
+                    rows={3}
+                    disabled={!isPublicMode}
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+        
+        {isPublicMode && (
+          <Button 
+            onClick={handleSubmitResponse} 
+            className="w-full mt-6"
+          >
+            Finalizar Avaliação
+          </Button>
+        )}
+      </div>
     </div>
   )
 }
