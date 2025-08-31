@@ -15,7 +15,7 @@ import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/componen
 import { useAuth } from "@/contexts/AuthContext"
 import { useHospital } from "@/contexts/HospitalContext"
 import { supabase } from "@/integrations/supabase/client"
-import { useToast } from "@/hooks/use-toast"
+import { toast } from "sonner"
 import { NPSPreview } from "@/components/NPSPreview"
 import { PontosContatoForm, PontoContato } from "@/components/PontosContatoForm"
 import { PontosContatoPreview } from "@/components/PontosContatoPreview"
@@ -29,7 +29,6 @@ const CriarCampanhaPage = () => {
   const navigate = useNavigate()
   const { user } = useAuth()
   const { selectedHospital } = useHospital()
-  const { toast } = useToast()
   
   const [campaignName, setCampaignName] = useState("")
   const [currentDate] = useState(new Date().toLocaleDateString('pt-BR'))
@@ -372,11 +371,30 @@ const CriarCampanhaPage = () => {
                               id="banner-upload"
                               type="file"
                               accept="image/*"
-                              onChange={(e) => {
+                              onChange={async (e) => {
                                 const file = e.target.files?.[0]
-                                if (file) {
-                                  const url = URL.createObjectURL(file)
-                                  setBannerUrl(url)
+                                if (file && selectedHospital) {
+                                  try {
+                                    // Upload para o Supabase Storage
+                                    const fileExt = file.name.split('.').pop()
+                                    const fileName = `${selectedHospital.id}_${Date.now()}.${fileExt}`
+                                    
+                                    const { data, error } = await supabase.storage
+                                      .from('banners')
+                                      .upload(fileName, file)
+                                    
+                                    if (error) throw error
+                                    
+                                    // Get public URL
+                                    const { data: { publicUrl } } = supabase.storage
+                                      .from('banners')
+                                      .getPublicUrl(fileName)
+                                    
+                                    setBannerUrl(publicUrl)
+                                  } catch (error) {
+                                    console.error('Erro ao fazer upload do banner:', error)
+                                    toast.error("Erro ao fazer upload do banner")
+                                  }
                                 }
                               }}
                             />
