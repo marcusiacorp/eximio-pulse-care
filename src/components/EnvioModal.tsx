@@ -290,9 +290,11 @@ export function EnvioModal({ isOpen, onClose, campanha }: EnvioModalProps) {
     onClose()
   }
 
-  // Carregar pacientes ao abrir modal para campanhas que não são do tipo link
+  // Gerar link e QR code automaticamente para campanhas do tipo link
   useEffect(() => {
-    if (isOpen && campanha.tipo !== 'link') {
+    if (isOpen && campanha.tipo === 'link' && !campanhaId) {
+      handleSalvarCampanha()
+    } else if (isOpen && campanha.tipo !== 'link') {
       loadPacientes()
     }
   }, [isOpen, campanha.tipo])
