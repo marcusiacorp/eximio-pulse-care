@@ -195,44 +195,18 @@ export const PerguntaPadraoForm = ({
         </CardContent>
       </Card>
 
-      {/* Pergunta Inicial - Área do Hospital */}
+      {/* Pergunta Padrão - Caixa Única */}
       <Card>
         <CardHeader>
-          <CardTitle>1. Identificação da Área</CardTitle>
+          <CardTitle>Pergunta Padrão</CardTitle>
           <p className="text-sm text-muted-foreground">
-            Pergunta inicial para identificar a área de atendimento
+            Avaliação geral e identificação da área de atendimento
           </p>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="bg-purple-50 dark:bg-purple-950 p-4 rounded-lg space-y-4">
-            <h4 className="font-semibold text-purple-900 dark:text-purple-100">Pergunta de Identificação da Área</h4>
-            
-            <div>
-              <Badge variant="outline">Múltipla Escolha</Badge>
-              <p className="mt-2 text-sm font-medium">Em qual área do hospital você foi atendido?</p>
-              <div className="flex flex-wrap gap-2 mt-2">
-                {areasHospital.map((area) => (
-                  <Badge key={area} variant="secondary" className="text-xs">
-                    {area}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Perguntas Padrão Globais */}
-      <Card>
-        <CardHeader>
-          <CardTitle>2. Perguntas Padrão (Globais)</CardTitle>
-          <p className="text-sm text-muted-foreground">
-            Perguntas aplicadas uma única vez, independente do setor
-          </p>
-        </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-6">
+          {/* Avaliação Geral */}
           <div className="bg-blue-50 dark:bg-blue-950 p-4 rounded-lg space-y-4">
-            <h4 className="font-semibold text-blue-900 dark:text-blue-100">Perguntas Padrão Globais</h4>
+            <h4 className="font-semibold text-blue-900 dark:text-blue-100">Avaliação Geral</h4>
             
             <div>
               <Badge variant="outline">Pergunta NPS</Badge>
@@ -250,6 +224,23 @@ export const PerguntaPadraoForm = ({
               </p>
             </div>
           </div>
+
+          {/* Identificação da Área */}
+          <div className="bg-purple-50 dark:bg-purple-950 p-4 rounded-lg space-y-4">
+            <h4 className="font-semibold text-purple-900 dark:text-purple-100">Identificação da Área</h4>
+            
+            <div>
+              <Badge variant="outline">Múltipla Escolha</Badge>
+              <p className="mt-2 text-sm font-medium">Em qual área do hospital você foi atendido?</p>
+              <div className="flex flex-wrap gap-2 mt-2">
+                {areasHospital.map((area) => (
+                  <Badge key={area} variant="secondary" className="text-xs">
+                    {area}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          </div>
         </CardContent>
       </Card>
 
@@ -257,7 +248,7 @@ export const PerguntaPadraoForm = ({
       {setoresData.map((setor) => (
         <Card key={setor.id}>
           <CardHeader>
-            <CardTitle>3.{setor.id} Avaliação - {setor.nome}</CardTitle>
+            <CardTitle>Avaliação - {setor.nome}</CardTitle>
             <p className="text-sm text-muted-foreground">
               Perguntas específicas para pacientes atendidos no {setor.nome}
             </p>
