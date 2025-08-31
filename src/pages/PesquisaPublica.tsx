@@ -163,7 +163,7 @@ export default function PesquisaPublica() {
             setoresHospital={(campanha.configuracao?.[0]?.pergunta_definitiva as any)?.setoresHospital || []}
             nomeHospital={campanha.nome}
             isPublicMode={true}
-            logoUrl={(campanha.configuracao?.[0]?.layout_envio as any)?.logo_url}
+            logoUrl={(campanha.configuracao?.[0]?.layout_envio as any)?.bannerUrl}
           />
         )}
 
