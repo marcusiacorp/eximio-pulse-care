@@ -1,3 +1,4 @@
+import React from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
@@ -19,6 +20,30 @@ export const FormulariosAdicionaisPreview = ({
   isPublicMode = false,
   onResponse
 }: FormulariosAdicionaisPreviewProps) => {
+  const [respostasFormularios, setRespostasFormularios] = React.useState<{[key: number]: any}>({})
+
+  // Enviar dados para o parent via callback
+  const enviarResposta = () => {
+    if (onResponse) {
+      onResponse({
+        formularios_adicionais: respostasFormularios
+      })
+    }
+  }
+
+  // Chamar callback quando dados mudarem (para modo público)
+  React.useEffect(() => {
+    if (isPublicMode) {
+      enviarResposta()
+    }
+  }, [respostasFormularios])
+
+  const handleRespostaChange = (index: number, valor: any) => {
+    setRespostasFormularios(prev => ({
+      ...prev,
+      [index]: valor
+    }))
+  }
   return (
     <Card className={`w-full max-w-2xl mx-auto ${!formulariosAdicionaisAtivos ? 'opacity-50 grayscale' : ''}`}>
       <CardContent className="p-6">
@@ -52,22 +77,28 @@ export const FormulariosAdicionaisPreview = ({
                     </p>
                   )}
                   
-                  {formulario.tipo === "multiplas-opcoes" ? (
-                    <RadioGroup disabled={!formulariosAdicionaisAtivos}>
-                      {formulario.opcoes.map((opcao: string, opcaoIndex: number) => (
-                        <div key={opcaoIndex} className="flex items-center space-x-2">
-                          <RadioGroupItem value={opcao} />
-                          <Label className="text-sm">{opcao}</Label>
-                        </div>
-                      ))}
-                    </RadioGroup>
-                  ) : (
-                    <Textarea
-                      placeholder="Sua resposta..."
-                      className="w-full min-h-[80px] resize-none"
-                      disabled={!formulariosAdicionaisAtivos}
-                    />
-                  )}
+                   {formulario.tipo === "multiplas-opcoes" ? (
+                     <RadioGroup 
+                       disabled={!formulariosAdicionaisAtivos}
+                       value={respostasFormularios[index] || ""}
+                       onValueChange={(valor) => handleRespostaChange(index, valor)}
+                     >
+                       {formulario.opcoes.map((opcao: string, opcaoIndex: number) => (
+                         <div key={opcaoIndex} className="flex items-center space-x-2">
+                           <RadioGroupItem value={opcao} />
+                           <Label className="text-sm">{opcao}</Label>
+                         </div>
+                       ))}
+                     </RadioGroup>
+                   ) : (
+                     <Textarea
+                       placeholder="Sua resposta..."
+                       className="w-full min-h-[80px] resize-none"
+                       disabled={!formulariosAdicionaisAtivos}
+                       value={respostasFormularios[index] || ""}
+                       onChange={(e) => handleRespostaChange(index, e.target.value)}
+                     />
+                   )}
                 </div>
               ))}
             </div>
@@ -76,12 +107,14 @@ export const FormulariosAdicionaisPreview = ({
               <Label htmlFor="experiencia" className="text-sm font-medium">
                 Sua experiência:
               </Label>
-              <Textarea
-                id="experiencia"
-                placeholder="Descreva sua experiência..."
-                className="w-full min-h-[120px] resize-none"
-                disabled={!formulariosAdicionaisAtivos}
-              />
+               <Textarea
+                 id="experiencia"
+                 placeholder="Descreva sua experiência..."
+                 className="w-full min-h-[120px] resize-none"
+                 disabled={!formulariosAdicionaisAtivos}
+                 value={respostasFormularios[0] || ""}
+                 onChange={(e) => handleRespostaChange(0, e.target.value)}
+               />
             </div>
           )}
         </div>

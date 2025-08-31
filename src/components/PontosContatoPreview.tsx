@@ -1,4 +1,4 @@
-import { useState } from "react"
+import React, { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -84,6 +84,27 @@ export const PontosContatoPreview = ({
     
     return "bg-background border-border hover:bg-accent"
   }
+
+  // Enviar dados para o parent via callback
+  const enviarResposta = () => {
+    if (onResponse) {
+      onResponse({
+        pontos_contato: {
+          scores: selectedScores,
+          feedback_positivo: feedbackPositivo,
+          influencias_selecionadas: influenciaSelecionada,
+          sugestao_final: sugestaoFinal
+        }
+      })
+    }
+  }
+
+  // Chamar callback quando dados mudarem (para modo público)
+  React.useEffect(() => {
+    if (isPublicMode) {
+      enviarResposta()
+    }
+  }, [selectedScores, feedbackPositivo, influenciaSelecionada, sugestaoFinal])
 
   if (!pontosContatoAtivos) {
     return (

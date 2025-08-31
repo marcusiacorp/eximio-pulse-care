@@ -17,6 +17,7 @@ export type Database = {
       campanha_configuracao: {
         Row: {
           autorizacao: string | null
+          banner_url: string | null
           campanha_id: string
           confirmacao_envio: Json | null
           created_at: string
@@ -24,15 +25,20 @@ export type Database = {
           id: string
           layout_envio: Json | null
           lembrete: Json | null
+          o_que_agradou: string | null
           pergunta_definitiva: Json | null
+          pergunta_recomendacao: string | null
           pontos_contato: Json | null
           problemas: Json | null
           recomendacao: string | null
+          resposta_autorizacao: string | null
+          setores_selecionados: string[] | null
           trecho_pergunta: string | null
           updated_at: string
         }
         Insert: {
           autorizacao?: string | null
+          banner_url?: string | null
           campanha_id: string
           confirmacao_envio?: Json | null
           created_at?: string
@@ -40,15 +46,20 @@ export type Database = {
           id?: string
           layout_envio?: Json | null
           lembrete?: Json | null
+          o_que_agradou?: string | null
           pergunta_definitiva?: Json | null
+          pergunta_recomendacao?: string | null
           pontos_contato?: Json | null
           problemas?: Json | null
           recomendacao?: string | null
+          resposta_autorizacao?: string | null
+          setores_selecionados?: string[] | null
           trecho_pergunta?: string | null
           updated_at?: string
         }
         Update: {
           autorizacao?: string | null
+          banner_url?: string | null
           campanha_id?: string
           confirmacao_envio?: Json | null
           created_at?: string
@@ -56,10 +67,14 @@ export type Database = {
           id?: string
           layout_envio?: Json | null
           lembrete?: Json | null
+          o_que_agradou?: string | null
           pergunta_definitiva?: Json | null
+          pergunta_recomendacao?: string | null
           pontos_contato?: Json | null
           problemas?: Json | null
           recomendacao?: string | null
+          resposta_autorizacao?: string | null
+          setores_selecionados?: string[] | null
           trecho_pergunta?: string | null
           updated_at?: string
         }
@@ -221,6 +236,7 @@ export type Database = {
       }
       respostas_pesquisa: {
         Row: {
+          campanha_id: string | null
           created_at: string
           envio_id: string
           formularios_adicionais: Json | null
@@ -229,9 +245,16 @@ export type Database = {
           pergunta_definitiva: Json | null
           pontos_contato: Json | null
           problemas: Json | null
+          resposta_autorizacao: boolean | null
+          resposta_o_que_agradou: string | null
+          resposta_porque_nota: string | null
+          resposta_recomendacao: boolean | null
+          resposta_trecho_pergunta: string | null
+          setores_atendimento: string[] | null
           updated_at: string
         }
         Insert: {
+          campanha_id?: string | null
           created_at?: string
           envio_id: string
           formularios_adicionais?: Json | null
@@ -240,9 +263,16 @@ export type Database = {
           pergunta_definitiva?: Json | null
           pontos_contato?: Json | null
           problemas?: Json | null
+          resposta_autorizacao?: boolean | null
+          resposta_o_que_agradou?: string | null
+          resposta_porque_nota?: string | null
+          resposta_recomendacao?: boolean | null
+          resposta_trecho_pergunta?: string | null
+          setores_atendimento?: string[] | null
           updated_at?: string
         }
         Update: {
+          campanha_id?: string | null
           created_at?: string
           envio_id?: string
           formularios_adicionais?: Json | null
@@ -251,6 +281,12 @@ export type Database = {
           pergunta_definitiva?: Json | null
           pontos_contato?: Json | null
           problemas?: Json | null
+          resposta_autorizacao?: boolean | null
+          resposta_o_que_agradou?: string | null
+          resposta_porque_nota?: string | null
+          resposta_recomendacao?: boolean | null
+          resposta_trecho_pergunta?: string | null
+          setores_atendimento?: string[] | null
           updated_at?: string
         }
         Relationships: []

@@ -1,4 +1,4 @@
-import { useState, useRef } from "react"
+import React, { useState, useRef } from "react"
 import { Upload, Star, X, Check } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
@@ -25,7 +25,8 @@ export const NPSPreview = ({
   setoresHospital = [],
   nomeHospital = "",
   isPublicMode = false,
-  logoUrl
+  logoUrl,
+  onResponse
 }: NPSPreviewProps) => {
   console.log('NPSPreview recebeu logoUrl:', logoUrl)
   console.log('NPSPreview logoUrl existe?', !!logoUrl)
@@ -105,6 +106,28 @@ export const NPSPreview = ({
         : [...prev, setor]
     )
   }
+
+  // Enviar dados para o parent via callback
+  const enviarResposta = () => {
+    if (onResponse) {
+      onResponse({
+        nps_score: selectedScore,
+        resposta_trecho_pergunta: trechoPergunta ? feedback : null,
+        resposta_o_que_agradou: oQueAgradou ? respostaAgradou : null,
+        resposta_porque_nota: feedback,
+        setores_atendimento: setoresSelecionados.length > 0 ? setoresSelecionados : null,
+        resposta_recomendacao: selectedRecomendacao,
+        resposta_autorizacao: selectedAuthorization
+      })
+    }
+  }
+
+  // Chamar callback quando dados mudarem (para modo público)
+  React.useEffect(() => {
+    if (isPublicMode) {
+      enviarResposta()
+    }
+  }, [selectedScore, feedback, respostaAgradou, setoresSelecionados, selectedRecomendacao, selectedAuthorization])
 
   return (
     <div className="max-w-md mx-auto bg-white border rounded-lg shadow-sm p-6 space-y-6">

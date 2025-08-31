@@ -1,3 +1,4 @@
+import React from "react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent } from "@/components/ui/card"
@@ -10,6 +11,31 @@ interface ProblemasPreviewProps {
 }
 
 export const ProblemasPreview = ({ problemasAtivos, nomeHospital, isPublicMode = false, onResponse }: ProblemasPreviewProps) => {
+  const [teveProblema, setTeveProblema] = React.useState<boolean | null>(null)
+  const [descricaoProblema, setDescricaoProblema] = React.useState("")
+  const [problemaResolvido, setProblemaResolvido] = React.useState<boolean | null>(null)
+  const [notaAtendimento, setNotaAtendimento] = React.useState<number | null>(null)
+
+  // Enviar dados para o parent via callback
+  const enviarResposta = () => {
+    if (onResponse) {
+      onResponse({
+        problemas: {
+          teve_problema: teveProblema,
+          descricao: descricaoProblema,
+          foi_resolvido: problemaResolvido,
+          nota_atendimento: notaAtendimento
+        }
+      })
+    }
+  }
+
+  // Chamar callback quando dados mudarem (para modo público)
+  React.useEffect(() => {
+    if (isPublicMode) {
+      enviarResposta()
+    }
+  }, [teveProblema, descricaoProblema, problemaResolvido, notaAtendimento])
   return (
     <div className={`space-y-6 p-4 ${!problemasAtivos ? 'opacity-50 grayscale' : ''}`}>
       {!problemasAtivos && (
@@ -32,10 +58,20 @@ export const ProblemasPreview = ({ problemasAtivos, nomeHospital, isPublicMode =
             <h3 className="text-lg font-medium mb-4">Você teve algum problema com a gente?</h3>
             
             <div className="flex justify-center gap-4 mb-6">
-              <Button variant="outline" className="px-8" disabled={!problemasAtivos}>
+              <Button 
+                variant={teveProblema === true ? "default" : "outline"} 
+                className="px-8" 
+                disabled={!problemasAtivos}
+                onClick={() => setTeveProblema(true)}
+              >
                 SIM
               </Button>
-              <Button variant="outline" className="px-8" disabled={!problemasAtivos}>
+              <Button 
+                variant={teveProblema === false ? "default" : "outline"} 
+                className="px-8" 
+                disabled={!problemasAtivos}
+                onClick={() => setTeveProblema(false)}
+              >
                 NÃO
               </Button>
             </div>
@@ -49,18 +85,30 @@ export const ProblemasPreview = ({ problemasAtivos, nomeHospital, isPublicMode =
                 placeholder="Descreva o que aconteceu... (máximo 280 caracteres)"
                 maxLength={280}
                 className="min-h-[100px]"
-                disabled
+                disabled={!problemasAtivos}
+                value={descricaoProblema}
+                onChange={(e) => setDescricaoProblema(e.target.value)}
               />
-              <p className="text-xs text-muted-foreground mt-1">0/280 caracteres</p>
+              <p className="text-xs text-muted-foreground mt-1">{descricaoProblema.length}/280 caracteres</p>
             </div>
 
             <div>
               <h4 className="font-medium mb-3">Seu problema foi resolvido?</h4>
               <div className="flex gap-4">
-                <Button variant="outline" size="sm" disabled={!problemasAtivos}>
+                <Button 
+                  variant={problemaResolvido === true ? "default" : "outline"} 
+                  size="sm" 
+                  disabled={!problemasAtivos}
+                  onClick={() => setProblemaResolvido(true)}
+                >
                   SIM
                 </Button>
-                <Button variant="outline" size="sm" disabled={!problemasAtivos}>
+                <Button 
+                  variant={problemaResolvido === false ? "default" : "outline"} 
+                  size="sm" 
+                  disabled={!problemasAtivos}
+                  onClick={() => setProblemaResolvido(false)}
+                >
                   NÃO
                 </Button>
               </div>
@@ -72,10 +120,11 @@ export const ProblemasPreview = ({ problemasAtivos, nomeHospital, isPublicMode =
                 {Array.from({ length: 11 }, (_, i) => (
                   <Button
                     key={i}
-                    variant="outline"
+                    variant={notaAtendimento === i ? "default" : "outline"}
                     size="sm"
                     className="w-10 h-10 p-0"
                     disabled={!problemasAtivos}
+                    onClick={() => setNotaAtendimento(i)}
                   >
                     {i}
                   </Button>

@@ -19,6 +19,11 @@ interface CampanhaData {
     trecho_pergunta?: string
     recomendacao?: string
     autorizacao?: string
+    o_que_agradou?: string
+    setores_selecionados?: string[]
+    pergunta_recomendacao?: string
+    resposta_autorizacao?: string
+    banner_url?: string
     pergunta_definitiva?: any
     pontos_contato?: any
     problemas?: any
@@ -33,6 +38,8 @@ export default function PesquisaPublica() {
   const [loading, setLoading] = useState(true)
   const [etapaAtual, setEtapaAtual] = useState(0)
   const [etapas, setEtapas] = useState<string[]>([])
+  const [respostas, setRespostas] = useState<any>({})
+  const [envioId, setEnvioId] = useState<string | null>(null)
 
   // Carregar dados da campanha
   useEffect(() => {
@@ -105,19 +112,94 @@ export default function PesquisaPublica() {
     carregarCampanha()
   }, [campanhaId])
 
-  const handleProximaEtapa = () => {
+  const handleProximaEtapa = async () => {
     if (etapaAtual < etapas.length - 1) {
       setEtapaAtual(etapaAtual + 1)
     } else {
-      // Na última etapa, mostrar mensagem de agradecimento
-      toast.success("Resposta enviada com sucesso! Obrigado pela sua participação.")
-      setEtapaAtual(999) // Tela de agradecimento
+      // Na última etapa, salvar resposta
+      const sucesso = await salvarResposta()
+      if (sucesso) {
+        toast.success("Resposta enviada com sucesso! Obrigado pela sua participação.")
+        setEtapaAtual(999) // Tela de agradecimento
+      }
     }
   }
 
   const handleEtapaAnterior = () => {
     if (etapaAtual > 0) {
       setEtapaAtual(etapaAtual - 1)
+    }
+  }
+
+  // Função para coletar dados dos componentes
+  const handleResponse = (data: any) => {
+    setRespostas(prev => ({
+      ...prev,
+      ...data
+    }))
+  }
+
+  // Função para salvar resposta no Supabase
+  const salvarResposta = async () => {
+    if (!campanhaId) return false
+
+    try {
+      // Criar envio se não existir
+      let currentEnvioId = envioId
+      if (!currentEnvioId) {
+        const { data: envioData, error: envioError } = await supabase
+          .from('envios_pesquisa')
+          .insert({
+            campanha_id: campanhaId,
+            paciente_id: 'public-user-' + Date.now(), // ID temporário para usuário público
+            status: 'respondido',
+            respondido_em: new Date().toISOString()
+          })
+          .select()
+          .single()
+
+        if (envioError) {
+          console.error('Erro ao criar envio:', envioError)
+          toast.error("Erro ao salvar resposta")
+          return false
+        }
+
+        currentEnvioId = envioData.id
+        setEnvioId(currentEnvioId)
+      }
+
+      // Preparar dados normalizados
+      const dadosResposta = {
+        envio_id: currentEnvioId,
+        campanha_id: campanhaId,
+        nps_score: respostas.nps_score || null,
+        resposta_trecho_pergunta: respostas.resposta_trecho_pergunta || null,
+        resposta_o_que_agradou: respostas.resposta_o_que_agradou || null,
+        resposta_porque_nota: respostas.resposta_porque_nota || null,
+        setores_atendimento: respostas.setores_atendimento || null,
+        resposta_recomendacao: respostas.resposta_recomendacao || null,
+        resposta_autorizacao: respostas.resposta_autorizacao || null,
+        pontos_contato: respostas.pontos_contato || null,
+        problemas: respostas.problemas || null,
+        formularios_adicionais: respostas.formularios_adicionais || null
+      }
+
+      // Salvar resposta
+      const { error: respostaError } = await supabase
+        .from('respostas_pesquisa')
+        .insert(dadosResposta)
+
+      if (respostaError) {
+        console.error('Erro ao salvar resposta:', respostaError)
+        toast.error("Erro ao salvar resposta")
+        return false
+      }
+
+      return true
+    } catch (error) {
+      console.error('Erro inesperado ao salvar resposta:', error)
+      toast.error("Erro inesperado ao salvar resposta")
+      return false
     }
   }
 
@@ -164,24 +246,23 @@ export default function PesquisaPublica() {
       <div className="container mx-auto max-w-4xl px-4">
         {/* Renderizar o componente de preview apropriado para cada etapa */}
         {etapaAtualNome === "pergunta_definitiva" && (() => {
-          const layoutEnvio = campanha.configuracao?.[0]?.layout_envio
-          const logoUrl = (layoutEnvio as any)?.bannerUrl
+          const bannerUrl = campanha.configuracao?.[0]?.banner_url
           
           console.log('Passando para NPSPreview:')
-          console.log('- layoutEnvio:', layoutEnvio)
-          console.log('- logoUrl:', logoUrl)
-          console.log('- logoUrl tipo:', typeof logoUrl)
+          console.log('- banner_url da nova coluna:', bannerUrl)
+          console.log('- banner_url existe?', !!bannerUrl)
           
           return (
             <NPSPreview
               trechoPergunta={campanha.configuracao?.[0]?.trecho_pergunta || ""}
-              recomendacao={campanha.configuracao?.[0]?.recomendacao || ""}
-              autorizacao={campanha.configuracao?.[0]?.autorizacao || ""}
-              oQueAgradou={(campanha.configuracao?.[0]?.pergunta_definitiva as any)?.oQueAgradou}
-              setoresHospital={(campanha.configuracao?.[0]?.pergunta_definitiva as any)?.setoresHospital || []}
+              recomendacao={campanha.configuracao?.[0]?.pergunta_recomendacao || campanha.configuracao?.[0]?.recomendacao || ""}
+              autorizacao={campanha.configuracao?.[0]?.resposta_autorizacao || campanha.configuracao?.[0]?.autorizacao || ""}
+              oQueAgradou={campanha.configuracao?.[0]?.o_que_agradou || (campanha.configuracao?.[0]?.pergunta_definitiva as any)?.oQueAgradou}
+              setoresHospital={campanha.configuracao?.[0]?.setores_selecionados || (campanha.configuracao?.[0]?.pergunta_definitiva as any)?.setoresHospital || []}
               nomeHospital={campanha.nome}
               isPublicMode={true}
-              logoUrl={logoUrl}
+              logoUrl={bannerUrl}
+              onResponse={handleResponse}
             />
           )
         })()}
@@ -192,6 +273,7 @@ export default function PesquisaPublica() {
             pontosContato={(campanha.configuracao[0].pontos_contato as any)?.pontos || []}
             nomeHospital={campanha.nome}
             isPublicMode={true}
+            onResponse={handleResponse}
           />
         )}
 
@@ -200,6 +282,7 @@ export default function PesquisaPublica() {
             problemasAtivos={true}
             nomeHospital={campanha.nome}
             isPublicMode={true}
+            onResponse={handleResponse}
           />
         )}
 
@@ -209,6 +292,7 @@ export default function PesquisaPublica() {
             formulariosCriados={(campanha.configuracao?.[0]?.formularios_adicionais as any)?.formularios || []}
             nomeHospital={campanha.nome}
             isPublicMode={true}
+            onResponse={handleResponse}
           />
         )}
 

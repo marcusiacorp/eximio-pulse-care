@@ -88,7 +88,7 @@ export function EnvioModal({ isOpen, onClose, campanha }: EnvioModalProps) {
 
       if (updateError) throw updateError
 
-      // Salvar configuração da campanha
+      // Salvar configuração da campanha com colunas normalizadas  
       console.log('Salvando configuração:', {
         bannerUrl: campanha.layoutEnvio?.bannerUrl,
         layoutEnvio: campanha.layoutEnvio
@@ -101,6 +101,12 @@ export function EnvioModal({ isOpen, onClose, campanha }: EnvioModalProps) {
           trecho_pergunta: campanha.perguntaDefinitiva?.trechoPergunta,
           recomendacao: campanha.perguntaDefinitiva?.recomendacao,
           autorizacao: campanha.perguntaDefinitiva?.autorizacao,
+          o_que_agradou: campanha.perguntaDefinitiva?.oQueAgradou,
+          setores_selecionados: campanha.perguntaDefinitiva?.setoresHospital,
+          pergunta_recomendacao: campanha.perguntaDefinitiva?.recomendacao,
+          resposta_autorizacao: campanha.perguntaDefinitiva?.autorizacao,
+          banner_url: campanha.layoutEnvio?.bannerUrl,
+          // Manter JSONBs para dados complexos
           pergunta_definitiva: {
             oQueAgradou: campanha.perguntaDefinitiva?.oQueAgradou,
             setoresHospital: campanha.perguntaDefinitiva?.setoresHospital
