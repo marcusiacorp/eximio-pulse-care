@@ -407,7 +407,8 @@ export default function PesquisaPublica() {
           const config = campanha.configuracao[0]
           const perguntaPadraoData = config.pergunta_padrao as any
           console.log('DEBUG - Renderizando pergunta padrão:', perguntaPadraoData)
-          console.log('DEBUG - Setores selecionados:', perguntaPadraoData?.setoresSelecionados)
+          console.log('DEBUG - Setores selecionados do DB:', perguntaPadraoData?.setoresSelecionados)
+          console.log('DEBUG - Usando setores:', perguntaPadraoData?.setoresSelecionados || ["Pronto Socorro", "Ambulatório", "Unidade de Internação"])
           
           return (
             <PerguntaPadraoPreview

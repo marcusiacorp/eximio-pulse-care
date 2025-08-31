@@ -21,6 +21,7 @@ interface CampanhaData {
   perguntaPadrao?: {
     boasVindas: string
     bannerPadraoUrl: string
+    setoresSelecionados?: string[]
   }
   pontosContato: any
   problemas: any
@@ -125,6 +126,10 @@ export function EnvioModal({ isOpen, onClose, campaignData }: EnvioModalProps) {
         bannerUrl: campaignData.layoutEnvio?.bannerUrl,
         layoutEnvio: campaignData.layoutEnvio
       });
+      console.log('DEBUGGING SETORES - Salvando setores selecionados:', {
+        setoresSelecionados: campaignData.perguntaPadrao?.setoresSelecionados,
+        perguntaPadrao: campaignData.perguntaPadrao
+      });
 
       if (campaignData.id) {
         // UPDATE configuração existente
@@ -146,7 +151,8 @@ export function EnvioModal({ isOpen, onClose, campaignData }: EnvioModalProps) {
               setoresHospital: campaignData.perguntaDefinitiva?.setoresHospital
             },
             pergunta_padrao: {
-              boasVindas: campaignData.perguntaPadrao?.boasVindas
+              boasVindas: campaignData.perguntaPadrao?.boasVindas,
+              setoresSelecionados: campaignData.perguntaPadrao?.setoresSelecionados
             },
             pontos_contato: campaignData.pontosContato,
             problemas: campaignData.problemas,
@@ -177,7 +183,8 @@ export function EnvioModal({ isOpen, onClose, campaignData }: EnvioModalProps) {
               setoresHospital: campaignData.perguntaDefinitiva?.setoresHospital
             },
             pergunta_padrao: {
-              boasVindas: campaignData.perguntaPadrao?.boasVindas
+              boasVindas: campaignData.perguntaPadrao?.boasVindas,
+              setoresSelecionados: campaignData.perguntaPadrao?.setoresSelecionados
             },
             pontos_contato: campaignData.pontosContato,
             problemas: campaignData.problemas,

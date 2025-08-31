@@ -132,9 +132,11 @@ const CriarCampanhaPage = () => {
       
       // Popular dados da pergunta padrão
       const perguntaPadraoData = configData.pergunta_padrao as any || {}
+      console.log('DEBUG CARREGAMENTO - pergunta_padrao do banco:', perguntaPadraoData)
       setBoasVindas(perguntaPadraoData.boasVindas || "")
       setBannerPadraoUrl(configData.banner_padrao_url || "")
       setSetoresSelecionados(perguntaPadraoData.setoresSelecionados || ["Pronto Socorro", "Ambulatório", "Unidade de Internação"])
+      console.log('DEBUG CARREGAMENTO - setores definidos:', perguntaPadraoData.setoresSelecionados || ["Pronto Socorro", "Ambulatório", "Unidade de Internação"])
       
       // Popular outros dados do JSON
       const layoutEnvio = configData.layout_envio as any || {}
