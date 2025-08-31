@@ -114,7 +114,18 @@ export const NPSPreview = ({
               src={logoUrl || logoPreview} 
               alt="Logo do Hospital" 
               className="w-full h-full object-contain rounded-lg"
+              onError={(e) => {
+                console.error('Erro ao carregar imagem:', logoUrl)
+                console.log('URL do banner:', logoUrl)
+              }}
             />
+          </div>
+        ) : isPublicMode ? (
+          <div className="w-32 h-16 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center bg-gray-50">
+            <div className="text-center">
+              <p className="text-xs text-gray-500">Banner não configurado</p>
+              <p className="text-xs text-red-500">URL: {logoUrl || 'undefined'}</p>
+            </div>
           </div>
         ) : !isPublicMode ? (
           <div 

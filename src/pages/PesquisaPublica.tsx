@@ -66,6 +66,8 @@ export default function PesquisaPublica() {
           toast.error("Esta pesquisa não está mais disponível")
         } else {
           console.log('Campanha carregada:', data)
+          console.log('Layout envio:', data.configuracao?.[0]?.layout_envio)
+          console.log('Banner URL:', (data.configuracao?.[0]?.layout_envio as any)?.bannerUrl)
           setCampanha(data)
 
           // Definir etapas baseadas na configuração
