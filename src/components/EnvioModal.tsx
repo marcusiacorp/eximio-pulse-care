@@ -93,6 +93,9 @@ export function EnvioModal({ isOpen, onClose, campanha }: EnvioModalProps) {
         .from("campanha_configuracao")
         .insert({
           campanha_id: data.id,
+          trecho_pergunta: campanha.perguntaDefinitiva?.trechoPergunta,
+          recomendacao: campanha.perguntaDefinitiva?.recomendacao,
+          autorizacao: campanha.perguntaDefinitiva?.autorizacao,
           pontos_contato: campanha.pontosContato,
           problemas: campanha.problemas,
           formularios_adicionais: campanha.formulariosAdicionais,
