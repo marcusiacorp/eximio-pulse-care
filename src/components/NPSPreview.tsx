@@ -136,7 +136,7 @@ export const NPSPreview = ({
       {/* Pergunta Principal */}
       <div className="text-center">
         <p className="text-lg font-medium text-gray-900 leading-relaxed">
-          {trechoPergunta || "Como você avalia a qualidade do atendimento recebido?"}
+          {trechoPergunta}
         </p>
       </div>
 

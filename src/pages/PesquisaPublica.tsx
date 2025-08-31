@@ -144,7 +144,7 @@ export default function PesquisaPublica() {
         {/* Renderizar o componente de preview apropriado para cada etapa */}
         {etapaAtualNome === "pergunta_definitiva" && (
           <NPSPreview
-            trechoPergunta={campanha.configuracao?.trecho_pergunta || "Em uma escala de 0 a 10, o quanto você recomendaria nossos serviços?"}
+            trechoPergunta={campanha.configuracao?.trecho_pergunta || ""}
             recomendacao={campanha.configuracao?.recomendacao || ""}
             autorizacao={campanha.configuracao?.autorizacao || ""}
             nomeHospital={campanha.nome}
