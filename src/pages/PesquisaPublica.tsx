@@ -245,6 +245,16 @@ export default function PesquisaPublica() {
       
       console.log('Dados do envio:', envioData)
       
+      // Debug: Verificar se a campanha existe e está ativa
+      const { data: campanhaDebug, error: campanhaDebugError } = await supabase
+        .from('campanhas')
+        .select('id, nome, ativa')
+        .eq('id', campanhaId)
+        .single()
+      
+      console.log('Debug - Campanha encontrada:', campanhaDebug)
+      console.log('Debug - Erro ao buscar campanha:', campanhaDebugError)
+      
       const { data: novoEnvio, error: envioError } = await supabase
         .from('envios_pesquisa')
         .insert(envioData)
