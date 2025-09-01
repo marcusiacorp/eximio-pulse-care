@@ -305,6 +305,15 @@ export default function PesquisaPublica() {
         avaliacao_unidadeinternacao_sugestoes: respostas.respostasSetores?.["Unidade de Internação"]?.sugestoes || null,
       }
 
+      // Debug detalhado das respostas
+      console.log('=== DEBUG RESPOSTAS ===')
+      console.log('Estado respostas completo:', respostas)
+      console.log('npsScoreGlobal:', respostas.npsScoreGlobal)
+      console.log('oQueAgradouGlobal:', respostas.oQueAgradouGlobal)
+      console.log('areaSelecionada:', respostas.areaSelecionada)
+      console.log('respostasSetores:', respostas.respostasSetores)
+      console.log('======================')
+      
       console.log('Salvando resposta com dados:', dadosResposta)
 
       // Salvar resposta
