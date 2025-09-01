@@ -214,15 +214,18 @@ export default function PesquisaPublica() {
 
   // Função para coletar dados dos componentes
   const handleResponse = (data: any) => {
-    console.log('DEBUG - Recebendo resposta do componente:', data)
-    console.log('DEBUG - Etapa atual:', etapaAtualNome)
+    console.log('=== HANDLE RESPONSE START ===')
+    console.log('Dados recebidos do componente:', JSON.stringify(data, null, 2))
+    console.log('Etapa atual:', etapaAtualNome)
+    console.log('Estado respostas ANTES da atualização:', JSON.stringify(respostas, null, 2))
     
     setRespostas(prev => {
       const novasRespostas = {
         ...prev,
         ...data
       }
-      console.log('DEBUG - Respostas atualizadas:', novasRespostas)
+      console.log('Estado respostas APÓS a atualização:', JSON.stringify(novasRespostas, null, 2))
+      console.log('=== HANDLE RESPONSE END ===')
       return novasRespostas
     })
   }
@@ -232,7 +235,8 @@ export default function PesquisaPublica() {
     if (!campanhaId) return false
 
     try {
-      console.log('Iniciando salvamento de resposta:', respostas)
+      console.log('=== INÍCIO SALVAMENTO ===')
+      console.log('Estado respostas no momento do salvamento:', JSON.stringify(respostas, null, 2))
       console.log('Dados pessoais finais:', dadosPessoaisFinais)
       
       // Criar novo envio sem paciente_id (pesquisa pública)
