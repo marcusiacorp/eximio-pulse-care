@@ -104,6 +104,13 @@ export type Database = {
             referencedRelation: "campanhas"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "campanha_configuracao_campanha_id_fkey"
+            columns: ["campanha_id"]
+            isOneToOne: false
+            referencedRelation: "campanhas_publicas"
+            referencedColumns: ["id"]
+          },
         ]
       }
       campanhas: {
@@ -403,7 +410,64 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      campanha_configuracao_publica: {
+        Row: {
+          banner_padrao_url: string | null
+          banner_url: string | null
+          campanha_id: string | null
+          confirmacao_envio: Json | null
+          formularios_adicionais: Json | null
+          id: string | null
+          layout_envio: Json | null
+          pergunta_area_atendimento: string | null
+          pergunta_definitiva: Json | null
+          pergunta_nps_global: string | null
+          pergunta_o_que_agradou_global: string | null
+          pergunta_padrao: Json | null
+          pergunta_recomendacao: string | null
+          perguntas_setores: Json | null
+          pontos_contato: Json | null
+          problemas: Json | null
+          setores_selecionados: string[] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campanha_configuracao_campanha_id_fkey"
+            columns: ["campanha_id"]
+            isOneToOne: false
+            referencedRelation: "campanhas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "campanha_configuracao_campanha_id_fkey"
+            columns: ["campanha_id"]
+            isOneToOne: false
+            referencedRelation: "campanhas_publicas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      campanhas_publicas: {
+        Row: {
+          ativa: boolean | null
+          id: string | null
+          nome: string | null
+          tipo_campanha: string | null
+        }
+        Insert: {
+          ativa?: boolean | null
+          id?: string | null
+          nome?: string | null
+          tipo_campanha?: string | null
+        }
+        Update: {
+          ativa?: boolean | null
+          id?: string | null
+          nome?: string | null
+          tipo_campanha?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       get_campanha_metrics: {
