@@ -293,10 +293,6 @@ export default function PesquisaPublica() {
         avaliacao_unidadeinternacao_o_que_mais_contribuiu: respostas.respostasSetores?.["Unidade de Internação"]?.satisfacaoSetor || null,
         avaliacao_unidadeinternacao_o_que_mais_influenciou: respostas.respostasSetores?.["Unidade de Internação"]?.influencias?.join(', ') || null,
         avaliacao_unidadeinternacao_sugestoes: respostas.respostasSetores?.["Unidade de Internação"]?.sugestoes || null,
-        // Adicionar dados pessoais do respondente
-        nome_respondente: dadosPessoaisFinais?.nome || null,
-        email_respondente: dadosPessoaisFinais?.email || null,
-        telefone_respondente: dadosPessoaisFinais?.telefone || null
       }
 
       console.log('Salvando resposta com dados:', dadosResposta)
@@ -305,6 +301,28 @@ export default function PesquisaPublica() {
       const { error: respostaError } = await supabase
         .from('respostas_pesquisa')
         .insert(dadosResposta)
+
+      if (respostaError) {
+        console.error('Erro ao salvar resposta:', respostaError)
+        throw respostaError
+      }
+
+      // Salvar dados pessoais na tabela separada se fornecidos
+      if (dadosPessoaisFinais && (dadosPessoaisFinais.nome || dadosPessoaisFinais.email || dadosPessoaisFinais.telefone)) {
+        const { error: dadosError } = await supabase
+          .from('dados_anonimos')
+          .insert({
+            campanha_id: campanhaId,
+            nome_respondente: dadosPessoaisFinais.nome || null,
+            email_respondente: dadosPessoaisFinais.email || null,
+            telefone_respondente: dadosPessoaisFinais.telefone || null
+          })
+
+        if (dadosError) {
+          console.error('Erro ao salvar dados pessoais:', dadosError)
+          // Não fazer throw aqui para não bloquear o processo se só os dados pessoais falharem
+        }
+      }
 
       if (respostaError) {
         console.error('Erro detalhado ao salvar resposta:', respostaError)

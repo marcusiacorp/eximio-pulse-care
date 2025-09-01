@@ -18,6 +18,12 @@ interface ResultadosDetalhadosProps {
   onClose: () => void
 }
 
+interface ColunaDados {
+  key: string
+  label: string
+  accessor?: (resposta: any) => any
+}
+
 export const ResultadosDetalhados = ({ campanhaId, isOpen, onClose }: ResultadosDetalhadosProps) => {
   const { data, isLoading, error } = useRespostasDetalhadas(campanhaId)
 
@@ -35,15 +41,27 @@ export const ResultadosDetalhados = ({ campanhaId, isOpen, onClose }: Resultados
     return String(valor)
   }
 
-  const gerarColunas = () => {
+  const gerarColunas = (): ColunaDados[] => {
     if (!data?.configuracao || !data?.respostas?.length) return []
 
     const colunas = []
 
-    // Dados pessoais sempre primeiro
-    colunas.push({ key: 'nome_respondente', label: 'Nome' })
-    colunas.push({ key: 'email_respondente', label: 'E-mail' })
-    colunas.push({ key: 'telefone_respondente', label: 'Telefone' })
+    // Dados pessoais sempre primeiro (vindos da nova tabela)
+    colunas.push({ 
+      key: 'dados_anonimos.nome_respondente', 
+      label: 'Nome',
+      accessor: (resposta: any) => resposta.dados_anonimos?.nome_respondente || 'N/A'
+    })
+    colunas.push({ 
+      key: 'dados_anonimos.email_respondente', 
+      label: 'E-mail',
+      accessor: (resposta: any) => resposta.dados_anonimos?.email_respondente || 'N/A'
+    })
+    colunas.push({ 
+      key: 'dados_anonimos.telefone_respondente', 
+      label: 'Telefone',
+      accessor: (resposta: any) => resposta.dados_anonimos?.telefone_respondente || 'N/A'
+    })
 
     // NPS sempre presente
     colunas.push({ key: 'nps_score', label: 'NPS' })
@@ -98,7 +116,14 @@ export const ResultadosDetalhados = ({ campanhaId, isOpen, onClose }: Resultados
     
     const linhas = data.respostas.map(resposta => {
       return colunas.map(col => {
-        let valor = resposta[col.key as keyof typeof resposta]
+        let valor
+        
+        // Se a coluna tem accessor, usar ela
+        if ('accessor' in col && typeof col.accessor === 'function') {
+          valor = col.accessor(resposta)
+        } else {
+          valor = resposta[col.key as keyof typeof resposta]
+        }
         
         if (col.key === 'created_at') {
           valor = new Date(valor as string).toLocaleString('pt-BR')
@@ -231,12 +256,19 @@ export const ResultadosDetalhados = ({ campanhaId, isOpen, onClose }: Resultados
                   <tbody>
                     {data.respostas.map((resposta, index) => (
                       <tr key={resposta.id} className={index % 2 === 0 ? 'bg-background' : 'bg-muted/30'}>
-                        {gerarColunas().map((coluna) => {
-                          let valor = resposta[coluna.key as keyof typeof resposta]
-                          
-                          if (coluna.key === 'created_at') {
-                            valor = new Date(valor as string).toLocaleString('pt-BR')
-                          }
+                         {gerarColunas().map((coluna) => {
+                           let valor
+                           
+                           // Se a coluna tem accessor, usar ela
+                           if ('accessor' in coluna && typeof coluna.accessor === 'function') {
+                             valor = coluna.accessor(resposta)
+                           } else {
+                             valor = resposta[coluna.key as keyof typeof resposta]
+                           }
+                           
+                           if (coluna.key === 'created_at') {
+                             valor = new Date(valor as string).toLocaleString('pt-BR')
+                           }
                           
                           return (
                             <td key={coluna.key} className="px-4 py-3 border-r border-border max-w-xs">

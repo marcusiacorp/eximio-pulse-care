@@ -160,6 +160,36 @@ export type Database = {
           },
         ]
       }
+      dados_anonimos: {
+        Row: {
+          campanha_id: string
+          created_at: string
+          email_respondente: string | null
+          id: string
+          nome_respondente: string | null
+          telefone_respondente: string | null
+          updated_at: string
+        }
+        Insert: {
+          campanha_id: string
+          created_at?: string
+          email_respondente?: string | null
+          id?: string
+          nome_respondente?: string | null
+          telefone_respondente?: string | null
+          updated_at?: string
+        }
+        Update: {
+          campanha_id?: string
+          created_at?: string
+          email_respondente?: string | null
+          id?: string
+          nome_respondente?: string | null
+          telefone_respondente?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       envios_pesquisa: {
         Row: {
           campanha_id: string
@@ -275,11 +305,9 @@ export type Database = {
           avaliacao_unidadeinternacao_sugestoes: string | null
           campanha_id: string | null
           created_at: string
-          email_respondente: string | null
           envio_id: string
           formularios_adicionais: Json | null
           id: string
-          nome_respondente: string | null
           nps_score: number | null
           pergunta_definitiva: Json | null
           pergunta_padrao_avaliacao_geral: number | null
@@ -293,7 +321,6 @@ export type Database = {
           resposta_recomendacao: boolean | null
           resposta_trecho_pergunta: string | null
           setores_atendimento: string[] | null
-          telefone_respondente: string | null
           updated_at: string
         }
         Insert: {
@@ -311,11 +338,9 @@ export type Database = {
           avaliacao_unidadeinternacao_sugestoes?: string | null
           campanha_id?: string | null
           created_at?: string
-          email_respondente?: string | null
           envio_id: string
           formularios_adicionais?: Json | null
           id?: string
-          nome_respondente?: string | null
           nps_score?: number | null
           pergunta_definitiva?: Json | null
           pergunta_padrao_avaliacao_geral?: number | null
@@ -329,7 +354,6 @@ export type Database = {
           resposta_recomendacao?: boolean | null
           resposta_trecho_pergunta?: string | null
           setores_atendimento?: string[] | null
-          telefone_respondente?: string | null
           updated_at?: string
         }
         Update: {
@@ -347,11 +371,9 @@ export type Database = {
           avaliacao_unidadeinternacao_sugestoes?: string | null
           campanha_id?: string | null
           created_at?: string
-          email_respondente?: string | null
           envio_id?: string
           formularios_adicionais?: Json | null
           id?: string
-          nome_respondente?: string | null
           nps_score?: number | null
           pergunta_definitiva?: Json | null
           pergunta_padrao_avaliacao_geral?: number | null
@@ -365,7 +387,6 @@ export type Database = {
           resposta_recomendacao?: boolean | null
           resposta_trecho_pergunta?: string | null
           setores_atendimento?: string[] | null
-          telefone_respondente?: string | null
           updated_at?: string
         }
         Relationships: []

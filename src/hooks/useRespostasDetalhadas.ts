@@ -3,10 +3,13 @@ import { supabase } from "@/integrations/supabase/client"
 
 export interface RespostaDetalhada {
   id: string
-  nome_respondente?: string
-  email_respondente?: string
-  telefone_respondente?: string
   nps_score?: number
+  // Dados pessoais vêm de uma tabela separada
+  dados_anonimos?: {
+    nome_respondente?: string
+    email_respondente?: string
+    telefone_respondente?: string
+  }
   resposta_trecho_pergunta?: string
   resposta_o_que_agradou?: string
   resposta_porque_nota?: string
@@ -72,6 +75,18 @@ export const useRespostasDetalhadas = (campanhaId: string | null) => {
         throw respostasError
       }
 
+      // Buscar dados pessoais anônimos da campanha
+      const { data: dadosAnonimos, error: dadosError } = await supabase
+        .from('dados_anonimos')
+        .select('*')
+        .eq('campanha_id', campanhaId)
+        .order('created_at', { ascending: false })
+
+      if (dadosError) {
+        console.error('Erro ao buscar dados anônimos:', dadosError)
+        throw dadosError
+      }
+
       // Buscar configuração da campanha para determinar colunas
       const { data: configuracao, error: configError } = await supabase
         .from('campanha_configuracao')
@@ -96,8 +111,15 @@ export const useRespostasDetalhadas = (campanhaId: string | null) => {
         throw campanhaError
       }
 
+      // Combinar respostas com dados pessoais (quando existirem)
+      // Para pesquisas públicas, pode não haver dados pessoais, então fazemos um merge baseado na ordem temporal
+      const respostasComDados = respostas.map((resposta, index) => ({
+        ...resposta,
+        dados_anonimos: dadosAnonimos[index] || null
+      }))
+
       return {
-        respostas: respostas as RespostaDetalhada[],
+        respostas: respostasComDados as RespostaDetalhada[],
         configuracao: configuracao as ConfiguracaoCampanha,
         campanha: campanha
       }
