@@ -15,7 +15,7 @@ interface CampanhaData {
   id: string
   nome: string
   tipo_campanha: string
-  hospital_id: string
+  hospital_id?: string // Optional since public views don't expose this
   ativa: boolean
   configuracao?: Array<{
     trecho_pergunta?: string
@@ -59,10 +59,10 @@ export default function PesquisaPublica() {
         console.log('Carregando campanha:', campanhaId)
         
         const { data, error } = await supabase
-          .from('campanhas')
+          .from('campanhas_publicas')
           .select(`
             *,
-            configuracao:campanha_configuracao(*)
+            configuracao:campanha_configuracao_publica(*)
           `)
           .eq('id', campanhaId)
           .maybeSingle()
