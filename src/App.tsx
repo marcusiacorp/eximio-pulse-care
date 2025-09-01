@@ -34,6 +34,7 @@ const App = () => (
               <DashboardPage />
             </ProtectedRoute>
           }>
+            <Route index element={<HomePage />} />
             <Route path="home" element={<HomePage />} />
             <Route path="campanhas" element={<CampanhasPage />} />
             <Route path="campanhas/criar/:tipo" element={<CriarCampanhaPage />} />
